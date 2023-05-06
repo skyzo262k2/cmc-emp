@@ -1,0 +1,21 @@
+#nb {
+    border: none;
+    background: none;
+    color: blue;
+
+}
+
+#nb:active {
+    color: red;
+}
+.parente {
+        display: flex;
+        position: absolute;
+        top: 40px;
+}
+.salle{
+    margin: 3em;
+}
+.filiere {
+    margin: 3em;
+}

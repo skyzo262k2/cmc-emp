@@ -1,0 +1,26 @@
+td {
+    text-align: center;
+}
+
+#tbl_Saisir th,
+#tbl_Saisir td {
+    text-align: left;
+}
+
+select {
+    width: 195px;
+}
+
+.row {
+    width: 95%;
+    margin: 50px 10px;
+}
+
+.col-8 {
+    text-align: center;
+}
+
+.col-4 {
+    text-align: center;
+    padding: 70px 50px;
+}
