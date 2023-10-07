@@ -5,11 +5,11 @@
     <title> Les stagiaires </title>
     <link rel="stylesheet" type="text/css" href="../Css/Bootstrap/css/bootstrap.css">
     <script src="../JS/ChatGraphique/jquery-3.2.1.slim.min.js"></script>
-    <script src="../JS/ChatGraphique/chart.js"></script>
-    
+
+
     <script src="../JS/ChatGraphique/popper.min.js"></script>
 
-    <!-- <script src="../JS/ChatGraphique/Chart1.js"></script> -->
+    <script src="../JS/ChatGraphique/Chart1.js"></script>
     <script src="../Css/bootstrap.min.js"></script>
     <style>
         body {
@@ -17,12 +17,12 @@
         }
 
         .effectif {
-            font-size: 12px;
-            /* font-weight: bold; */
+            font-size: 16px;
+            font-weight: bold;
         }
 
         .nbr {
-            font-size: 25px;
+            font-size: 30px;
             font-weight: bold;
             margin-top: 20px;
         }
@@ -76,7 +76,8 @@
         .statistique {
             margin-top: 50px;
         }
-        .col-6{
+
+        .col-6 {
             text-align: center;
         }
     </style>
@@ -85,39 +86,40 @@
 <body>
 
     <div class="container">
-        <div class="row ">
+        <div class="row mt-3">
 
-            <div class="col-6 "><canvas id="myChart"></canvas></div>
+            <div class="col-7 "><canvas id="myChart" height="140"></canvas></div>
 
-            <div class="col-6">
-                <!-- <div class="green-panel pn">
+            <div class="col-5" style='text-align: center;'>
+                <div class="green-panel pn">
                     <div class="green-header">
-                        <h4>Taux d'Avancement</h4>
+                        <h4  style='font-weight: bold; margin-bottom:25px;color:blueviolet'>Taux d'Avancement</h4>
                     </div>
-                    <canvas id="serverstatus03" height="120" width="120"></canvas>
+                    <canvas id="serverstatus03" height="150" width="150"></canvas>
                     <script>
                         var doughnutData = [{
-                                value: <?php //echo number_format($TauxAvan[0], 2); ?>,
+                                value: <?php echo number_format($TauxAvan[0], 2); ?>,
                                 color: "#2b2b2b"
                             },
                             {
-                                value:<?php //echo 100-number_format($TauxAvan[0], 2); ?>,
+                                value: <?php echo 100 - number_format($TauxAvan[0], 2); ?>,
                                 color: "#fffffd"
                             }
                         ];
                         var myDoughnut = new Chart(document.getElementById("serverstatus03").getContext("2d")).Doughnut(doughnutData);
                     </script>
-                    <h3><?php //echo number_format($TauxAvan[0], 2); ?>%</h3>
-                </div> -->
+                    <h3 class='m-5' style='font-weight: bold;'><?php echo number_format($TauxAvan[0], 2); ?>%</h3>
+                </div>
             </div>
 
         </div>
         <div class="row statistique">
+            <div class="col-md-1"></div>
 
             <div class="col-md-2">
                 <div class="stat stat1">
                     <div class="effectif">
-                        Total Absences Formateurs
+                    Total des absences des formateurs
                         <div class="nbr"><?php echo $nbAbsenceFrm[0]; ?></div>
                     </div>
 
@@ -126,7 +128,7 @@
             <div class="col-md-2">
                 <div class="stat stat2">
                     <div class="effectif">
-                        Total Absences Stagiaires
+                    Total des absences des stagiaires
                         <div class="nbr"><?php echo $nbAbsenceStg[0]; ?></div>
                     </div>
 
@@ -135,7 +137,7 @@
             <div class="col-md-2">
                 <div class="stat stat3">
                     <div class="effectif">
-                        Groupes pas Terminé Affectation
+                    Groupes n'ont pas terminé affectations
                         <div class="nbr"><?php echo $nbGrpNonAffecter[0]; ?></div>
                     </div>
 
@@ -145,7 +147,7 @@
             <div class="col-md-2">
                 <div class="stat stat1">
                     <div class="effectif">
-                        Groupes n'est pas Emploi
+                    Les groupes ne sont pas un emploi
                         <div class="nbr"><?php echo $nbGrpNonEmploi[0]; ?></div>
                     </div>
                 </div>
@@ -153,20 +155,20 @@
             <div class="col-md-2">
                 <div class="stat stat2">
                     <div class="effectif">
-                        Formateur aucune Affectation
+                    Les formateurs n'ont aucune affectation
                         <div class="nbr"><?php echo $nbFrmNonAffectation[0]; ?></div>
                     </div>
                 </div>
             </div>
 
-            <div class="col-md-2">
+            <!-- <div class="col-md-2">
                 <div class="stat stat2">
                     <div class="effectif">
-                        Taux Avancement
-                        <div class="nbr"><?php echo number_format($TauxAvan[0], 2); ?> %</div>
+                    Les groupes n'ont aucun stagiaire
+                        <div class="nbr"><?php //echo $nbGrpSansStg[0]; ?> </div>
                     </div>
                 </div>
-            </div>
+            </div> -->
 
             <div class="col-md-2">
                 <div class="stat stat1">
@@ -233,6 +235,7 @@
 
 
 </body>
+<script src="../JS/ChatGraphique/chart.js"></script>
 <script>
     var ctx = document.getElementById('myChart').getContext('2d');
     var myChart = new Chart(ctx, {

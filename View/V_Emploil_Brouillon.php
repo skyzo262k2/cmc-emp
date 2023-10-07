@@ -172,7 +172,8 @@
         margin: 0 auto;
     }
 
-    input[type="button"],
+    input[type="button"]
+    ,button,
     #ajt {
         background-color: blue;
         color: white;
@@ -185,7 +186,7 @@
         transition: all 0.2s ease-in-out;
     }
 
-    input[type="button"]:active {
+    input[type="button"]:active,button:active {
         transform: translateY(0px);
         box-shadow: none;
     }
@@ -356,8 +357,11 @@
     const ajax = new EmploiAjax('../Controller/C_Emploil_Brouillon.php');
 
     function EmploiGroupe() {
-        let grp = document.getElementById('grp').selectedOptions[0].value
+        let grp = document.getElementById('grp').value
+        let relaod = document.getElementById('relaod')
         if (grp != "") {
+            relaod.value = grp
+            relaod.hidden = false
             ajax.Ajax(`group=${grp}`, (er, data) => {
                 if (er == null) {
                     let table = JSON.parse(data)
@@ -366,6 +370,8 @@
                 }
             })
         } else {
+            relaod.value = ""
+            relaod.hidden = true
             CreationRows()
             document.getElementById('Form').innerHTML = ""
         }
@@ -523,6 +529,9 @@
     <form action="" method="post">
         <input type="hidden" name="frm_hid" id="frm_hid">
         <input type="button" onclick="Utiliser()" value="utiliser" name="utl">
+        <button onclick="EmploiGroupe()" id="relaod" hidden type="button">
+            reload
+        </button>
         <table>
             <tr>
                 <td style="text-align: center;font-size: larger;">Groupes</td>

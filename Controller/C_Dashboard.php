@@ -10,10 +10,11 @@ if (!isset($_SESSION["Admin"]) || $_SESSION["Admin"]["Poste"] == "Surveille") {
 $cnnx = new Connexion();
 
 $CodeEtab = $_SESSION['Etablissement']["CodeEtb"];
+$taux =  $_SESSION['Etablissement']["TauxFPA"] / 100;
 $anne = explode("/", $_SESSION['Annee']);
 
 if (isset($_GET['get'])) {
-    
+   
     $dates = [];
     $absences1 = [];
     $cnnx->connexion();
@@ -54,11 +55,13 @@ if (isset($_GET['get'])) {
     $nbstg = $cnnx::$cnx->query("call SP_NbStagiaireByEtabAnne('$CodeEtab','$anne[0]')")->fetch(PDO::FETCH_NUM);
     $nbGrpNonAffecter = $cnnx::$cnx->query("call SP_NBGroupesNonTermineAffectation('$CodeEtab','$anne[0]')")->fetch(PDO::FETCH_NUM);
     $nbGrpNonEmploi = $cnnx::$cnx->query("call SP_NbGroupeNonEmploi('$CodeEtab','$anne[0]')")->fetch(PDO::FETCH_NUM);
+    $nbGrpSansStg = $cnnx::$cnx->query("call SP_NbGroupeSansStagiaire('$CodeEtab','$anne[0]')")->fetch(PDO::FETCH_NUM);
     $nbFrmNonAffectation = $cnnx::$cnx->query("call SP_NbFormateurNonAffectation('$CodeEtab','$anne[0]')")->fetch(PDO::FETCH_NUM);
     $nbAbsenceStg = $cnnx::$cnx->query("call SP_TotalAbsenceStg('$CodeEtab','$anne[0]')")->fetch(PDO::FETCH_NUM);
     $nbAbsenceFrm = $cnnx::$cnx->query("call SP_TotalAbsenceFormateur('$CodeEtab','$anne[0]')")->fetch(PDO::FETCH_NUM);
-    $TauxAvan = $cnnx::$cnx->query("call SP_TauxAvancementByEtabAnneF('$CodeEtab','$anne[0]')")->fetch(PDO::FETCH_NUM);
+    $TauxAvan = $cnnx::$cnx->query("call SP_TauxAvancementByEtabAnneF('$CodeEtab','$anne[0]',$taux)")->fetch(PDO::FETCH_NUM);
     $cnnx->Deconnexion();
+    
    
     require "../View/V_Dashboard.php";
 }

@@ -177,6 +177,8 @@
         var formateur;
 
         function EmploiGroupes(){
+            let relaod = document.getElementById('relaod')
+            relaod.hidden = true
             let checked = document.querySelectorAll('#check')
             let groupes = []
             for (let index = 0; index < checked.length; index++) {
@@ -185,14 +187,18 @@
                     groupes.push(checked[index].value)
             }
 
-            ajax.Ajax(`Valider=''&groupes=${JSON.stringify(groupes)}`, (er, data) => {
-                if (er == null) {
-                    let table = JSON.parse(data)
-                    formateur = table['formateur']
-                    Creation(table['group'])
-                    document.getElementById('detail').open = false
-                }
-            })
+           if(groupes.length>0){
+
+                relaod.hidden = false
+                ajax.Ajax(`Valider=''&groupes=${JSON.stringify(groupes)}`, (er, data) => {
+                    if (er == null) {
+                        let table = JSON.parse(data)
+                        formateur = table['formateur']
+                        Creation(table['group'])
+                        document.getElementById('detail').open = false
+                    }
+                })
+            }
         }
 
         function FormateurC(e) {
@@ -332,7 +338,7 @@
         GetGroupFormateur();
     </script>
     <style>
-        input[type="button"],input[type="reset"] {
+        input[type="button"],#relaod,input[type="reset"] {
             background-color: blue;
             color: white;
             padding: 10px 20px;
@@ -359,7 +365,7 @@
             }
         }
 
-        input[type="button"]:active,input[type="reset"]:active {
+        input[type="button"]:active,input[type="reset"]:active,#relaod:active {
             transform: translateY(0px);
             box-shadow: none;
         }
@@ -578,6 +584,9 @@
     </form>
     <form action="" method="post">
         <input type="button" onclick="Utiliser()" value='Utiliser' name='utl'>
+        <button onclick="EmploiGroupes()" id="relaod" hidden type="button">
+                reload
+            </button>
         <table border="1" id="table">
             <tr>
                 <td>Jour</td>

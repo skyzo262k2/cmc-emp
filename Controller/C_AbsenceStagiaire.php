@@ -92,13 +92,45 @@ function AfficherStagiaire($Stagiaires, $seance, $date)
 }
 
 
+function information_Seance($infos){
+    if(!$infos)
+            $infos =["-","-","-","-","-"];
+        
+        echo '<div class="row m-2">
+                
+                <div class="col-3">
+                    <div class="form-groupe">
+                        <input type="text" class="form-control" disabled value="' . $infos[1] . '" style="text-align : center;">
+                    </div>
+                </div>
+                <div class="col-5">
+                    <div class="form-groupe">
+                    <input type="text" class="form-control" disabled  style="text-align : center;" value="' . $infos[3] . '">
+                    </div>
+                </div>
+                <div class="col-1">
+                    <div class="form-groupe">
+                    <input type="text" id="module" class="form-control" disabled  style="text-align : center;" value="' . $infos[2] . '">
+                    </div>
+                </div>
+                <div class="col-3">
+                    <div class="form-groupe">
+                        <input type="text" class="form-control" disabled value="' . $infos[4] . '" style="text-align : center;">
+                    </div>
+                </div>
+                </div>';
+}
+
 
 
 
 if (isset($_POST["add"]) && isset($_POST["date"]) && isset($_POST["seance"]) && isset($_POST["groupe"]) && isset($_POST["module"])) {
 
-    // print_r($_POST["add"]);
+    // print_r($_POST["module"]);
     $t_cef = explode(",", $_POST["add"]);
+    // print_r($t_cef);
+    
+    $day_name = GetDay($_POST["date"]);
     $CodeModule = $_POST["module"];
     foreach ($t_cef as $cef) {
         $cef_type = explode("/", $cef);
@@ -109,18 +141,28 @@ if (isset($_POST["add"]) && isset($_POST["date"]) && isset($_POST["seance"]) && 
         }
     }
     $Stagiaires = $absencestagiaire->GetStagiairebyGroupe($_POST["groupe"], $AnneeFr, $CodeEtab);
+    $information_seance = $absencestagiaire->GetInformationSeanceGroupe($_POST["groupe"], $day_name, $_POST["seance"], $AnneeFr, $CodeEtab);
+    information_Seance($information_seance);
     AfficherStagiaire($Stagiaires, $_POST["seance"], $_POST["date"]);
 } 
 
-elseif (isset($_POST["modcef"]) && isset($_POST["date"]) && isset($_POST["seance"]) && isset($_POST["justify"]) && isset($_POST["groupe"])) {
+elseif (isset($_POST["modcef"]) && isset($_POST["date"]) && isset($_POST["seance"]) && isset($_POST["justify"]) && isset($_POST["groupe"])) { 
+    $day_name = GetDay($_POST["date"]);
     $absencestagiaire->ChangeJustifyStagiaire($_POST["modcef"], $_POST["date"], $_POST["seance"], $AnneeFr, $CodeEtab, $_POST["justify"]);
     $Stagiaires = $absencestagiaire->GetStagiairebyGroupe($_POST["groupe"], $AnneeFr, $CodeEtab);
+    
+    $information_seance = $absencestagiaire->GetInformationSeanceGroupe($_POST["groupe"], $day_name, $_POST["seance"], $AnneeFr, $CodeEtab);
+    information_Seance($information_seance);
     AfficherStagiaire($Stagiaires, $_POST["seance"], $_POST["date"]);
 } 
 
-elseif (isset($_POST["supcef"]) && isset($_POST["date"]) && isset($_POST["seance"]) && isset($_POST["groupe"])) {
+elseif (isset($_POST["supcef"]) && isset($_POST["date"]) && isset($_POST["seance"]) && isset($_POST["groupe"])) { 
+    $day_name = GetDay($_POST["date"]);
     $absencestagiaire->DeleteAbsence($_POST["supcef"], $AnneeFr, $_POST["date"], $_POST["seance"], $CodeEtab);
     $Stagiaires = $absencestagiaire->GetStagiairebyGroupe($_POST["groupe"], $AnneeFr, $CodeEtab);
+
+    $information_seance = $absencestagiaire->GetInformationSeanceGroupe($_POST["groupe"], $day_name, $_POST["seance"], $AnneeFr, $CodeEtab);
+    information_Seance($information_seance);
     AfficherStagiaire($Stagiaires, $_POST["seance"], $_POST["date"]);
 } 
 
@@ -129,7 +171,11 @@ elseif (isset($_POST["date"]) && isset($_POST["seance"]) && !isset($_POST["group
         $date = $_POST["date"];
         $day_name = GetDay($date);
         if ($day_name != "Dimanche") {
-            $Groupes = $absencestagiaire->GetAllGroupebyEmploi($_POST["seance"], $day_name, $AnneeFr, $CodeEtab);
+            // $Groupes = $absencestagiaire->GetAllGroupebyEmploi($_POST["seance"], $day_name, $AnneeFr, $CodeEtab);
+            $absencestagiaire->connexion();
+            $Groupes = AbsenceStagiaire::$cnx->query(" select distinct g.codegrp from stagiaire s inner join groupe g on g.CodeGrp = s.groupe 
+                        where s.Etab = '".$CodeEtab."' and s.AnneF = '".$AnneeFr."' order by g.codegrp")->fetchAll(PDO::FETCH_NUM);
+            $absencestagiaire->Deconnexion();
 
             echo "<select name='groupe' id='groupe' class='form-control' onchange='ChangeGroupe(this)'>
                     <option value='choisir'>Choisir Groupe</option>";
@@ -153,32 +199,7 @@ elseif (isset($_POST["groupe"]) && isset($_POST["date"]) && isset($_POST["seance
     if ($day_name != "Dimanche") {
         $Stagiaires = $absencestagiaire->GetStagiairebyGroupe($_POST["groupe"], $AnneeFr, $CodeEtab);
         $information_seance = $absencestagiaire->GetInformationSeanceGroupe($_POST["groupe"], $day_name, $seance, $AnneeFr, $CodeEtab);
-        // print_r($information_seance);
-        echo '<div class="row m-2">
-                
-                <div class="col-3">
-                    <div class="form-groupe">
-                        <input type="text" class="form-control" disabled value="' . $information_seance[1] . '" style="text-align : center;">
-                    </div>
-                </div>
-                <div class="col-5">
-                    <div class="form-groupe">
-                    <input type="text" class="form-control" disabled  style="text-align : center;" value="' . $information_seance[3] . '">
-                    </div>
-                </div>
-                <div class="col-1">
-                    <div class="form-groupe">
-                    <input type="text" id="module" class="form-control" disabled  style="text-align : center;" value="' . $information_seance[2] . '">
-                    </div>
-                </div>
-                <div class="col-3">
-                    <div class="form-groupe">
-                        <input type="text" class="form-control" disabled value="' . $information_seance[4] . '" style="text-align : center;">
-                    </div>
-                </div>
-                </div>';
-
-        echo '<div id="table_info"';
+        information_Seance($information_seance);
         AfficherStagiaire($Stagiaires, $_POST["seance"], $_POST["date"]);
         echo "</div>";
     }

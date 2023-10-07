@@ -169,6 +169,13 @@
                         <option value='3'>Troisième Annee</option>
                     </select>
                 </div>
+                <div class="form-groupe m-4">
+                    <select name="tFPA" class="inputs form-control">
+                        <option value="choisir">FPA de Groupe</option>
+                        <option value='N'>Non</option>
+                        <option value='O'>Oui</option>
+                    </select>
+                </div>
                 <b style="color: red;">Tout Les Champs obligatoire</b>
                 <div class="model-footer m-3">
                     <input type="submit" class="btn btn-primary" value="Ajouter" name="btnAjouter">

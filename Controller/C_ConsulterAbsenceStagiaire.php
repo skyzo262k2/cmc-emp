@@ -108,14 +108,28 @@ if (isset($_POST["dtdebut"]) && isset($_POST["dtfin"]) && isset($_POST["seance"]
             <th>justify</th>
             </tr>";
             foreach ($ConsParEtabAbsence as $con) {
+                if($con[5] == "-"){
+                    $f = "-";
+                    $m = "-";
+                }else{
+                    $absencestg->connexion();
+                    $data = AbsenceStagiaire::$cnx->query("select m.DescpMd,a.matricule from Modules m inner join affectModule a on a.ModuleCode = m.CodeMd 
+                    inner join groupe g on g.Codegrp = a.groupe
+                    where CodeMd='$con[5]' and a.groupe = '$con[3]'
+                    and a.CodeEtab = '$CodeEtab' and a.AnneeFr = '$AnneeFr'
+                    and g.CodeFlr = m.CodeFlr")->fetch(PDO::FETCH_NUM);
+                    $fo = AbsenceStagiaire::$cnx->query("select concat(Nom,' ',Prenom) from formateur where CodeEtab = '$CodeEtab' and matricule ='$data[1]'")->fetch(PDO::FETCH_NUM);
+                    $absencestg->Deconnexion();
+                    $f = $fo[0];
+                    $m = $data[0];
+                }
                 echo "<tr>
-             <td>$con[0]</td>
-             <td>$con[1]</td>
-             <td>" . GetHeureSeance($con[2]) . "</td>
-             <td>$con[3]</td>
-             <td>$con[4]</td>
-             
-        </tr>";
+                    <td>$f</td>
+                    <td>$m</td>
+                    <td>" . GetHeureSeance($con[4]) . "</td>
+                    <td>$con[2]</td>
+                    <td>$con[6]</td>
+                    </tr>";
             }
         }
         echo   "</table>";
@@ -153,11 +167,11 @@ if (isset($_POST["dtdebut"]) && isset($_POST["dtfin"]) && isset($_POST["seance"]
     if ($grp == "choisir" && isset($_SESSION["userFormateur"])) {
         $Absence = [0];
         $Retard = [0];
-    }else{
+    } else {
         $Absence = $absencestg->GetSatatistique($dtD, $dtF, $seance, $grp, $stg, $AnneeFr, $CodeEtab, "A");
         $Retard = $absencestg->GetSatatistique($dtD, $dtF, $seance, $grp, $stg, $AnneeFr, $CodeEtab, "R");
     }
-  
+
     echo "<div class='row nb_statistique'>
                 <div class='col-4'></div>
                 <div class='col-2 statistique'>
@@ -178,7 +192,7 @@ if (isset($_POST["dtdebut"]) && isset($_POST["dtfin"]) && isset($_POST["seance"]
         if (isset($_SESSION["Admin"])) {
 
             $TopAbsenceStagiaire = $absencestg->GetTopAbsenceStagiaire($dtD, $dtF, "A", $AnneeFr, $CodeEtab);
-            echo " <div class='m-5'>
+            echo " <div class='m-5'  id='informations'>
         <div>
             <b>Absences Stagiaire : Top 10 </b>
         </div>

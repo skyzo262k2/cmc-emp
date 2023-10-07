@@ -16,7 +16,6 @@ if(!isset($_SESSION["Admin"]) || $_SESSION["Admin"]["Poste"] == "Surveille"){
 $codetab = $_SESSION['Etablissement']['CodeEtb'];
 $affecter = new Affecter();
 $FormateursGroups = $affecter->Formateurs_Groupes($codetab);
-
 $Groupes = $FormateursGroups[0];
 $Formateur = $FormateursGroups[1];
 $anne = explode('/', $_SESSION['Annee']);
@@ -86,7 +85,7 @@ if (isset($_POST['efm'])) :
 endif;
 
 
-if ( isset($_POST['formateur']) ||  isset($_SESSION["userFormateur"]) ):
+if(isset($_POST['formateur']) ||  isset($_SESSION["userFormateur"]) ):
     $dis='';
     $hid='';
     if(!isset($_SESSION["userFormateur"])){
@@ -114,10 +113,16 @@ if ( isset($_POST['formateur']) ||  isset($_SESSION["userFormateur"]) ):
             $color='green';
         if($MdFrmt["taux"] >=90 && $MdFrmt["taux"]<=100)
             $color='yellow';
-
         if($MdFrmt["taux"]>100)
             $color='red';
 
+        if($MdFrmt["Fpa"]=='O'):
+            // echo $MdFrmt["s1"].'<br>';
+            $tax=$_SESSION['Etablissement']['TauxFPA'];
+            $MdFrmt["s1"]=($tax/100)*$MdFrmt["s1"];
+            $MdFrmt["s2"]=($tax/100)*$MdFrmt["s2"];
+            $MdFrmt["taux"]=$MdFrmt["avc"]!=0?$MdFrmt["avc"]/ ($MdFrmt["s1"]+ $MdFrmt["s2"])*100:0;
+        endif;
         $tbody .= "<tr>      <td>" . $MdFrmt["Groupe"] . "</td>";
         $tbody .=    "<td>" . $MdFrmt["descpMd"] . "</td>
                             <td>" . $MdFrmt["CodeMd"] . "</td>
@@ -125,6 +130,7 @@ if ( isset($_POST['formateur']) ||  isset($_SESSION["userFormateur"]) ):
                             <td>" . $MdFrmt["s2"] . "</td>
                             <td>" . $MdFrmt["codeflr"] . "</td>
                             <td>" . $MdFrmt["annee"] . "</td>
+                            <td>" . $MdFrmt["Fpa"] . "</td>
                             <td>" . $MdFrmt["avc"] . "</td>
                             <td style='background-color:$color;'>" . number_format($MdFrmt["taux"], 2) . "%</td>
                             <td><button type='button' $dis onclick='openF(this)' value='" . $MdFrmt["efm"] . "/" . $mat_F . "/" . $MdFrmt["Groupe"] . "/" . $MdFrmt["CodeMd"] . "/" . $MdFrmt['anneefr'] . "'>" . $MdFrmt["efm"] . "</button></td>
@@ -149,6 +155,7 @@ if ( isset($_POST['formateur']) ||  isset($_SESSION["userFormateur"]) ):
     $_SESSION['masshorraire'] = $masshorraire;
     $tbody .= "<div id='inf' hidden><span style='margin-left:0px;' id='s1'> " . $s1 . "</span>";
     $tbody .= "<span id='s2'> " . $s2 . "</span>";
+    $tbody .= "<span id='resete'> " . $masshorraire-$avc . "</span>";
     $tbody .= "<span id='mass'>" . $masshorraire . "</span>";
     $tbody .= "<span id='nbsemaine'>" . number_format($heureparsemaine, 2) . "</span></div>";
     $tbody .= "<span id='to_avc' hidden>" .$_SESSION['avc']. "</span></div>";

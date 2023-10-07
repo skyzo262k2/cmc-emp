@@ -50,13 +50,15 @@
         }
 
         function Groupes() {
-            var grp = document.getElementById('grp').selectedOptions[0].value
+            var grp = document.getElementById('grp').value
+            let relaod = document.getElementById('relaod')
             var request = new XMLHttpRequest();
             request.open("POST", `../Controller/C_EmploiReel.php`, true);
             request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
             request.onload = function() {
                 if (this.status == 200) {
-                    // console.log(this.responseText)
+                    relaod.value = grp
+                    relaod.hidden = false
                     Saisir(JSON.parse(this.response));
                     document.getElementById('hid').innerHTML = `
                     <strong>Emploi Groupes </strong>
@@ -73,8 +75,11 @@
                     document.getElementById('hid').hidden=false
                 }
             }
-            if(grp=="")
+            if(grp==""){
                 document.getElementById('hid').hidden=true
+                relaod.value = ""
+                relaod.hidden = true
+            }
             request.send(`group=${grp}`)
         }
         function Archiver()
@@ -324,7 +329,7 @@
         box-shadow: none;
     }
 
-    #imp {
+    #imp,#relaod {
         background-color: blue;
         color: white;
         padding: 10px 20px;
@@ -336,7 +341,7 @@
         transition: all 0.2s ease-in-out;
     }
 
-    #imp:active {
+    #imp:active,#relaod:active {
         transform: translateY(0px);
         box-shadow: none;
     }
@@ -351,6 +356,9 @@
         <center>
             <input type="button" value="Archiver" onclick="Archiver()" name="archiver">
             <button onclick="openPop()" type="button" id="imp">Imprimer</button>
+            <button onclick="Groupes()" id="relaod" hidden type="button">
+                reload
+            </button>
         </center>
         <table>
             <tr>

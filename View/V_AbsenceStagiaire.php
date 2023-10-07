@@ -109,7 +109,7 @@
             request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
             request.onload = function() {
                 if (this.status == 200 && this.readyState == 4) {
-                    document.getElementById("table_info").innerHTML = this.responseText;
+                    document.getElementById("informations").innerHTML = this.responseText;
                 }
             };
             request.send(`modcef=${cef}&date=${date}&seance=${seance}&justify=${justify}&groupe=${groupe}`);
@@ -125,7 +125,7 @@
             request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
             request.onload = function() {
                 if (this.status == 200 && this.readyState == 4) {
-                    document.getElementById("table_info").innerHTML = this.responseText;
+                    document.getElementById("informations").innerHTML = this.responseText;
                 }
             };
             request.send(`supcef=${cef}&date=${date}&seance=${seance}&groupe=${groupe}`);
@@ -151,7 +151,7 @@
                 request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
                 request.onload = function() {
                     if (this.status == 200 && this.readyState == 4) {
-                        document.getElementById("table_info").innerHTML = this.responseText;
+                        document.getElementById("informations").innerHTML = this.responseText;
                     }
                 };
                 request.send(`add=${T_Value}&date=${date}&seance=${seance}&groupe=${groupe}&module=${module}`);

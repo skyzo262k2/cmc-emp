@@ -107,9 +107,8 @@
                 if (isset($groupe)) {
                     foreach ($groupe as $grop){
                         if( $Fpa=='O'){
-                            $tax=$_SESSION['Etablissement']['TauxFPA'];
-                            $grop['s1']=($tax/100)*$grop['s1'];
-                            $grop['s2']=($tax/100)*$grop['s2'];;
+                            $grop['s1']*=0.6;
+                            $grop['s2']*=0.6;
                             $grop['masshoraire']=$grop["s1"]+ $grop["s2"];
 
                             $grop['taux']=$grop["avc"]!=0?number_format($grop["avc"]/($grop['masshoraire'])*100,2):0;

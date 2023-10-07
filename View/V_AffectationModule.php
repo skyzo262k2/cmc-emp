@@ -40,7 +40,7 @@
                     if (this.status == 200) {
                         document.getElementById('tbody').innerHTML = this.responseText
                         document.getElementById('name').innerHTML = `<b>Formateur : ${document.getElementById('frm').selectedOptions[0].innerText}</b>`
-                       data()
+                        data()
                     }
                 }
                 request.send(`formateur=${frm}`);
@@ -210,6 +210,7 @@
             document.getElementById('nbs').innerText = document.getElementById('nbsemaine').innerText
             document.getElementById('impri').innerHTML = document.getElementById('imp').innerHTML
             document.getElementById('avc').innerHTML = document.getElementById('to_avc').innerHTML + "%"
+            document.getElementById('reste').innerHTML = document.getElementById('resete').innerHTML
         }
     </script>
     <style>
@@ -494,7 +495,7 @@
                                             ?>
                                         </select>
                                     </td>
-                                    <th>chosir le Groupe</th>
+                                    <th>Choisir le Groupe</th>
                                     <td>
                                         <select name="groupe" onchange="ChangeG(this)" id='grp'>
                                             <option value="<?= $grp ?>"><?= $grp ?></option>
@@ -533,23 +534,25 @@
 
                 <div>
                     <p id='name'>
-                        <b>Formateur :<?=$nom_F?></b>
+                        <b>Formateur :<?= $nom_F ?></b>
                     </p>
 
                     <table id="tbl_Saisir">
                         <tr>
                             <td id='col'>table service</td>
-                            <td id='impri'></td>
+                            <td id='impri' title="Imprimer"></td>
                             <td id='col'>S1</td>
                             <td id="ss1"></td>
                             <td id='col'>S2</td>
                             <td id="ss2"></td>
-                            <td id='col'>Masse Horaire</td>
-                            <td id="mas"></td>
+                            <td id='col' title="Masse Horaire">M.H</td>
+                            <td id="mas" title="Masse Horaire"></td>
                             <td id='col'>nombre Par semaine</td>
                             <td id="nbs"></td>
                             <td id='col'>Taux Avancement</td>
                             <td id="avc"></td>
+                            <td id='col'>Reste M.H</td>
+                            <td id="reste"></td>
                         </tr>
                     </table>
 
@@ -562,13 +565,14 @@
                             <th>S2</th>
                             <th>Filière</th>
                             <th>Annee scolaire</th>
+                            <th>FPA</th>
                             <th>Avancement</th>
                             <th>Taux</th>
                             <th>EFM</th>
-                            <th <?php if(isset($_SESSION["userFormateur"])) echo 'hidden'?> >Action</th>
+                            <th <?php if (isset($_SESSION["userFormateur"])) echo 'hidden' ?>>Action</th>
                         </tr>
                         <tbody id='tbody'>
-                            <?php if(isset($_SESSION["userFormateur"])) :
+                            <?php if (isset($_SESSION["userFormateur"])) :
                                 echo $_SESSION["userFormateur"]["tableservice"]
                             ?>
                                 <script>

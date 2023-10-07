@@ -195,6 +195,7 @@ class PagePDF_Emploi
 
     public function CreateSeance($PosY, $PosX, $T_Info, $width)
     {
+        $T = explode("-", $T_Info[0]);
         $this->pdf->SetY($PosY);
         $this->pdf->SetFont('Arial', 'B', 8);
         $this->pdf->SetX($PosX);
@@ -209,10 +210,26 @@ class PagePDF_Emploi
         $this->pdf->SetX($PosX + 30);
         $this->pdf->Cell(1, 1, $T_Info[1], 0, 1, 'C', 1);
 
-        $this->pdf->SetFont('Arial', 'B', 8);
-        $this->pdf->SetY($PosY + 2.5);
-        $this->pdf->SetX($PosX + 30);
-        $this->pdf->Cell(1, 1, $T_Info[0], 0, 1, 'C', 1);
+
+        if (count($T) == 1) {
+            $this->pdf->SetFont('Arial', 'B', 8);
+            $this->pdf->SetY($PosY + 2.5);
+            $this->pdf->SetX($PosX + 30);
+            $this->pdf->Cell(1, 1, $T_Info[0], 0, 1, 'C', 1);
+        } else {
+            if (count($T) == 2)
+                $this->pdf->SetFont('Arial', 'B', 8);
+            elseif (count($T) == 3)
+                $this->pdf->SetFont('Arial', 'B', 8);
+            elseif (count($T) == 4)
+                $this->pdf->SetFont('Arial', 'B', 7);
+            else {
+                $this->pdf->SetFont('Arial', 'B', 4);
+            }
+            $this->pdf->SetY($PosY + 2.5);
+            $this->pdf->SetX($PosX + 30);
+            $this->pdf->Cell(1, 1, $T_Info[0], 0, 1, 'C', 1);
+        }
 
         $mots_module = explode(" ", $T_Info[3]);
         $mot1 = "";
@@ -248,7 +265,7 @@ class PagePDF_Emploi
             for ($i = 5; $i < 10; $i++) {
                 $mot2 .= $mots_module[$i] . " ";
             }
-            
+
             for ($i = 10; $i < 15; $i++) {
                 $mot3 .= $mots_module[$i] . " ";
             }
@@ -508,7 +525,7 @@ class Proposition_EFM
     public $AnneFr;
     public $pdf;
     public $Information;
-    
+
 
     function __construct($pdf, $etab, $anne, $info)
     {
@@ -603,7 +620,7 @@ class Proposition_EFM
         $this->pdf->Cell(130, 8, $this->Information[26][0], 1, 1, "C", 0);
         $this->pdf->SetY(109);
         $this->pdf->SetX(70);
-        $this->pdf->Cell(130, 8, number_format($this->Information[26][1],2) . " %", 1, 1, "C", 0);
+        $this->pdf->Cell(130, 8, number_format($this->Information[26][1], 2) . " %", 1, 1, "C", 0);
         $this->pdf->SetY(117);
         $this->pdf->SetX(70);
         $this->pdf->Cell(130, 12, $this->Information[1], 1, 1, "C", 0);
@@ -762,7 +779,7 @@ class Proposition_EFM
         $this->pdf->SetY(204);
         $this->pdf->SetX(140);
         $this->pdf->Cell(30, 7, $this->Information[21] == "Oui" ? "X" : "", 1, 1, "C", 0);
-        
+
         $this->pdf->SetFont('Arial', 'B', 15);
         $this->pdf->SetY(211);
         $this->pdf->SetX(140);
@@ -796,7 +813,7 @@ class Proposition_EFM
         $this->pdf->SetY(204);
         $this->pdf->SetX(170);
         $this->pdf->Cell(30, 7, $this->Information[21] == "Non" ? "X" : "", 1, 1, "C", 0);
-        
+
         $this->pdf->SetFont('Arial', 'B', 15);
         $this->pdf->SetY(211);
         $this->pdf->SetX(170);

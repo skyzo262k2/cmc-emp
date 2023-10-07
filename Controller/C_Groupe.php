@@ -27,11 +27,12 @@ if (isset($_POST["btnAjouter"])) {
         $groupe->CodeGrp = $_POST["tCodeGrp"];
         $groupe->CodeFlr = $_POST["tCodeFlr"];
         $groupe->Annee = $_POST["tAnnee"];
-        if ($_SESSION['Etablissement']['TauxFPA'] == "100") {
-            $groupe->Fpa = "N";
-        } else {
-            $groupe->Fpa = "O";
-        }
+        $groupe->Fpa = $_POST["tFPA"];
+        // if ($_SESSION['Etablissement']['TauxFPA'] == "100") {
+        //     $groupe->Fpa = "N";
+        // } else {
+        //     $groupe->Fpa = "O";
+        // }
         $boolAdd = $groupe->AddGroupe();
     }
 }
@@ -43,12 +44,13 @@ if (isset($_POST["btnModifier"])) {
         $groupe->CodeGrp = $_POST["tCodeGrp"];
         $groupe->CodeFlr = $_POST["tCodeFlr"];
         $groupe->Annee = $_POST["tAnnee"];
+        $groupe->Fpa = $_POST["tFPA"];
         // Fix TauxFPA
-        if ($_SESSION['Etablissement']['TauxFPA'] == "100") {
-            $groupe->Fpa = "N";
-        } else {
-            $groupe->Fpa = "O";
-        }
+        // if ($_SESSION['Etablissement']['TauxFPA'] == "100") {
+        //     $groupe->Fpa = "N";
+        // } else {
+        //     $groupe->Fpa = "O";
+        // }
         $boolAdd = $groupe->UpdateGroupe();
     }
 }

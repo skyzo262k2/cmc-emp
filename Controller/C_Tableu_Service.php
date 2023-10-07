@@ -21,7 +21,8 @@ if (isset($_GET['Mat'])) {
     inner join etablissement E on f.CodeEtab = E.CodeEtb where f.Matricule = '$mat';")->fetch(PDO::FETCH_NUM);
 
 
-    $InfoHeures = $cnnx::$cnx->query("select sum(m.s1),sum(m.s2),sum(m.pr),sum(m.Dist) ,sum(m.pr)+sum(m.Dist), (sum(m.pr)+sum(m.Dist)) / e.Sem_Annee
+    $InfoHeures = $cnnx::$cnx->query("
+    select sum(m.s1),sum(m.s2),sum(m.pr),sum(m.Dist) ,sum(m.pr)+sum(m.Dist), (sum(m.pr)+sum(m.Dist)) / e.Sem_Annee
     from etablissement e 
     inner join groupe g on g.CodeEtab = e.CodeEtb
      inner join  affectmodule af on g.CodeGrp= af.Groupe 
