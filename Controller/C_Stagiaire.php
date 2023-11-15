@@ -18,6 +18,10 @@ $anne = $annees[0];
 $etab = $_SESSION["Etablissement"]["CodeEtb"];
 $info = "";
 
+$poste = $_SESSION['Admin']['Poste'];
+$secteur = isset($_SESSION['Admin']['secteur']) ? $_SESSION['Admin']['secteur'] : null;
+
+
 $stagiaire->etab = $etab;
 $stagiaire->annef = $anne;
 
@@ -58,13 +62,24 @@ if (isset($_POST["btnModifier"])) {
 if (isset($_POST["btnSupprimer"])) {
     $stagiaire->DeleteAll();
 }
+
+
+
 if (isset($_GET['info'])) {
     $info = $_GET['info'];
     $_SESSION["rechinfostag"] = $info;
     if ($info == "") {
-        $_SESSION['Stagiaire'] = $stagiaire->GetAll();
+
+        if ($poste != "ChefSecteur")
+            $_SESSION['Stagiaire'] = $stagiaire->GetAll();
+        else
+            $_SESSION['Stagiaire'] = $stagiaire->GetAllSecteur($secteur);
     } else {
         $_SESSION['Stagiaire'] = $stagiaire->Find($info);
+        if ($poste != "ChefSecteur")
+            $_SESSION['Stagiaire'] = $stagiaire->Find($info);
+        else
+            $_SESSION['Stagiaire'] = $stagiaire->FindStagiaire($info, $secteur);
     }
 
 
@@ -73,8 +88,8 @@ if (isset($_GET['info'])) {
 
 
 
-                $tab = $page->Pagination_Btn($_SESSION['Stagiaire'], $_GET['get']);
-                $page->Pagination_Nb($tab, $_GET['get']);
+    $tab = $page->Pagination_Btn($_SESSION['Stagiaire'], $_GET['get']);
+    $page->Pagination_Nb($tab, $_GET['get']);
 
     echo "</div>
                 <div class='deleteAll'>
@@ -97,25 +112,33 @@ if (isset($_GET['info'])) {
                         </tr>
                     </thead>
                     <tbody >";
-                        $page->GetTablePage($_SESSION['Stagiaire'], $_GET['get']);
+    $page->GetTablePage($_SESSION['Stagiaire'], $_GET['get']);
     echo "
                     </tbody>
                 </table>
             </div>";
-
-
-    
 } else {
     if (isset($_SESSION["rechinfostag"])) {
         $info = $_SESSION["rechinfostag"];
         if ($info == "") {
-            $_SESSION['Stagiaire'] = $stagiaire->GetAll();
+
+            if ($poste != "ChefSecteur")
+                $_SESSION['Stagiaire'] = $stagiaire->GetAll();
+            else
+                $_SESSION['Stagiaire'] = $stagiaire->GetAllSecteur($secteur);
         } else {
             $stagiaire->connexion();
-            $_SESSION['Stagiaire'] = $stagiaire->Find($info);
+            if ($poste != "ChefSecteur")
+                $_SESSION['Stagiaire'] = $stagiaire->Find($info);
+            else
+                $_SESSION['Stagiaire'] = $stagiaire->FindStagiaire($info, $secteur);
         }
     } else {
-        $_SESSION['Stagiaire'] = $stagiaire->GetAll();
+
+        if ($poste != "ChefSecteur")
+            $_SESSION['Stagiaire'] = $stagiaire->GetAll();
+        else
+            $_SESSION['Stagiaire'] = $stagiaire->GetAllSecteur($secteur);
     }
     require "../View/V_Stagiaire.php";
 }

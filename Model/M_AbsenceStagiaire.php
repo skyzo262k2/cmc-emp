@@ -111,6 +111,18 @@ class AbsenceStagiaire extends Connexion
         }
     }
 
+    public function GetSatatistiqueBySecteur($dtD,$dtF,$seance,$groupe,$stg,$anne,$etab,$type,$secteur){
+        $rows = [];
+        try {
+            parent::connexion();
+            $rows = parent::$cnx->query("call SP_AbsenceStatistiqueBySecteur('$dtD', '$dtF', '$seance', '$groupe', '$stg', '$anne', '$etab', '$type','$secteur')")->fetch(PDO::FETCH_NUM);
+            parent::Deconnexion();
+            
+        } catch (Exception $ex) {
+        }
+        return $rows;
+    }
+
     public function GetSatatistique($dtD,$dtF,$seance,$groupe,$stg,$anne,$etab,$type){
         $rows = [];
         try {

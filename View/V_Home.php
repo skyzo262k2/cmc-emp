@@ -42,12 +42,14 @@
 
                 <ul class="navbar-nav text-light" id="accordionSidebar">
                     <?php if ($poste != "Surveille" && $poste != "formateur") : ?>
-                        <li class="nav-item">
-                            <a class="nav-link <%=(locals.activeDash) ? 'active': ''%>" href="../Controller/C_Home.php">
-                                <i class="fas fa-tachometer-alt"></i>
-                                <span>Dashboard</span>
-                            </a>
-                        </li>
+                        <?php if ($poste != "ChefSecteur") : ?>
+                            <li class="nav-item">
+                                <a class="nav-link <%=(locals.activeDash) ? 'active': ''%>" href="../Controller/C_Home.php">
+                                    <i class="fas fa-tachometer-alt"></i>
+                                    <span>Dashboard</span>
+                                </a>
+                            </li>
+                        <?php endif; ?>
                         <li class="nav-item" data-bs-toggle="dropdown">
                             <a class="nav-link <%=(locals.activeDash) ? 'active': ''%> dropdown-toggle" href="/home">
                                 <i class="fas fa-pencil-alt"></i>
@@ -73,7 +75,9 @@
                             <li><a class="dropdown-item" href="../Controller/C_EmploiReel.php" target="iframe_a">Groupe</a></li>
                             <li><a class="dropdown-item" href="../Controller/C_Emploil_Brouillon.php" target="iframe_a">Bruillon Groupe</a></li>
                             <li><a class="dropdown-item" href="../Controller/C_Emploi_Groupes.php" target="iframe_a">Bruillon Large</a></li>
-                            <li><a class="dropdown-item" href="../Controller/C_EmploiArchiver.php" target="iframe_a">Archiver</a></li>
+                            <?php if ($poste != "ChefSecteur") : ?>
+                                <li><a class="dropdown-item" href="../Controller/C_EmploiArchiver.php" target="iframe_a">Archiver</a></li>
+                            <?php endif; ?>
                             <li><a class="dropdown-item" href="../Controller/C_Emploi_Formateur.php" target="iframe_a">Formateur</a></li>
                             <li><a class="dropdown-item" href="../Controller/C_Emploi_Salles.php" target="iframe_a">Salles</a></li>
                         </ul>
@@ -106,11 +110,13 @@
                             <li><a class="dropdown-item" href="../Controller/C_Stagiaire.php" target="iframe_a">Stagiaire</a></li>
                             <li><a class="dropdown-item" href="../Controller/C_Module.php" target="iframe_a">Module</a></li>
                             <li><a class="dropdown-item" href="../Controller/C_salle.php" target="iframe_a">Salle</a></li>
-                            <li><a class="dropdown-item" href="../Controller/C_filiere.php" target="iframe_a">Filière</a></li>
-                            <li><a class="dropdown-item" href="../Controller/C_Secteur.php" target="iframe_a">Secteur</a></li>
-                            <li><a class="dropdown-item" href="../Controller/C_Niveau.php" target="iframe_a">Niveaux</a></li>
                             <li><a class="dropdown-item" href="../Controller/C_Groupe.php" target="iframe_a">Groupe</a></li>
-                            <li><a class="dropdown-item" href="../Controller/C_Surveille.php" target="iframe_a">Surveille</a></li>
+                            <li><a class="dropdown-item" href="../Controller/C_filiere.php" target="iframe_a">Filière</a></li>
+                            <?php if ($poste != "ChefSecteur") : ?>
+                                <li><a class="dropdown-item" href="../Controller/C_Secteur.php" target="iframe_a">Secteur</a></li>
+                                <li><a class="dropdown-item" href="../Controller/C_Niveau.php" target="iframe_a">Niveaux</a></li>
+                                <li><a class="dropdown-item" href="../Controller/C_Surveille.php" target="iframe_a">Utilisateur</a></li>
+                            <?php endif; ?>
                             <li><a class="dropdown-item" href="../Controller/C_Validateur.php" target="iframe_a">Validateur</a></li>
                         </ul>
 
@@ -156,7 +162,7 @@
                                 <span>Gestion EFM</span>
                             </a>
                         </li>
-                        <?php if (count($data)!=0) : ?>
+                        <?php if (count($data) != 0) : ?>
                             <li class="nav-item">
                                 <a class="nav-link <%=(locals.activeDash) ? 'active': ''%>" href="../Controller/C_Valider.php" target="iframe_a">
                                     <i class="fas fa-layer-group"></i>
@@ -232,7 +238,7 @@
                         <div>
                             Année Formation : <?= $annee ?>
                         </div>
-                       
+
                         <!-- <button class="btn btn-link d-md-none rounded-circle me-3"  id="sidebarToggleTop" type="button">
                             <i class="fas fa-bars"></i>
                         </button> -->
@@ -266,14 +272,14 @@
                                             <a class="dropdown-item" href="../Controller/C_Profil.php" target="iframe_a">
                                                 <i class="fas fa-user fa-sm fa-fw me-2 text-gray-400"></i>&nbsp;Profile
                                             </a>
-                                           <?php elseif($poste == "formateur"): ?>
-                                                <a class="dropdown-item" href="../Controller/C_ProfilFormateur.php" target="iframe_a">
-                                                    <i class="fas fa-user fa-sm fa-fw me-2 text-gray-400"></i>&nbsp;Profile
-                                                </a>
-                                           <?php elseif($poste == "Surveille"): ?>
+                                        <?php elseif ($poste == "formateur") : ?>
+                                            <a class="dropdown-item" href="../Controller/C_ProfilFormateur.php" target="iframe_a">
+                                                <i class="fas fa-user fa-sm fa-fw me-2 text-gray-400"></i>&nbsp;Profile
+                                            </a>
+                                        <?php elseif ($poste == "Surveille") : ?>
                                             <a class="dropdown-item" href="../Controller/C_ProfilSurveille.php" target="iframe_a">
-                                                    <i class="fas fa-user fa-sm fa-fw me-2 text-gray-400"></i>&nbsp;Profile
-                                                </a>
+                                                <i class="fas fa-user fa-sm fa-fw me-2 text-gray-400"></i>&nbsp;Profile
+                                            </a>
                                         <?php endif; ?>
 
 
@@ -299,12 +305,15 @@
 
                 <?php
                 $url = "../Controller/C_Dashboard.php";
-                if ($poste == "Surveille") {
+                if ($poste == "Surveille")
                     $url = "../Controller/C_Emploi_Salles.php";
-                }
-                if ($poste == "formateur") {
+
+                if ($poste == "ChefSecteur")
+                    $url = "../Controller/C_Emploi_Salles.php";
+
+                if ($poste == "formateur")
                     $url = "../Controller/C_Emploi_Formateur.php";
-                }
+
                 echo "<iframe src='$url' name='iframe_a' height='84%' width='100%' title='Iframe Example'></iframe>";
                 ?>
 

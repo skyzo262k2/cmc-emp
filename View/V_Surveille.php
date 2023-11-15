@@ -84,11 +84,21 @@
             var x = new XMLHttpRequest()
             x.open('GET', '../Controller/C_Surveille.php?info=' + val, true)
             x.onreadystatechange = function() {
-                if (this.readyState == 4 && this.status == 200) {
+                if (this.readyState == 4 && this.status == 200) {                    
                     document.getElementById('infomations').innerHTML = this.responseText;
                 }
             }
             x.send();
+        }
+        function Secteur(slc)
+        {
+            let secteur=document.getElementById('secteur')
+            if(slc.value=="ChefSecteur")
+            {
+                secteur.hidden=false
+            }else{
+                secteur.hidden=true
+            }
         }
     </script>
 
@@ -97,7 +107,7 @@
 <body>
     <div class="row header">
         <div class="col-4 title">
-            Gestion Surveille
+            Gestion Utilisateur
         </div>
         <div class="col-2"></div>
         <div class="col-4 recherche">
@@ -136,6 +146,7 @@
                             <th scope="col">Matricule</th>
                             <th scope="col">Nom</th>
                             <th scope="col">Prénom</th>
+                            <th scope='col'>Type Utilisateur</th>
                             <th scope="col">Réinitialiser</th>
                             <th scope="col">Action</th>
                         </tr>
@@ -157,95 +168,32 @@
                 <div class="form-groupe m-4">
                     <input type="text" class="inputs form-control" maxlength="25" name="tPrenom" id="tPrenom" placeholder="Prénom">
                 </div>
+                <div class="form-groupe m-4">
+                    <select name="typeuser" id="typeuser" onchange="Secteur(this)" class="form-control">
+                        <option value="">Type Utilisateur</option>
+                        <option value="Surveille">Surveille</option>
+                        <option value="ChefSecteur">Chef Secteur</option>
+                    </select>
+                </div>
+
+                <div class="form-groupe m-4">
+                    <select name="secteur" id="secteur" hidden  class="form-control">
+                        <option value="">Choisir Seteur</option>
+                        <?php foreach($AlSecteurs as  $value) {?>
+                            <option value="<?=$value['CodeSect']?>">
+                                <?=$value['DescpSect']?>
+                            </option>
+                        <?php } ?>
+                    </select>
+                </div>
                 <b style="color: red;">Tout Les Champs obligatoire</b>
                 <div class="model-footer m-3">
                     <input type="submit" class="btn btn-primary" value="Ajouter" name="btnAjouter">
-                    <input type="submit" class="btn btn-primary" value="Modifier" name="btnModifier">
+                    <!-- <input type="submit" class="btn btn-primary" value="Modifier" name="btnModifier"> -->
                     <input type="reset" class="btn btn-primary" value="reset">
                 </div>
             </form>
         </div>
     </div>
 </body>
-
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<!-- 
-
-
-
-<div id="addSurveilleModal" class="modal fade">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <form action="" method="post" id="form">
-                    <div class="modal-header">
-                        <h4 class="modal-title">Ajouter Surveille</h4>
-                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="form-group">
-                            <label>Matricule :</label>
-                            <input type="text" name="matsur" id="mat" class="form-control" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Nom :</label>
-                            <input type="text" name="nomsur" id="nom" class="form-control" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Prénom :</label>
-                            <input type="text" id="prenom" name="prenomsur" class="form-control" required>
-                        </div>
-
-                        <div class="form-group">
-                            <label>Login :</label>
-                            <input type="text" id="prenom" name="usersur" class="form-control" required>
-                        </div>
-
-                        <div class="form-group">
-                            <label>Mot de passe :</label>
-                            <input type="password" name="passnewsur1" id="passnew1" class="form-control" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Retapez le mot de passe :</label>
-                            <input type="password" name="passnewsur2" id="passnew2" class="form-control" required>
-                        </div>
-
-                    </div>
-                    <div class="modal-footer">
-                        <input type="button" class="btn btn-default" data-dismiss="modal" value="Annuler">
-                        <input type="submit" name="AddSurveille" id="btnmotpass" class="btn btn-primary" value="Ajouter">
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div> -->

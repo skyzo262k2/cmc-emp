@@ -15,6 +15,16 @@ class Emploi_fomateur extends Connexion
             parent::Deconnexion();
             return $Formateur;
         }
+
+        public function GetFormateurParSecteur($anne,$codeetab,$secteur)
+        {
+            parent::connexion();
+            $req="CALL SP_Get_Info_EmploiSecteur('$anne','$codeetab','$secteur')";
+            $Formateur=parent::$cnx->query($req)->FetchAll(PDO::FETCH_ASSOC);
+            parent::Deconnexion();
+            return $Formateur;
+        }
+
         public function getEmploiFormateur($anne,$codeetab,$mat)
         {
             parent::connexion();

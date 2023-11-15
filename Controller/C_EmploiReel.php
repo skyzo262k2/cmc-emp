@@ -16,7 +16,14 @@ $word=new Word();
 $empR=new Emploi_Reel();
 $codetb=$_SESSION['Etablissement']['CodeEtb'];
 $anne=explode('/',$_SESSION['Annee']);
-$Groupes=$empR->GetGroupes($codetb,$anne[0]);
+
+
+if ($_SESSION["Admin"]["Poste"] != 'ChefSecteur') {
+    $Groupes=$empR->GetGroupes($codetb,$anne[0]);
+} else {
+    $Groupes= $empR->GetGroupesParSecteur($codetb, $anne[0], $_SESSION['Admin']['secteur']);
+}
+
 $imprimer="";
 $test=false;
 

@@ -23,7 +23,18 @@ function GetSeance($date)
         $dayname = date('D', strtotime($date));
         if ($dayname != "Sun") {
                 $Day = $T_NameDay[$dayname];
-                $Seances_Day = $cnnx::$cnx->query("call PS_GetSeanceByDay('$Day','$anne[0]','$Etab')")->fetchAll(PDO::FETCH_NUM);
+
+                $donnees = $cnnx::$cnx->query("call PS_GetSeanceByDay('$Day','$anne[0]','$Etab')")->fetchAll(PDO::FETCH_NUM);
+                $Seances_Day = [];
+                foreach ($donnees as $donne) {
+                        if ($_SESSION["Admin"]["Poste"] == "ChefSecteur") {
+                                if ($_SESSION["Admin"]["secteur"] ==  $donne[7]) {
+                                        $Seances_Day[] =  $donne;
+                                }
+                        } else {
+                                $Seances_Day[] =  $donne;
+                        }
+                }
                 echo "<table width='100%' class='table table-bordered table-hover table-borderless'>
                 <tr class='table-info'>
                 <th colspan='2'>Date</th>
@@ -44,7 +55,7 @@ function GetSeance($date)
                 foreach ($Seances_Day as $sec) {
                         $n = $cnnx::$cnx->query("call PS_FindAvancement('$date','$sec[3]','$sec[2]','$sec[0]','$sec[1]','$anne[0]','$Etab')")->fetch(PDO::FETCH_NUM);
                         $i++;
-                        $couleur = $cnnx::$cnx->query("call couleur_row_affectation('$sec[3]','$sec[2]','$sec[0]','$anne[0]','$Etab')")->fetch(PDO::FETCH_NUM);;
+                        $couleur = $cnnx::$cnx->query("call SP_Couleur_row_affectation('$sec[3]','$sec[2]','$sec[0]','$anne[0]','$Etab')")->fetch(PDO::FETCH_NUM);;
 
                         echo "<tr class='trinfo'>";
                         echo "  <td>$sec[4]</td>    
@@ -74,20 +85,16 @@ function GetSeance($date)
         }
 }
 if (isset($_POST['import']) && isset($_FILES['execl']) && $_FILES['execl']['tmp_name'] != "") {
-
         $data = SimpleXLSX::parse($_FILES['execl']['tmp_name']);
         $req = "CREATE TEMPORARY TABLE temp_avc (grp VARCHAR(255), mdl VARCHAR(255), mat VARCHAR(255), avc VARCHAR(255));";
         $cnnx::$cnx->exec($req);
         $inserts = array();
-
-        foreach ($data->rows() as $row) {    
-                if ($row[8] != "" && $row[16] != "" && $row[19] != "" && $row[40] != "") 
+        foreach ($data->rows() as $row) {
+                if ($row[8] != "" && $row[16] != "" && $row[19] != "" && $row[40] != "")
                         $inserts[] = "('" . $row[8] . "', '" . $row[16] . "', '" . $row[19] . "', '" . $row[40] . "')";
         }
-
         $req = "INSERT INTO temp_avc (grp, mdl, mat, avc) VALUES " . implode(",", $inserts) . ";";
         $cnnx::$cnx->exec($req);
-
         $batch_size = 100;
         $offset = 0;
         while (true) {
@@ -108,7 +115,6 @@ if (isset($_POST['import']) && isset($_FILES['execl']) && $_FILES['execl']['tmp_
                 $cnnx::$cnx->commit();
                 $offset += $batch_size;
         }
-    
 }
 
 

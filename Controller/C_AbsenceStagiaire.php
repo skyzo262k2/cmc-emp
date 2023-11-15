@@ -3,6 +3,7 @@
 require "../Model/M_AbsenceStagiaire.php";
 
 session_start();
+
 if (!isset($_SESSION["Admin"])) {
     header("location:../Controller/C_Login.php");
 }
@@ -55,7 +56,7 @@ function AfficherStagiaire($Stagiaires, $seance, $date)
 
     foreach ($Stagiaires as $stg) {
         $row = $absencestagiaire->VerifierAbsenceStagiaire($stg[0], $date, $AnneeFr, $seance, $CodeEtab);
-        
+
         echo "<tr>
                 <td>$stg[0]</td>
                 <td>$stg[1]</td>
@@ -69,15 +70,15 @@ function AfficherStagiaire($Stagiaires, $seance, $date)
                     <td>-</td>
                 </tr>";
         } else {
-            if($row[8] === "A"){
+            if ($row[8] === "A") {
                 echo "<td><input type='radio' checked /></td>
                     <td><input type='radio' disabled  /></td>";
-            }else{
+            } else {
                 echo "<td><input type='radio' disabled  /></td>
                     <td><input type='radio' checked /></td>";
             }
-            
-            echo"<td> <span>$row[6]</span> <span onclick='ChangeJustify(this)'><span style='display:none;'>$row[6]</span><span style='display:none;'>$stg[0]</span>
+
+            echo "<td> <span>$row[6]</span> <span onclick='ChangeJustify(this)'><span style='display:none;'>$row[6]</span><span style='display:none;'>$stg[0]</span>
                             <span><img class='icon' src='../Images/Icon_Update.png'/></span></span>  </td>
                     <td><div onclick='SupprimerAbsence(this)'><span><img class='icon' src='../Images/Icon_Delete.png'/></span><span style='display:none;'>$stg[0]</span></div></td>
                     </tr>";
@@ -92,11 +93,12 @@ function AfficherStagiaire($Stagiaires, $seance, $date)
 }
 
 
-function information_Seance($infos){
-    if(!$infos)
-            $infos =["-","-","-","-","-"];
-        
-        echo '<div class="row m-2">
+function information_Seance($infos)
+{
+    if (!$infos)
+        $infos = ["-", "-", "-", "-", "-"];
+
+    echo '<div class="row m-2">
                 
                 <div class="col-3">
                     <div class="form-groupe">
@@ -129,7 +131,7 @@ if (isset($_POST["add"]) && isset($_POST["date"]) && isset($_POST["seance"]) && 
     // print_r($_POST["module"]);
     $t_cef = explode(",", $_POST["add"]);
     // print_r($t_cef);
-    
+
     $day_name = GetDay($_POST["date"]);
     $CodeModule = $_POST["module"];
     foreach ($t_cef as $cef) {
@@ -144,19 +146,15 @@ if (isset($_POST["add"]) && isset($_POST["date"]) && isset($_POST["seance"]) && 
     $information_seance = $absencestagiaire->GetInformationSeanceGroupe($_POST["groupe"], $day_name, $_POST["seance"], $AnneeFr, $CodeEtab);
     information_Seance($information_seance);
     AfficherStagiaire($Stagiaires, $_POST["seance"], $_POST["date"]);
-} 
-
-elseif (isset($_POST["modcef"]) && isset($_POST["date"]) && isset($_POST["seance"]) && isset($_POST["justify"]) && isset($_POST["groupe"])) { 
+} elseif (isset($_POST["modcef"]) && isset($_POST["date"]) && isset($_POST["seance"]) && isset($_POST["justify"]) && isset($_POST["groupe"])) {
     $day_name = GetDay($_POST["date"]);
     $absencestagiaire->ChangeJustifyStagiaire($_POST["modcef"], $_POST["date"], $_POST["seance"], $AnneeFr, $CodeEtab, $_POST["justify"]);
     $Stagiaires = $absencestagiaire->GetStagiairebyGroupe($_POST["groupe"], $AnneeFr, $CodeEtab);
-    
+
     $information_seance = $absencestagiaire->GetInformationSeanceGroupe($_POST["groupe"], $day_name, $_POST["seance"], $AnneeFr, $CodeEtab);
     information_Seance($information_seance);
     AfficherStagiaire($Stagiaires, $_POST["seance"], $_POST["date"]);
-} 
-
-elseif (isset($_POST["supcef"]) && isset($_POST["date"]) && isset($_POST["seance"]) && isset($_POST["groupe"])) { 
+} elseif (isset($_POST["supcef"]) && isset($_POST["date"]) && isset($_POST["seance"]) && isset($_POST["groupe"])) {
     $day_name = GetDay($_POST["date"]);
     $absencestagiaire->DeleteAbsence($_POST["supcef"], $AnneeFr, $_POST["date"], $_POST["seance"], $CodeEtab);
     $Stagiaires = $absencestagiaire->GetStagiairebyGroupe($_POST["groupe"], $AnneeFr, $CodeEtab);
@@ -164,17 +162,19 @@ elseif (isset($_POST["supcef"]) && isset($_POST["date"]) && isset($_POST["seance
     $information_seance = $absencestagiaire->GetInformationSeanceGroupe($_POST["groupe"], $day_name, $_POST["seance"], $AnneeFr, $CodeEtab);
     information_Seance($information_seance);
     AfficherStagiaire($Stagiaires, $_POST["seance"], $_POST["date"]);
-} 
-
-elseif (isset($_POST["date"]) && isset($_POST["seance"]) && !isset($_POST["groupe"])) {
+} elseif (isset($_POST["date"]) && isset($_POST["seance"]) && !isset($_POST["groupe"])) {
     if ($_POST["seance"] != "choisir" && !empty($_POST["date"])) {
         $date = $_POST["date"];
         $day_name = GetDay($date);
         if ($day_name != "Dimanche") {
             // $Groupes = $absencestagiaire->GetAllGroupebyEmploi($_POST["seance"], $day_name, $AnneeFr, $CodeEtab);
             $absencestagiaire->connexion();
-            $Groupes = AbsenceStagiaire::$cnx->query(" select distinct g.codegrp from stagiaire s inner join groupe g on g.CodeGrp = s.groupe 
-                        where s.Etab = '".$CodeEtab."' and s.AnneF = '".$AnneeFr."' order by g.codegrp")->fetchAll(PDO::FETCH_NUM);
+            if ($_SESSION["Admin"]["Poste"] == "ChefSecteur")
+                $Groupes = AbsenceStagiaire::$cnx->query(" select distinct g.codegrp from stagiaire s inner join groupe g on g.CodeGrp = s.groupe inner join filiere f using(CodeFlr)
+            where s.Etab = '" . $CodeEtab . "' and s.AnneF = '" . $AnneeFr . "' and f.CodeSect = '" . $_SESSION["Admin"]["secteur"] . "'   order by g.codegrp")->fetchAll(PDO::FETCH_NUM);
+            else
+                $Groupes = AbsenceStagiaire::$cnx->query(" select distinct g.codegrp from stagiaire s inner join groupe g on g.CodeGrp = s.groupe 
+            where s.Etab = '" . $CodeEtab . "' and s.AnneF = '" . $AnneeFr . "' order by g.codegrp")->fetchAll(PDO::FETCH_NUM);
             $absencestagiaire->Deconnexion();
 
             echo "<select name='groupe' id='groupe' class='form-control' onchange='ChangeGroupe(this)'>
@@ -183,17 +183,15 @@ elseif (isset($_POST["date"]) && isset($_POST["seance"]) && !isset($_POST["group
                 echo "<option value='$grp[0]'>$grp[0]</option>";
             }
             echo "</select>";
-        }else
-        echo "<select name='groupe' id='groupe' class='form-control' onchange='ChangeGroupe(this)'>
+        } else
+            echo "<select name='groupe' id='groupe' class='form-control' onchange='ChangeGroupe(this)'>
                 <option value='choisir'>Choisir Groupe</option>
             </select>";
     } else
         echo "<select name='groupe' id='groupe' class='form-control' onchange='ChangeGroupe(this)'>
                 <option value='choisir'>Choisir Groupe</option>
             </select>";
-} 
-
-elseif (isset($_POST["groupe"]) && isset($_POST["date"]) && isset($_POST["seance"])) {
+} elseif (isset($_POST["groupe"]) && isset($_POST["date"]) && isset($_POST["seance"])) {
     $day_name = GetDay($_POST["date"]);
     $seance = $_POST["seance"];
     if ($day_name != "Dimanche") {

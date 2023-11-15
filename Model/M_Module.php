@@ -25,6 +25,14 @@ class Module extends Connexion
         return $rows;
     }
 
+    public function GetModulesSecteur($secteur)
+    {
+        parent::connexion();
+        $rows = parent::$cnx->query("call SPGetModuleSecteur('$secteur')")->fetchAll(PDO::FETCH_ASSOC);
+        parent::Deconnexion();
+        return $rows;
+    }
+
     public function AddModules()
     {
         try {

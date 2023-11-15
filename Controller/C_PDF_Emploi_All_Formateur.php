@@ -2,6 +2,10 @@
 require "../Model/M_Connexion.php";
 require '../Model/PDF.php';
 session_start();
+if (!isset($_SESSION["Admin"])) {
+    header("location:../Controller/C_Login.php");
+}
+
 $CodeEtab = $_SESSION['Etablissement']["CodeEtb"];
 $anne = explode('/', $_SESSION['Annee']);
 $cnnx = new Connexion();

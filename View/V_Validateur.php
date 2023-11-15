@@ -144,7 +144,7 @@
         </div>
         <div class="col-2"></div>
         <div class="col-4 recherche">
-            <input type="text" id="salle" class="form-control inp-recherche" name="salle" value="<?php echo $info; 
+            <input type="text" id="salle" class="form-control inp-recherche" name="salle" value="<?php echo $info;
                                                                                                     ?>" onkeyup="Recherche(this)" placeholder="Recherche ....">
         </div>
         <div class="col-2"></div>
@@ -155,7 +155,7 @@
             <?php
             AjaxInfor($table);
             ?>
-           
+
         </div>
         <div class="col-4 justify-content-center  position-fixed start-0">
             <div class="form-groupe m-4">
@@ -163,7 +163,7 @@
                     <option value="choisir">Choisir Filière</option>
                     <?php
                     foreach ($Filieres as $flr) {
-                        echo "<option value='$flr[0]'>$flr[1]</option>";
+                            echo "<option value='$flr[0]'>$flr[1]</option>";
                     }
                     ?>
                 </select>
@@ -173,7 +173,7 @@
                     <option value="choisir">Choisir Formateur</option>
                     <?php
                     foreach ($Formateurs as $for) {
-                        echo "<option value='$for[0]'>$for[1] $for[2]</option>";
+                            echo "<option value='$for[0]'>$for[1] $for[2]</option>";
                     }
                     ?>
                 </select>

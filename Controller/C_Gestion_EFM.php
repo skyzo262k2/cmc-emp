@@ -2,6 +2,9 @@
 
 require "../Model/M_EFM.php";
 session_start();
+if (!isset($_SESSION["userFormateur"])) {
+    header("location:../Controller/C_Login.php");
+}
 
 $efm = new EFM();
 $efm->matricule = $_SESSION['userFormateur']["Matricule"];

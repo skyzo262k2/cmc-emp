@@ -2,7 +2,10 @@
 
 require "../Model/M_AbsenceFormateur.php";
 
+
+
 session_start();
+
 if (!isset($_SESSION["Admin"])) {
     header("location:../Controller/C_Login.php");
 }
@@ -32,9 +35,22 @@ function GetDay($d)
     return $T_NameDay[$dayname];
 }
 
-function AfficherFormateur($Formateur, $date, $seance)
+function AfficherFormateur($Formateurs, $date, $seance)
 {
     global $AbsenceFormateur, $AnneeFr, $CodeEtab;
+
+    $Formateur_affiche = [];
+    if ($_SESSION["Admin"]["Poste"] == "ChefSecteur") {
+        foreach ($Formateurs as $f) {
+            if ($f[5] == $_SESSION["Admin"]["secteur"]) {
+                $Formateur_affiche[] = $f;
+            }
+        }
+    } else {
+        $Formateur_affiche = $Formateurs;
+    }
+
+
     echo "<div class='table_info'>
     <div class='buttonvalide'>
         <button class='btn btn-primary m-2' onclick='AddAbsence()'>Valider</button>
@@ -54,7 +70,8 @@ function AfficherFormateur($Formateur, $date, $seance)
     </thead>
     <tbody>";
 
-    foreach ($Formateur as $form) {
+    foreach ($Formateur_affiche as $form) {
+
         $row = $AbsenceFormateur->VerifierAbsenceFormateur($form[0], $date, $seance, $AnneeFr, $CodeEtab);
         // echo $form[0];
         echo "<tr>
@@ -65,7 +82,7 @@ function AfficherFormateur($Formateur, $date, $seance)
                 <td>$form[4]</td>";
 
         if ($row == null) {
-            echo '<td><input type="checkbox" class="inp_chek checked_input" value="' . $form[0] . '/' . $form[2] . '/' . $form[3] . '" /></td>
+            echo '<td><input type="checkbox" class="inp_chek checked_input" value="' . $form[0] . '//' . $form[2] . '//' . $form[3] . '" /></td>
                     <td>-</td>
                     <td>-</td>
                 </tr>';
@@ -78,7 +95,7 @@ function AfficherFormateur($Formateur, $date, $seance)
         }
     }
     echo "</tbody>
-        </table>
+        </table> 
 
         
     
@@ -93,11 +110,14 @@ if (isset($_POST["add"]) && isset($_POST["date"]) && isset($_POST["seance"])) {
 
     $date = $_POST["date"];
     $day_name = GetDay($date);
-    $t_cef = explode(",", $_POST["add"]);
+    $t_cef = explode("**", $_POST["add"]);
+    // print_r($_POST["add"]);
     foreach ($t_cef as $cef) {
         try {
-            $info = explode("/", $cef);
-            $CodeModule = $AbsenceFormateur->GetCodeModule($info[1]);
+            $info = explode("//", $cef);
+            // print_r($info);
+            // echo "<br>";
+            $CodeModule = $AbsenceFormateur->GetCodeModule($info[1],$info[2]);
             $AbsenceFormateur->AddAbsence($info[0], $AnneeFr, $_POST["date"], $info[2], $_POST["seance"], $CodeModule[0], "Non", $CodeEtab);
         } catch (Exception $ec) {
         }

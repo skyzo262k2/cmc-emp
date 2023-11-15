@@ -24,6 +24,14 @@ class Stagiaire extends Connexion implements IMethodeCRUD
         return $rows;
     }
 
+    public function GetAllSecteur($secteur)
+    {
+        parent::connexion();
+        $rows = parent::$cnx->query("CALL PS_GetStagiaireSecteur('$this->annef','$this->etab','$secteur')")->fetchAll(PDO::FETCH_ASSOC);
+        parent::Deconnexion();
+        return $rows;
+    }
+
     public function Add()
     {
         try {
@@ -82,6 +90,27 @@ class Stagiaire extends Connexion implements IMethodeCRUD
         OR Groupe REGEXP '$val'
         OR discipline REGEXP '$val')
         and AnneF='$this->annef' and etab = '$this->etab'")->fetchAll(PDO::FETCH_ASSOC);
+            parent::Deconnexion();
+        } catch (Exception $ex) {
+            // Exception
+        }
+        return $rows;
+    }
+
+    public function FindStagiaire($val, $secteur)
+    {
+        $rows = [];
+        try {
+            parent::connexion();
+            $rows = parent::$cnx->query("SELECT s.CEF,s.Nom,s.Prenom,s.Groupe,s.Discipline 
+                FROM Stagiaire s INNER JOIN Groupe g ON g.CodeGrp=s.Groupe
+                INNER JOIN filiere f using(CodeFlr)
+                WHERE (s.CEF REGEXP '$val' 
+                OR s.Nom REGEXP '$val'
+                OR s.Prenom REGEXP '$val'
+                OR s.Groupe REGEXP '$val'
+                OR s.discipline REGEXP '$val')
+                AND f.CodeSect='$secteur' AND s.AnneF='$this->annef' AND s.etab = '$this->etab'")->fetchAll(PDO::FETCH_ASSOC);
             parent::Deconnexion();
         } catch (Exception $ex) {
             // Exception

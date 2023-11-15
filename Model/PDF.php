@@ -41,7 +41,7 @@ class PagePDF_TableauService
         $this->pdf->Cell(0, 50, $grp, 0, 0, "L", 0);
 
         $this->pdf->SetX(200);
-        $this->pdf->Cell(0, 50, "Masse Horaire :    " . number_format($InformationHour[4], 2) . " H", 0, 0, "", 0);
+        $this->pdf->Cell(0, 50, "Masse Horaire :    " . number_format($InformationHour[2], 2) . " H", 0, 0, "", 0);
 
 
 
@@ -69,10 +69,10 @@ class PagePDF_TableauService
             $this->pdf->Cell(161, 6, $Affec['descpMd'], 1, 0, 'L', 1);
 
             $this->pdf->SetX(256);
-            $this->pdf->Cell(15, 6, $Affec['s1'], 1, 0, 'C', 1);
+            $this->pdf->Cell(15, 6, number_format($Affec['s1'],2) , 1, 0, 'C', 1);
 
             $this->pdf->SetX(271);
-            $this->pdf->Cell(15, 6, $Affec['s2'], 1, 0, 'C', 1);
+            $this->pdf->Cell(15, 6, number_format($Affec['s2'],2), 1, 0, 'C', 1);
 
             $position_detail += 6;
         }
@@ -80,11 +80,11 @@ class PagePDF_TableauService
 
         $this->pdf->SetFont('Arial', 'B', 10);
 
-        $this->pdf->SetX(258);
-        $this->pdf->Cell(0, 15, $InformationHour[0], 0, 0, "", 0);
+        $this->pdf->SetX(257);
+        $this->pdf->Cell(0, 15, number_format($InformationHour[0], 2), 0, 0, "", 0);
 
         $this->pdf->SetX(273);
-        $this->pdf->Cell(0, 15, $InformationHour[1], 0, 0, "", 0);
+        $this->pdf->Cell(0, 15, number_format($InformationHour[1], 2), 0, 0, "", 0);
     }
 
 
@@ -438,7 +438,7 @@ class PagePDF_AffectationGrp
         $this->pdf->Cell(0, 50, $grp, 0, 0, "L", 0);
 
         $this->pdf->SetX(200);
-        $this->pdf->Cell(0, 50, "Masse Horaire :    " . $InformationHour[2], 0, 0, "", 0);
+        $this->pdf->Cell(0, 50, "Masse Horaire :    " . number_format($InformationHour[2], 2), 0, 0, "", 0);
         $position_entete = 45;
         $this->entete_table($position_entete);
         $position_detail = 53; // Position ordonnée = $position_entete+hauteur de la cellule d'en-tête (60+8)
@@ -462,10 +462,10 @@ class PagePDF_AffectationGrp
             $this->pdf->Cell(171, 6, $Affec['descpMd'], 1, 0, 'L', 1);
 
             $this->pdf->SetX(256);
-            $this->pdf->Cell(15, 6, $Affec['s1'], 1, 0, 'C', 1);
+            $this->pdf->Cell(15, 6, number_format($Affec['s1'], 2), 1, 0, 'C', 1);
 
             $this->pdf->SetX(271);
-            $this->pdf->Cell(15, 6, $Affec['s2'], 1, 0, 'C', 1);
+            $this->pdf->Cell(15, 6, number_format($Affec['s2'], 2), 1, 0, 'C', 1);
 
             $position_detail += 6;
         }
@@ -474,10 +474,10 @@ class PagePDF_AffectationGrp
         $this->pdf->SetFont('Arial', 'B', 10);
 
         $this->pdf->SetX(258);
-        $this->pdf->Cell(0, 15, $InformationHour[0], 0, 0, "", 0);
+        $this->pdf->Cell(0, 15,number_format($InformationHour[0], 2), 0, 0, "", 0);
 
         $this->pdf->SetX(273);
-        $this->pdf->Cell(0, 15, $InformationHour[1], 0, 0, "", 0);
+        $this->pdf->Cell(0, 15, number_format($InformationHour[1], 2), 0, 0, "", 0);
     }
 
 

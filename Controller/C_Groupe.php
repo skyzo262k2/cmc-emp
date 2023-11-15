@@ -5,6 +5,7 @@ require "../Model/M_Pagination.php";
 $info = "";
 $page = new Pagination();
 session_start();
+
 if (!isset($_SESSION["Admin"]) || $_SESSION["Admin"]["Poste"] == "Surveille") {
     header("location:../Controller/C_Login.php");
 }
@@ -28,16 +29,14 @@ if (isset($_POST["btnAjouter"])) {
         $groupe->CodeFlr = $_POST["tCodeFlr"];
         $groupe->Annee = $_POST["tAnnee"];
         $groupe->Fpa = $_POST["tFPA"];
-        // if ($_SESSION['Etablissement']['TauxFPA'] == "100") {
-        //     $groupe->Fpa = "N";
-        // } else {
-        //     $groupe->Fpa = "O";
-        // }
+        if (isset($_POST["tTauxFPA"])) {
+            $groupe->taux = $_POST["tTauxFPA"];
+        } else {
+            $groupe->taux = 100;
+        }
         $boolAdd = $groupe->AddGroupe();
     }
 }
-// In Modify Button we don't need to check empty, because values are "disabled".
-// codeGrp is the one "disabled". CodeEtab is already stocked in $_SESSION
 
 if (isset($_POST["btnModifier"])) {
     if ((!empty($_POST["tCodeGrp"]) and !empty($_POST["tCodeFlr"])) && ($_POST["tCodeFlr"] != "choisir" and $_POST["tAnnee"] != "choisir")) {
@@ -45,12 +44,11 @@ if (isset($_POST["btnModifier"])) {
         $groupe->CodeFlr = $_POST["tCodeFlr"];
         $groupe->Annee = $_POST["tAnnee"];
         $groupe->Fpa = $_POST["tFPA"];
-        // Fix TauxFPA
-        // if ($_SESSION['Etablissement']['TauxFPA'] == "100") {
-        //     $groupe->Fpa = "N";
-        // } else {
-        //     $groupe->Fpa = "O";
-        // }
+        if (isset($_POST["tTauxFPA"])) {
+            $groupe->taux = $_POST["tTauxFPA"];
+        } else {
+            $groupe->taux = 100;
+        }
         $boolAdd = $groupe->UpdateGroupe();
     }
 }
@@ -72,10 +70,23 @@ if (isset($_GET['info'])) {
     $info = $_GET['info'];
     $_SESSION["rechinfogroupe"] = $info;
     if ($info == "") {
-        $_SESSION['Groupe'] = $groupe->GetAllGroupe();
+        $toutgroupes = $groupe->GetAllGroupe();
     } else {
         $groupe->connexion();
-        $_SESSION['Groupe'] = $groupe::$cnx->query("call sp_RechercherGlobal('$info','$tblName','$groupe->CodeEtab')")->fetchAll(PDO::FETCH_ASSOC);
+        $toutgroupes = $groupe::$cnx->query("call sp_RechercherGlobal('$info','$tblName','$groupe->CodeEtab')")->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    $_SESSION['Groupe'] = [];
+    if ($_SESSION["Admin"]["Poste"] ==  "ChefSecteur") {
+        foreach ($toutgroupes as $g) {
+            if ($g["CodeSect"] == $_SESSION["Admin"]["secteur"]) {
+                $_SESSION['Groupe'][] = [$g['CodeGrp'], $g['CodeFlr'], $g['Annee'], $g['Fpa'], $g['taux']];
+            }
+        }
+    } else {
+        foreach ($toutgroupes as $g) {
+            $_SESSION['Groupe'][] = [$g['CodeGrp'], $g['CodeFlr'], $g['Annee'], $g['Fpa'], $g['taux']];
+        }
     }
 
 
@@ -105,6 +116,7 @@ if (isset($_GET['info'])) {
                     <th scope='col'>Code Filiere</th>
                     <th scope='col'>Annee</th>
                     <th scope='col'>Fpa</th>
+                    <th scope='col'>Taux</th>
                     <th scope='col'>Action</th>
                 </tr>
             </thead>
@@ -118,13 +130,25 @@ if (isset($_GET['info'])) {
     if (isset($_SESSION["rechinfogroupe"])) {
         $info = $_SESSION["rechinfogroupe"];
         if ($info == "") {
-            $_SESSION['Groupe'] = $groupe->GetAllGroupe();
+            $toutgroupes = $groupe->GetAllGroupe();
         } else {
             $groupe->connexion();
-            $_SESSION['Groupe'] = $groupe::$cnx->query("call sp_RechercherGlobal('$info','$tblName','$groupe->CodeEtab')")->fetchAll(PDO::FETCH_ASSOC);
+            $toutgroupes = $groupe::$cnx->query("call sp_RechercherGlobal('$info','$tblName','$groupe->CodeEtab')")->fetchAll(PDO::FETCH_ASSOC);
         }
     } else {
-        $_SESSION['Groupe'] = $groupe->GetAllGroupe();
+        $toutgroupes = $groupe->GetAllGroupe();
+    }
+    $_SESSION['Groupe'] = [];
+    if ($_SESSION["Admin"]["Poste"] ==  "ChefSecteur") {
+        foreach ($toutgroupes as $g) {
+            if ($g["CodeSect"] == $_SESSION["Admin"]["secteur"]) {
+                $_SESSION['Groupe'][] = [$g['CodeGrp'], $g['CodeFlr'], $g['Annee'], $g['Fpa'], $g['taux']];
+            }
+        }
+    } else {
+        foreach ($toutgroupes as $g) {
+            $_SESSION['Groupe'][] = [$g['CodeGrp'], $g['CodeFlr'], $g['Annee'], $g['Fpa'], $g['taux']];
+        }
     }
     require "../View/V_Groupe.php";
 }

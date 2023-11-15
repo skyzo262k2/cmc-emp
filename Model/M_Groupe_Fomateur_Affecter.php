@@ -25,7 +25,20 @@ class Groupe_fomateur_affecter extends Connexion
         public function GetGroupes($codeetab)
         {
             parent::connexion();
-            $req="SELECT g.CodeGrp,g.CodeFlr,g.annee,g.Fpa FROM groupe g WHERE g.codeEtab='$codeetab' ;";
+            $req="SELECT g.CodeGrp,g.CodeFlr,g.annee,g.Fpa,g.taux as tauxfpa
+                     FROM groupe g WHERE g.codeEtab='$codeetab' ;";
+            $Formateur=parent::$cnx->query($req)->FetchAll(PDO::FETCH_ASSOC);
+            parent::Deconnexion();
+            return $Formateur;
+        }
+
+        public function GetGroupesSecteur($codeetab,$secteur)
+        {
+            parent::connexion();
+            $req="SELECT g.CodeGrp,g.CodeFlr,g.annee,g.Fpa,g.taux as tauxfpa
+                    FROM groupe g
+                    INNER JOIN filiere f using(CodeFlr)
+                    WHERE g.codeEtab='$codeetab' AND f.CodeSect='$secteur';";
             $Formateur=parent::$cnx->query($req)->FetchAll(PDO::FETCH_ASSOC);
             parent::Deconnexion();
             return $Formateur;

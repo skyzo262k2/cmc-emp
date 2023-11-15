@@ -128,7 +128,10 @@
                         <tr class="table-success">
                             <th scope="col">code Filiere</th>
                             <th scope="col">Description Filiere</th>
-                            <th scope="col">code Secteur</th>
+
+                            <?php if ($_SESSION["Admin"]["Poste"] != "ChefSecteur") : ?>
+                                <th scope="col">code Secteur</th>
+                            <?php endif; ?>
                             <th scope="col">Niveau</th>
                             <th scope="col">Action</th>
                         </tr>
@@ -154,18 +157,23 @@
 
 
 
-                <div class="form-groupe m-4">
-                    <select name="CodeSect" id="selcet" class="inputs form-control">
-                        <option value="">Choisir Secteur</option>
-                        <?php
-                        foreach ($codeSects as $CdSt) {
-                            foreach ($CdSt as $cdsec) {
-                                echo "<option value='$cdsec'>$cdsec</option>";
+                <?php if ($_SESSION["Admin"]["Poste"] != "ChefSecteur") : ?>
+                    <div class="form-groupe m-4">
+                        <select name="CodeSect" id="selcet" class="inputs form-control">
+                            <option value="">Choisir Secteur</option>
+                            <?php
+                            foreach ($codeSects as $CdSt) {
+                                foreach ($CdSt as $cdsec) {
+                                    echo "<option value='$cdsec'>$cdsec</option>";
+                                }
                             }
-                        }
-                        ?>
-                    </select>
-                </div>
+                            ?>
+                        </select>
+                    </div>
+                <?php else : ?>
+                    <input type="hidden" name="CodeSect" class="inputs form-control" value="<?= $_SESSION["Admin"]["secteur"] ?>">
+                <?php endif; ?>
+
                 <div class="form-groupe m-4">
                     <select name="nv" id="niv" class="inputs form-control">
                         <option value=""> Choisir Niveau</option>

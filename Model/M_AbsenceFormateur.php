@@ -66,10 +66,11 @@ class AbsenceFormateur extends Connexion
         $row = [];
         try {
             parent::connexion();
-            $row = parent::$cnx->query("select F.Matricule,concat(F.Nom,' ',F.Prenom),m.DescpMd,g.CodeGrp ,E.CodeSl
+            $row = parent::$cnx->query("select F.Matricule,concat(F.Nom,' ',F.Prenom),m.DescpMd,g.CodeGrp ,E.CodeSl,fi.CodeSect
             from formateur F inner join emploireel E using(Matricule)
             inner join Groupe g using(CodeGrp)
             inner join modules m on g.CodeFlr = m.CodeFlr
+            inner join filiere fi on m.CodeFlr = fi.CodeFlr
             where E.Seance = $seance and E.Jour = '$jour' and E.CodeModule = m.CodeMd
             and  E.CodeEtb = '$etab' and E.AnneeFr = '$anneeFr' and g.CodeFlr=m.CodeFlr order by F.Nom asc")->fetchAll(PDO::FETCH_NUM);
             parent::Deconnexion();
@@ -78,24 +79,34 @@ class AbsenceFormateur extends Connexion
         return $row;
     }
 
-    public function GetCodeModule($module)
+    public function GetCodeModule($module,$grp)
     {
         $row = [];
         try {
             parent::connexion();
-            $row = parent::$cnx->query('select CodeMd from Modules where DescpMd="' . $module . '"')->fetch(PDO::FETCH_NUM);
+            $row = parent::$cnx->query('select m.CodeMd from Modules m
+                                        inner join groupe g on g.CodeFlr = m.CodeFlr
+                                        where m.Annee = g.Annee
+                                        and  m.DescpMd= "'.$module.'"
+                                        and g.CodeGrp = "'.$grp.'";')->fetch(PDO::FETCH_NUM);
             parent::Deconnexion();
         } catch (Exception $ex) {
         }
         return $row;
     }
 
-    public function TotalAbsenceFormateurByAnne($date1, $date2, $seance, $anne, $etab)
+    public function TotalAbsenceFormateurByAnne($date1, $date2, $seance, $anne, $etab,$secteur )
     {
         $row = [0];
         $query = "select count(*) from AbsenceFormateur 
         where DateAbsenece >= '$date1' and DateAbsenece <= '$date2' 
         and AnneFr = '$anne' and etab = '$etab'";
+        if ($secteur != ""){
+            $query .= " and matricule in (select distinct a.matricule from affectmodule a 
+            inner join groupe g on g.Codegrp = a.Groupe 
+            inner join filiere f using(CodeFlr)
+            where f.CodeSect = '".$secteur."') ";
+        }
         try {
             parent::connexion();
             if ($date1 != "" && $date2 != "" && $seance == "choisir")
@@ -110,13 +121,19 @@ class AbsenceFormateur extends Connexion
         return $row;
     }
 
-    public function GetFormateurAbsenceBydateSeance($date1, $date2, $seance, $anne, $etab)
+    public function GetFormateurAbsenceBydateSeance($date1, $date2, $seance, $anne, $etab,$secteur)
     {
         $row = [];
         $query = "select F.matricule,concat(F.Nom,' ',F.Prenom),count(*) as Nb 
                 from formateur F inner join AbsenceFormateur using(Matricule) 
                 where DateAbsenece >= '$date1' and DateAbsenece <= '$date2' 
                 and AnneFr = '$anne' and etab = '$etab' ";
+        if ($secteur != ""){
+            $query .= " and F.matricule in (select distinct a.matricule from affectmodule a 
+            inner join groupe g on g.Codegrp = a.Groupe 
+            inner join filiere f using(CodeFlr)
+            where f.CodeSect = '".$secteur."') ";
+        }
         try {
             parent::connexion();
 

@@ -77,8 +77,9 @@
         }
 
         .sauvgarder {
-            margin-top: 50px;
-            text-align: center;
+            margin-right: 75px;
+            margin-top:50px;
+            text-align: right;
         }
 
         label {
@@ -278,11 +279,6 @@
                             <input type="text" name="nom" value="<?php echo $user["Nom"] ?>" id="nom" class="form-control">
                         </div>
 
-                        <div class="sauvgarder">
-                            <input type="submit" name="sauvgarder" class="btn btn-primary" value="Sauvgarder">
-                        </div>
-
-
                     </div>
                     <div class="etabliessement">
                         <!-- <h3>Information Etablissement</h3> -->
@@ -303,10 +299,7 @@
                             <label for="ville">Ville : </label>
                             <input type="text" name="ville" value="<?php echo $etab["Ville"] ?>" id="ville" class="form-control ">
                         </div>
-                        <div class="form-group">
-                            <label for="tauxfpa">Taux FPA : </label>
-                            <input type="text" name="tauxfpa" value="<?php echo $etab["TauxFPA"] ?>" id="tauxfpa" class="form-control ">
-                        </div>
+
                         <div class="form-group">
                             <label for="semanne">Semaine par Année : </label>
                             <input type="text" name="semanne" value="<?php echo $etab["Sem_Annee"] ?>" id="semanne" class="form-control ">
@@ -314,6 +307,10 @@
 
                     </div>
                 </div>
+                <div class="sauvgarder">
+                    <input type="submit" name="sauvgarder" class="btn btn-primary" value="Sauvgarder">
+                </div>
+
 
             </form>
         </div>

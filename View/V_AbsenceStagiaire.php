@@ -78,6 +78,8 @@
                     }
                 };
                 request.send(`groupe=${groupe}&date=${date}&seance=${seance}`);
+            }else{
+                document.getElementById("informations").innerHTML  = "";
             }
         }
 

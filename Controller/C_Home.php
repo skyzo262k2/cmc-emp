@@ -30,5 +30,6 @@ elseif (isset($_SESSION['userFormateur'])) {
 else{
     header("location:../Controller/C_Login.php");
 }
+
 require "../View/V_Home.php";
 ?>

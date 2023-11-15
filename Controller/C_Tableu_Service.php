@@ -10,7 +10,9 @@ if(!isset($_SESSION["Admin"]) || $_SESSION["Admin"]["Poste"] == "Surveille"){
 }
 
 $cnnx = new Connexion();
+
 if (isset($_GET['Mat'])) {
+
     $Etab = $_SESSION["Etablissement"]["CodeEtb"];
     $TAnn = explode("/", $_SESSION["Annee"]);
     $pdf = new FPDF('L', 'mm', 'A4');
@@ -20,26 +22,27 @@ if (isset($_GET['Mat'])) {
     $info = $cnnx::$cnx->query("select concat(f.Nom,' ',f.Prenom ),E.DescpFr from formateur f 
     inner join etablissement E on f.CodeEtab = E.CodeEtb where f.Matricule = '$mat';")->fetch(PDO::FETCH_NUM);
 
+    $InfoHeures = [$_SESSION['s1'],$_SESSION['s2'],$_SESSION['masshorraire']];
+//     $InfoHeures =$cnnx::$cnx->query("
+//     SELECT 
+//     sum(m.s1 * g.taux /100) as s1,sum(m.s2* g.taux /100) as s2 , sum(m.s1 * g.taux /100) + sum(m.s2* g.taux /100) as total
+//   FROM groupe g INNER JOIN affectmodule af ON af.Groupe=g.codegrp
+//   INNER JOIN modules m ON m.CodeMd = af.ModuleCode
+//   WHERE af.Matricule = '$mat' AND af.CodeEtab = '$Etab'
+//   AND af.AnneeFr = $TAnn[0] AND m.codeflr=g.codeflr;")->fetch();
 
-    $InfoHeures = $cnnx::$cnx->query("
-    select sum(m.s1),sum(m.s2),sum(m.pr),sum(m.Dist) ,sum(m.pr)+sum(m.Dist), (sum(m.pr)+sum(m.Dist)) / e.Sem_Annee
-    from etablissement e 
-    inner join groupe g on g.CodeEtab = e.CodeEtb
-     inner join  affectmodule af on g.CodeGrp= af.Groupe 
-    inner join Modules m on af.ModuleCode = m.CodeMd 
-    where g.CodeFlr = m.CodeFlr and af.Matricule =$mat
-    and af.CodeEtab='$Etab' and af.AnneeFr='$TAnn[0]'")->fetch();
+    $modulesformateur =  $cnnx::$cnx->query("CALL SP_ModuleAffecter_Formateur('$mat','$Etab','$TAnn[0]')")->fetchAll(PDO::FETCH_ASSOC);
 
     $page = new PagePDF_TableauService($pdf);
 
-    $nbpage = intval(count($_SESSION['Module_Form']) / 20);
-    if (count($_SESSION['Module_Form']) % 20 != 0) {
+    $nbpage = intval(count($modulesformateur) / 20);
+    if (count($modulesformateur) % 20 != 0) {
         $nbpage++;
     }
 
     for ($i = 0; $i < $nbpage; $i++) {
         $page->pdf->AddPage();
-        $page->AddPagePDF($_SESSION["Annee"],$info[1],$info[0],$InfoHeures,array_slice($_SESSION['Module_Form'],20*$i,20));
+        $page->AddPagePDF($_SESSION["Annee"],$info[1],$info[0],$InfoHeures,array_slice($modulesformateur,20*$i,20));
     }
     $page->AfficherPDF();
 }

@@ -40,7 +40,6 @@ if (isset($_POST["change"])) {
 
 
 if (isset($_POST['btnAjouterAnnee'])) {
-
     try {
         Connexion::$cnx->query("INSERT INTO Annee VALUES ('{$_POST['btnAjouterAnnee']}')");
     } catch (Exception) {
@@ -60,15 +59,12 @@ if (isset($_POST["sauvgarder"])) {
     $codeetabold = $_POST["codeetabold"];
     $descp = $_POST["descp"];
     $ville = $_POST["ville"];
-    $tauxfpa = $_POST["tauxfpa"];
     $semanne = $_POST["semanne"];
-
     if (isset($_POST["mat"]) && isset($_POST["codeetab"])) {
-       
         $codeetab = $_POST["codeetab"];
         $mat = $_POST["mat"];
         $n = Connexion::$cnx->exec("update personnel set Matricule = '$mat',Nom = '$nom', Prenom = '$prenom',Poste = '$poste' where Matricule = '$matold'");
-        $m = Connexion::$cnx->exec("update Etablissement set CodeEtb = '$codeetab',Ville = '$ville',DescpFr = '$descp',TauxFPA = '$tauxfpa',Sem_Annee = '$semanne' where CodeEtb = '$codeetabold'");
+        $m = Connexion::$cnx->exec("update Etablissement set CodeEtb = '$codeetab',Ville = '$ville',DescpFr = '$descp',Sem_Annee = '$semanne' where CodeEtb = '$codeetabold'");
         if ($n || $m) {
             $_SESSION["Admin"] = $conx::$cnx->query("SELECT * FROM personnel WHERE matricule = '$mat'")->fetch(PDO::FETCH_ASSOC);
             $_SESSION["Etablissement"] = $conx::$cnx->query("SELECT * FROM etablissement WHERE CodeEtb='$codeetab'")->fetch(PDO::FETCH_ASSOC);

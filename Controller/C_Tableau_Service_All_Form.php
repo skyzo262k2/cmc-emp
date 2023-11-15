@@ -25,13 +25,13 @@ foreach ($matricules as $mat) {
     inner join etablissement E on f.CodeEtab = E.CodeEtb where f.Matricule = '$mat[0]';")->fetch(PDO::FETCH_NUM);
 
 
-    $InfoHeures = $cnnx::$cnx->query("select sum(m.s1),sum(m.s2),sum(m.pr),sum(m.Dist) ,sum(m.pr)+sum(m.Dist), (sum(m.pr)+sum(m.Dist)) / e.Sem_Annee
-    from etablissement e 
-    inner join groupe g on g.CodeEtab = e.CodeEtb
-     inner join  affectmodule af on g.CodeGrp= af.Groupe 
-    inner join Modules m on af.ModuleCode = m.CodeMd
-    where g.CodeFlr = m.CodeFlr and af.Matricule ='$mat[0]'
-    and af.CodeEtab='$CodeEtab' and af.AnneeFr='$anne[0]'")->fetch();
+    $InfoHeures = $cnnx::$cnx->query("
+    SELECT 
+    sum(m.s1 * g.taux /100) as s1,sum(m.s2* g.taux /100) as s2 , sum(m.s1 * g.taux /100) + sum(m.s2* g.taux /100) as total
+  FROM groupe g INNER JOIN affectmodule af ON af.Groupe=g.codegrp
+  INNER JOIN modules m ON m.CodeMd = af.ModuleCode
+  WHERE af.Matricule = '$mat[0]' AND af.CodeEtab = '$CodeEtab'
+  AND af.AnneeFr = $anne[0] AND m.codeflr=g.codeflr;")->fetch();
 
     $Affecteds = $cnnx::$cnx->query("CALL SP_ModuleAffecter_Formateur('$mat[0]','$CodeEtab','$anne[0]')")->fetchAll(PDO::FETCH_ASSOC);
 

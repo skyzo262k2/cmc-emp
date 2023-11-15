@@ -40,7 +40,7 @@ if (isset($_POST["findmat"]) && isset($_POST["date1"]) && isset($_POST["date2"])
     $formateur = $absenceformateur->GetFormateur($mat, $CodeEtab);
     $absence_formateur = $absenceformateur->GetAbsenceByOneFormateur($mat, $date1, $date2, $seance, $AnneeFr, $CodeEtab);
 
-
+    // print_r($absence_formateur);
 
     echo "<input type='button' value='X' onclick='Fermer()' id='fermer'>
     <div class='info_stg'>
@@ -50,7 +50,7 @@ if (isset($_POST["findmat"]) && isset($_POST["date1"]) && isset($_POST["date2"])
         </div>
         <div class='form-groupe'>
             <label for='nom_stg'>Nom :</label>
-            <input type='text' id='nom_stg' class='info form-control' readonly value='$formateur[1]'>
+            <input type='text' id='nom_stg' class='info form-control' readonly value='".$formateur[1] ." ".$formateur[2] ."'>
         </div>
     </div>
 
@@ -82,8 +82,8 @@ if (isset($_POST["findmat"]) && isset($_POST["date1"]) && isset($_POST["date2"])
     </div>";
 } elseif (isset($_POST["date1"]) && isset($_POST["date2"]) && isset($_POST["seance"])) {
 
-    $nb = $absenceformateur->TotalAbsenceFormateurByAnne($_POST["date1"], $_POST["date2"], $_POST["seance"], $AnneeFr, $CodeEtab);
-    $Formateur = $absenceformateur->GetFormateurAbsenceBydateSeance($_POST["date1"], $_POST["date2"], $_POST["seance"], $AnneeFr, $CodeEtab);
+    $nb = $absenceformateur->TotalAbsenceFormateurByAnne($_POST["date1"], $_POST["date2"], $_POST["seance"], $AnneeFr, $CodeEtab,$_SESSION["Admin"]["secteur"]);
+    $Formateur = $absenceformateur->GetFormateurAbsenceBydateSeance($_POST["date1"], $_POST["date2"], $_POST["seance"], $AnneeFr, $CodeEtab,$_SESSION["Admin"]["secteur"]);
     // echo  $_POST["seance"];
     echo "<div class='row m-4 total'>
                     <span>Total Absences : <b>$nb[0]</b></span>
@@ -127,7 +127,7 @@ if (isset($_POST["findmat"]) && isset($_POST["date1"]) && isset($_POST["date2"])
     $dt = new DateTime();
     $sysdate = $dt->format("Y-m-d");
     $datedebut = $AnneeFr . "-09-01";
-    $nb = $absenceformateur->TotalAbsenceFormateurByAnne($datedebut, $sysdate, "choisir", $AnneeFr, $CodeEtab);
-    $Formateur = $absenceformateur->GetFormateurAbsenceBydateSeance($datedebut, $sysdate, "choisir", $AnneeFr, $CodeEtab);
+    $nb = $absenceformateur->TotalAbsenceFormateurByAnne($datedebut, $sysdate, "choisir", $AnneeFr, $CodeEtab,$_SESSION["Admin"]["secteur"]);
+    $Formateur = $absenceformateur->GetFormateurAbsenceBydateSeance($datedebut, $sysdate, "choisir", $AnneeFr, $CodeEtab,$_SESSION["Admin"]["secteur"]);
     require "../View/V_ConsulterAbsenceFormateur.php";
 }

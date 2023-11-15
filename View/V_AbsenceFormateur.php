@@ -146,7 +146,7 @@
                         document.getElementById("informations").innerHTML = this.responseText;
                     }
                 };
-                request.send(`add=${T_Value}&date=${date}&seance=${seance}`);
+                request.send(`add=${T_Value.join("**")}&date=${date}&seance=${seance}`);
             }
         }
     </script>

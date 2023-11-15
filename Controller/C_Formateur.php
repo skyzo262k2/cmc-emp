@@ -14,10 +14,18 @@ $Formateur = new Formateur();
 $Formateur->CodeEtab = $_SESSION["Etablissement"]["CodeEtb"];
 
 
+$Formateur->connexion();
+$AlSecteurs = $Formateur::$cnx->query("select CodeSect,DescpSect from secteur;")->fetchAll(PDO::FETCH_NUM);
+$Formateur->Deconnexion();
+
 $Pag = new Pagination();
 
+$poste = $_SESSION['Admin']['Poste'];
+$secteur = isset($_SESSION['Admin']['secteur']) ? $_SESSION['Admin']['secteur'] : null;
 
-$cryptage_password = password_hash('OFPPT',PASSWORD_DEFAULT);
+$anne = explode('/', $_SESSION['Annee'])[0];
+
+$cryptage_password = password_hash('OFPPT', PASSWORD_DEFAULT);
 
 
 // Utilisation de la page 1 par defaut
@@ -43,21 +51,20 @@ if (isset($_POST["btnAjouter"])) {
         $Formateur->Type = $_POST["tType"];
         $Formateur->MassHoraire = $_POST["tMasseHoraire"];
         $Formateur->Password = $cryptage_password;
-        // $Formateur->Validateur = $_POST["tValidateur"];
+        $Formateur->Secteur = $_POST["tSecteur"];
         $Formateur->Add();
     }
 }
 
 // Methode Modifier un formateur quant en click le button Modifier
 if (isset($_POST["btnModifier"])) {
-    if (!empty($_POST["tMatricule"]) && !empty($_POST["tNom"]) && !empty($_POST["tPrenom"])  && empty($_POST["tType"]) != "choisir" && $_POST["tMasseHoraire"] != "choisir") {
+    if (!empty($_POST["tMatricule"]) && !empty($_POST["tNom"]) && !empty($_POST["tPrenom"])  && empty($_POST["tType"]) != "choisir" && $_POST["tSecteur"] != "choisir" && $_POST["tMasseHoraire"] != "choisir") {
         $Formateur->Matricule = $_POST["tMatricule"];
         $Formateur->Nom = $_POST["tNom"];
         $Formateur->Prenom = $_POST["tPrenom"];
         $Formateur->Type = $_POST["tType"];
         $Formateur->MassHoraire = $_POST["tMasseHoraire"];
-        // $Formateur->Validateur = $_POST["tValidateur"];
-
+        $Formateur->Secteur = $_POST["tSecteur"];
         $Formateur->Update();
     }
 }
@@ -74,12 +81,23 @@ if (isset($_GET['info'])) {
     $info = $_GET['info'];
     $_SESSION["rechinfoformateur"] = $info;
     if ($info == "") {
-        $_SESSION['Formateurs'] = $Formateur->GetAll();
+        if ($poste != "ChefSecteur")
+            $_SESSION['Formateurs'] = $Formateur->GetAll();
+        else
+            $_SESSION['Formateurs'] = $Formateur->GetFormateurSecteur($secteur,$anne);
     } else {
         $Formateur->connexion();
-        $_SESSION['Formateurs'] = $Formateur->Find($info);
+        if ($poste != "ChefSecteur")
+            $_SESSION['Formateurs'] = $Formateur->Find($info);
+        else
+            $_SESSION['Formateurs'] = $Formateur->FindSecteur($info, $secteur);
     }
 
+    for ($i = 0; $i < count($_SESSION['Formateurs']); $i++) {
+        if ($_SESSION['Formateurs'][$i]["secteur"] == "") {
+            $_SESSION['Formateurs'][$i]["secteur"] = "Sans";
+        }
+    }
 
     echo "<div class='pagi_sup'>
                 <div class='pagination'>";
@@ -104,6 +122,7 @@ if (isset($_GET['info'])) {
                             <th scope='col'>Prénom</th>
                             <th scope='col'>Type</th>
                             <th scope='col'>Masse Horaire</th>
+                            <th scope='col'>Secteur</th>
                             <th scope='col'>Réinitialiser</th>
                             <th scope='col'>Action</th>
                         </tr>
@@ -111,7 +130,7 @@ if (isset($_GET['info'])) {
                    
             <tbody >
             ";
-    $Pag->GetTablePage($_SESSION['Formateurs'], $_GET['get'],'formateur');
+    $Pag->GetTablePage($_SESSION['Formateurs'], $_GET['get'], 'formateur');
     echo " 
             </tbody>
             </table>
@@ -120,13 +139,29 @@ if (isset($_GET['info'])) {
     if (isset($_SESSION["rechinfoformateur"])) {
         $info = $_SESSION["rechinfoformateur"];
         if ($info == "") {
-            $_SESSION['Formateurs'] = $Formateur->GetAll();
+            if ($poste != "ChefSecteur")
+                $_SESSION['Formateurs'] = $Formateur->GetAll();
+            else
+                $_SESSION['Formateurs'] = $Formateur->GetFormateurSecteur($secteur,$anne);
         } else {
             $Formateur->connexion();
-            $_SESSION['Formateurs'] = $Formateur->Find($info);
+            if ($poste != "ChefSecteur")
+                $_SESSION['Formateurs'] = $Formateur->Find($info);
+            else
+                $_SESSION['Formateurs'] = $Formateur->FindSecteur($info, $secteur);
         }
     } else {
-        $_SESSION['Formateurs'] = $Formateur->GetAll();
+        if ($poste != "ChefSecteur")
+            $_SESSION['Formateurs'] = $Formateur->GetAll();
+        else
+            $_SESSION['Formateurs'] = $Formateur->GetFormateurSecteur($secteur,$anne);
     }
+    for ($i = 0; $i < count($_SESSION['Formateurs']); $i++) {
+        if ($_SESSION['Formateurs'][$i]["secteur"] == "") {
+            $_SESSION['Formateurs'][$i]["secteur"] = "Sans";
+        }
+    }
+
+    
     require "../View/V_Formateur.php";
 }

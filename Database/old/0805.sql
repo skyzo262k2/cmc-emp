@@ -1,6 +1,6 @@
 DROP PROCEDURE SP_moduleNoaffeceted;
 DELIMITER //
-CREATE PROCEDURE SP_moduleNoaffeceted(codgrp varchar(25),anne_scolaire varchar(4),etab varchar(10),codflr varchar(25),anne_formation varchar(1))
+CREATE PROCEDURE SP_moduleNoaffeceted(codgrp varchar(30),anne_scolaire varchar(4),etab varchar(10),codflr varchar(25),anne_formation varchar(1))
 BEGIN
 	SELECT 
     m.*
@@ -24,7 +24,7 @@ END  //
 DELIMITER ;
 DROP PROCEDURE SP_ModuleAffecter_Formateur;
 DELIMITER //
-CREATE PROCEDURE SP_ModuleAffecter_Formateur(mat varchar(20),codetab varchar(10),anne varchar(4))
+CREATE PROCEDURE SP_ModuleAffecter_Formateur(mat varchar(30),codetab varchar(10),anne varchar(4))
 BEGIN
 	SELECT 
      af.Groupe,m.descpMd,m.s1,m.s2,m.Pr,m.Dist,m.CodeMd,af.anneefr,m.codeflr,g.annee,af.avc,af.efm,(af.avc/(m.s1 + m.s2))*100 as taux
@@ -53,7 +53,8 @@ DELIMITER //
 CREATE PROCEDURE SP_ModuleAffecter_Formateur(mat varchar(20),codetab varchar(10),anne varchar(4))
 BEGIN
 	SELECT 
-     af.Groupe,m.descpMd,m.s1,m.s2,m.Pr,m.Dist,m.CodeMd,af.anneefr,m.codeflr,g.Fpa,g.annee,af.avc,af.efm,(af.avc/(m.s1 + m.s2))*100 as taux
+		 af.Groupe,m.descpMd,m.s1,m.s2,m.Pr,m.Dist,m.CodeMd,af.anneefr,m.codeflr,g.Fpa,g.taux as tauxfpaGrp 
+		 ,g.annee,af.avc,af.efm,(af.avc/(m.s1 + m.s2))*100 as taux
 	FROM groupe g INNER JOIN affectmodule af ON af.Groupe=g.codegrp
 	INNER JOIN modules m ON m.CodeMd = af.ModuleCode
 	WHERE af.Matricule = mat AND af.CodeEtab = codetab

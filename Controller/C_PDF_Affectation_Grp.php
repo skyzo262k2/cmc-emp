@@ -19,7 +19,7 @@ if (isset($_GET['grp'])) {
     $info = $cnnx::$cnx->query("select DescpFr from etablissement where CodeEtb = '$Etab'")->fetch(PDO::FETCH_NUM);
 
 
-    $InfoHeures = $cnnx::$cnx->query("select sum(m.s1),sum(m.s2),sum(m.s1)+sum(m.s2)
+    $InfoHeures = $cnnx::$cnx->query("select sum(m.s1)* g.taux /100,sum(m.s2)* g.taux /100,(sum(m.s1)+sum(m.s2)) * g.taux /100
     from groupe g inner join filiere f using(Codeflr)
     inner join modules m using(Codeflr)
     where g.codeGrp = '$grp'")->fetch();

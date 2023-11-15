@@ -1,5 +1,6 @@
 <?php
 require "../Model/M_Connexion.php";
+
 $conx = new Connexion();
 $conx->connexion();
 $login = "";
@@ -20,19 +21,18 @@ if (isset($_POST["btnConnecte"])) {
         $st->bindParam(":login", $login);
         $st->execute();
         $Admin = $st->fetch();
-        if ($Admin) {
-            if (password_verify($password, $Admin[2])) {
+        if($Admin){
+            if(password_verify($password, $Admin[2])) {
                 $user = $conx::$cnx->query("SELECT * FROM personnel WHERE CodeUser = '$Admin[0]'")->fetch(PDO::FETCH_ASSOC);
                 $_SESSION["Admin"] = $user;
                 $_SESSION["Annee"] = $Annee;
                 $CodeEtab = $user['CodeEtab'];
                 $Etab = $conx::$cnx->query("SELECT * FROM etablissement WHERE CodeEtb='$CodeEtab'")->fetch(PDO::FETCH_ASSOC);
-                $_SESSION["Etablissement"] = $Etab;
+                $_SESSION["Etablissement"] = $Etab;        
                 header("location:../Controller/C_Home.php");
             } else
                 $erreurpassword = "Login or Password incorrect";
         } else {
-
             $st = Connexion::$cnx->prepare("SELECT * FROM formateur WHERE Matricule = ?");
             $st->execute([$login]);
             $bol = $st->fetch(PDO::FETCH_ASSOC);

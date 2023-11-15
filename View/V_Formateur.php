@@ -7,7 +7,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../Css/Bootstrap/css/bootstrap.min.css">
     <script src="../Css/Bootstrap/js/bootstrap.bundle.min.js"></script>
-    <script src="../JS/re.js"></script>
     <title>Formateurs</title>
     <style>
         .row {
@@ -90,6 +89,22 @@
             }
             x.send();
         }
+
+        function aff(parentTr) {
+            const value_list = [];
+            input_fields = document.getElementsByClassName('inputs');
+            indice = 0;
+            for (const value of parentTr.children) {
+                value_list.push(value.textContent);
+            }
+            
+            let val = value_list[5].split("-");
+            value_list[5] = val[0];
+            for (const input of input_fields) {
+                input.value = value_list[indice];
+                indice++;
+            }
+        }
     </script>
 
 </head>
@@ -139,12 +154,13 @@
                             <th scope="col">Prénom</th>
                             <th scope="col">Type</th>
                             <th scope="col">Masse Horaire</th>
+                            <th scope="col">Secteur</th>
                             <th scope="col">Réinitialiser</th>
                             <th scope="col">Action</th>
                         </tr>
                     </thead>
                     <tbody>
-                            <?php $Pag->GetTablePage($_SESSION["Formateurs"], $_GET["get"],'formateur'); ?>
+                        <?php $Pag->GetTablePage($_SESSION["Formateurs"], $_GET["get"], 'formateur'); ?>
                     </tbody>
                 </table>
             </div>
@@ -174,13 +190,16 @@
                         <option value="36.00">36 H</option>
                     </select>
                 </div>
-                <!-- <div class="form-groupe m-4">
-                    <select name="tValidateur" class="inputs form-control">
-                        <option value="choisir">Validateur</option>
-                        <option value="Oui">OUI</option>
-                        <option value="Non">NON</option>
+                <div class="form-groupe m-4">
+                    <select name="tSecteur" class="inputs form-control">
+                        <option value="choisir">Choisir Secteur</option>
+                        <option value="Sans">Sans Secteur</option>
+                        <?php foreach ($AlSecteurs as $sec) {
+                            echo '<option value=' . $sec[0] .'>' . $sec[1] . '</option>';
+                        }
+                        ?>
                     </select>
-                </div> -->
+                </div>
                 <b style="color: red;">Tout Les Champs obligatoire</b>
                 <div class="model-footer m-3">
                     <input type="submit" class="btn btn-primary" value="Ajouter" name="btnAjouter">

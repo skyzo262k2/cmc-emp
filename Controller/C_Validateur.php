@@ -4,6 +4,7 @@ require "../Model/M_Validateur.php";
 require "../Model/M_pagination.php";
 
 session_start();
+
 if (!isset($_SESSION["Admin"]) || $_SESSION["Admin"]["Poste"] == "Surveille") {
     header("location:../Controller/C_Login.php");
 }
@@ -26,7 +27,7 @@ function GetTablePage($tab, $nb)
                 echo "<td>" . $col . "</td>";
             }
             echo "<td>
-                <button class='sup' onclick='Delete(\"" . $tab[$i]['matricule'] . "\",\"" . $tab[$i]['filiere'] . "\")'><img src='../Images/Icon_Delete.png' width='30px' /></button>
+                <button class='sup' onclick='Delete(\"" . $tab[$i]["matricule"] . "\",\"" . $tab[$i]["filiere"] . "\")'><img src='../Images/Icon_Delete.png' width='30px' /></button>
                 </td>";
             echo " </tr>";
         }
@@ -37,11 +38,23 @@ function GetTablePage($tab, $nb)
 function AjaxInfor($table)
 {
     global $page;
+    $donnees = [];
+    if ($_SESSION["Admin"]["Poste"] == "ChefSecteur") {
+        foreach ($table as $t) {
+            if ($_SESSION["Admin"]["secteur"] == $t["CodeSect"]) {
+                $donnees[] = ["filiere" => $t["filiere"], "DescpFlr" => $t["DescpFlr"], "matricule" => $t["matricule"], "nom" => $t["nom"]];
+            }
+        }
+    } else {
+        foreach ($table as $t) {
+            $donnees[] = ["filiere" => $t["filiere"], "DescpFlr" => $t["DescpFlr"], "matricule" => $t["matricule"], "nom" => $t["nom"]];
+        }
+    }
     echo "   <div class='pagi_sup'>
 
     <div class='pagination'>
         ";
-    $salles = $page->Pagination_Btn($table, $_GET['get']);
+    $salles = $page->Pagination_Btn($donnees, $_GET['get']);
     $page->Pagination_Nb($salles, $_GET['get']);
 
     echo " </div>
@@ -67,7 +80,7 @@ function AjaxInfor($table)
         <tbody id='info_tbody'>
            ";
 
-    GetTablePage($table, $_GET['get']);
+    GetTablePage($donnees, $_GET['get']);
 
     echo "</tbody>
     </table>
@@ -82,10 +95,7 @@ $validateur = new Validateur();
 $validateur->CodeEtab = $_SESSION["Etablissement"]["CodeEtb"];
 
 
-$validateur->connexion();
-$Formateurs = $validateur::$cnx->query("call SP_GetAllFormateur('$validateur->CodeEtab')")->fetchAll(PDO::FETCH_NUM);
-$Filieres = $validateur::$cnx->query("call SP_GetAll_filiere()")->fetchAll(PDO::FETCH_NUM);
-$validateur->Deconnexion();
+
 
 
 if (isset($_POST['mat']) && isset($_POST['flr']) && isset($_POST['add'])) {
@@ -128,5 +138,27 @@ if (isset($_POST['mat']) && isset($_POST['flr']) && isset($_POST['add'])) {
     } else {
         $table = $validateur->GetAllValidateur();
     }
+    $validateur->connexion();
+    $Formateurs_select = $validateur::$cnx->query("SELECT Matricule,Nom,Prenom,secteur  FROM formateur where CodeEtab =  '" . $_SESSION["Etablissement"]["CodeEtb"] . "';")->fetchAll(PDO::FETCH_NUM);
+    $Filieres_select = $validateur::$cnx->query("call SP_GetAll_filiere()")->fetchAll(PDO::FETCH_NUM);
+    $Formateurs = [];
+    $Filieres = [];
+    if ($_SESSION["Admin"]["Poste"] == "ChefSecteur") {
+        foreach ($Filieres_select as $fi) {
+            if ($_SESSION["Admin"]["secteur"] == $fi[2]) {
+                $Filieres[] = $fi;
+            }
+        }
+        foreach ($Formateurs_select as $fo) {
+            if ($_SESSION["Admin"]["secteur"] == $fo[3]) {
+                $Formateurs[] = $fo;
+            }
+        }
+    } else {
+        $Formateurs = $Formateurs_select;
+        $Filieres = $Filieres_select;
+    }
+
+    $validateur->Deconnexion();
     require "../View/V_Validateur.php";
 }

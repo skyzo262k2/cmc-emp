@@ -7,6 +7,8 @@ class Surveille extends Connexion implements IMethodeCRUD
     public $Matricule;
     public $Nom;
     public $Prenom;
+    public $typeuser;
+    public $secteur;
     public $login;
     public $Password;
     public $CodeEtab;
@@ -21,9 +23,9 @@ class Surveille extends Connexion implements IMethodeCRUD
     public function Add()
     {
         parent::connexion();
-        $req="call SP_AddSureille(?,?,?,?,?,?,?)";
+        $req="call SP_AddSureille(?,?,?,?,?,?,?,?)";
         $requete=parent::$cnx->prepare($req);
-        $requete->execute([$this->Matricule, $this->Nom, $this->Prenom,'Surveille', $this->CodeEtab, $this->login, $this->Password]);
+        $requete->execute([$this->Matricule, $this->Nom, $this->Prenom,$this->typeuser, $this->CodeEtab, $this->login, $this->Password, $this->secteur]);
         parent::Deconnexion();
     }
 
@@ -36,6 +38,7 @@ class Surveille extends Connexion implements IMethodeCRUD
         $requete->bindParam(2,$this->Nom);
         $requete->bindParam(3,$this->Prenom);
         $requete->bindParam(4,$this->CodeEtab);
+        $requete->bindParam(4,$this->typeuser);
         $requete->execute();
         parent::Deconnexion();
     }

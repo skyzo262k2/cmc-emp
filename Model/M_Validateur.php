@@ -47,7 +47,8 @@ class Validateur extends Connexion
                 $exec->execute();
                 
                 parent::Deconnexion();
-            }catch(PDOException  $er)
+            }
+            catch(PDOException  $er)
             {
              
             }

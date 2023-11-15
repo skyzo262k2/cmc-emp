@@ -83,7 +83,9 @@
             <?php
             if (isset($Groupes)) :
                 foreach ($Groupes as $inf) {
-                    echo "<option value='{$inf['CodeGrp']}/{$inf['CodeFlr']}/{$inf['annee']}/{$inf['Fpa']}'> {$inf['CodeGrp']} </option>";
+                    echo "<option value='{$inf['CodeGrp']}/{$inf['CodeFlr']}/{$inf['annee']}/{$inf['Fpa']}/{$inf['tauxfpa']}'>
+                             {$inf['CodeGrp']} 
+                             </option>";
                 }
             endif;
             ?>
@@ -107,17 +109,21 @@
                 if (isset($groupe)) {
                     foreach ($groupe as $grop){
                         if( $Fpa=='O'){
-                            $tax=$_SESSION['Etablissement']['TauxFPA'];
-                            $grop['s1']=($tax/100)*$grop['s1'];
-                            $grop['s2']=($tax/100)*$grop['s2'];;
+                            $grop['s1']=($tauxfpaGrp/100)*$grop['s1'];
+                            $grop['s2']=($tauxfpaGrp/100)*$grop['s2'];;
                             $grop['masshoraire']=$grop["s1"]+ $grop["s2"];
 
                             $grop['taux']=$grop["avc"]!=0?number_format($grop["avc"]/($grop['masshoraire'])*100,2):0;
                         }
                         echo "
                         <tr>
-                            <td>" . $grop['nomp'] . "</td><td>" . $grop['descpMd'] . "</td><td>" . $grop['CodeMd'] . "</td>
-                            <td>" . $grop['flr'] . "</td><td>" . $anneGrp . "</td><td>" . $grop['s1'] . "</td><td>" . $grop['s2'] . "</td>
+                            <td>" . $grop['nomp'] . "</td>
+                            <td>" . $grop['descpMd'] . "</td>
+                            <td>" . $grop['CodeMd'] . "</td>
+                            <td>" . $grop['flr'] . "</td>
+                            <td>" . $anneGrp . "</td>
+                            <td>" . $grop['s1'] . "</td>
+                            <td>" . $grop['s2'] . "</td>
                             <td>" . $grop['masshoraire'] . "</td> 
                             <td>" . $grop['avc'] . "</td> 
                             <td>" . $grop['taux'] . "%</td>                                
@@ -126,13 +132,23 @@
                 }
                 if (isset($ModuleNoaffe)) {
                     foreach ($ModuleNoaffe as $grop) {
+                        if( $Fpa=='O'){
+                            $grop['s1']=($tauxfpaGrp/100)*$grop['s1'];
+                            $grop['s2']=($tauxfpaGrp/100)*$grop['s2'];;
+                            
+                        }
                         echo "
                         <tr>
-                            <td>------</td><td>" . $grop['DescpMd'] . "</td><td>" . $grop['CodeMd'] . "</td>
-                            <td>" . $grop['CodeFlr'] . "</td><td>" . $grop['Annee'] . "</td>
-                            <td>" . $grop['s1'] . "</td><td>" . $grop['s2'] . "</td><td>" . $grop['s1'] + $grop['s2'] . "</td>                            
-                            <td>0</td> 
-                            <td>0%</td>   
+                            <td>------</td>
+                                <td>" . $grop['DescpMd'] . "</td>
+                                <td>" . $grop['CodeMd'] . "</td>
+                                <td>" . $grop['CodeFlr'] . "</td>
+                                <td>" . $grop['Annee'] . "</td>
+                                <td>" . $grop['s1'] . "</td>
+                                <td>" . $grop['s2'] . "</td>
+                                <td>" . $grop["s1"]+ $grop["s2"] . "</td>                            
+                                <td>0</td> 
+                                <td>0%</td>   
                         </tr>";
                     }
                 }

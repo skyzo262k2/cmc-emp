@@ -18,8 +18,17 @@ $informations = [];
 if (isset($_POST["type"]) && isset($_POST["taux"])) {
     $taux =  $_POST["taux"];
     $type = $_POST["type"];
-    $informations = $cnnx::$cnx->query("call SP_taux_Avencement_Module($taux,'$type','$anne[0]','$Etab')")->fetchAll(PDO::FETCH_NUM);
-
+    $informations_donnnees = $cnnx::$cnx->query("call SP_taux_Avencement_Module($taux,'$type','$anne[0]','$Etab')")->fetchAll(PDO::FETCH_NUM);
+    $informations = [];
+    foreach ($informations_donnnees as $donne) {
+        if ($_SESSION["Admin"]["Poste"] == "ChefSecteur") {
+                if ($_SESSION["Admin"]["secteur"] ==  $donne[7]) {
+                        $informations[] =  $donne;
+                }
+        } else {
+                $informations[] =  $donne;
+        }
+}
     if (count($informations) != 0) {
         echo " <table width='100%' class='table table-bordered table-borderless'>
                         <thead>
@@ -52,7 +61,6 @@ if (isset($_POST["type"]) && isset($_POST["taux"])) {
                             <td>$info[1]</td>
                             <td>$info[4]</td>
                             <td>$info[3]</td>
-
                             <td>$info[2]</td>
                             <td>$avc %</td>
                             <td>$message</td>

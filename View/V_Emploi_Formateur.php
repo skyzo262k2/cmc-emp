@@ -65,22 +65,17 @@
     </script>
     <script>
         function Formateur(frm) {
-            if (frm.value !== "") {
+            if (frm.selectedOptions[0].value !== "") {
                 let route = 'C_Emploi_Formateur';
-                let send = `formateur=${frm.value}`;
+                let send = `formateur=${frm.selectedOptions[0].value}`;
                 let table = Ajax(route, send)
                 document.getElementById('seul').hidden = false
                 document.getElementById('Groupe').innerHTML=`
-                <a href="../Controller/C_Emploi_Groupes.php?Matricule=${frm.value}">
+                <a href="../Controller/C_Emploi_Groupes.php?Matricule=${frm.selectedOptions[0].value}">
                         Emploi du Temps Groupes
                 </a>`
-                let relaod=document.getElementById('relaod')
-                relaod.value=frm.value
-                relaod.hidden=false
 
             } else {
-                relaod.value=""
-                relaod.hidden=true
                 document.getElementById('seul').hidden = true
                 Vider()
             }
@@ -365,18 +360,15 @@
     }
 </style>
 
+
+
 <body>
     <center>
         <h1>Emploi Formateur</h1>
     </center>
     <form action="" method="post">
         <?php if(!isset($_SESSION['userFormateur'])):?>
-        <center >
-            <button onclick="openPop()" type="button">Imprimer</button>
-            <button onclick="Formateur(this)" id="relaod" hidden type="button">
-                reload
-            </button>
-        </center>
+        <center><button onclick="openPop()" type="button">Imprimer</button></center>
         <table>
             <tr>
                 <td style="text-align: center;font-size: larger;">Fomateur</td>
@@ -391,16 +383,13 @@
                         endif;
                         ?>
                     </select>
-                    <?php if(isset($_SESSION["Admin"]) && !$_SESSION["Admin"]["Poste"] == "Surveille"):?>
-                        <span  id="Groupe"></span>
-                    <?php endif;?>
+                    <span  id="Groupe"></span>
                 </td>
             </tr>
         </table>
         <?php endif;?>
         <div id="cacher">
             <center>
-                
                 <button type="button" id="x" onclick="FermerPop()">X</button><br>
                 <p>
                     <!-- <h2 style="color:red;">les Dates sont Obligatoires </h2> -->
@@ -461,7 +450,7 @@
             </center>
         </div>
 
-        <table border="1" style="width:1000px;">
+        <table border="1">
             <tr style="height: 60px;">
                 <td>Heures<br>Jours</td>
                 <td>8H30-11H00</td>

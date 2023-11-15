@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../Css/Bootstrap/css/bootstrap.min.css">
     <script src="../Css/Bootstrap/js/bootstrap.bundle.min.js"></script>
-    <script src="../Js/re.js"></script>
+    <!-- <script src="../Js/re.js"></script> -->
     <title>Salle</title>
     <style>
         .row {
@@ -91,6 +91,22 @@
             }
             x.send();
         }
+
+        function aff(parentTr) {
+            const value_list = [];
+            input_fields = document.getElementsByClassName('inputs');
+            indice = 0;
+            for (const value of parentTr.children) {
+                value_list.push(value.textContent);
+            }
+            
+            let val = value_list[3].split("-");
+            value_list[3] = val[0];
+            for (const input of input_fields) {
+                input.value = value_list[indice];
+                indice++;
+            }
+        }
     </script>
 </head>
 
@@ -135,6 +151,7 @@
                             <th scope="col">code salle</th>
                             <th scope="col">Description salle</th>
                             <th scope="col">Type</th>
+                            <th scope="col">Secteur</th>
                             <th scope="col">Action</th>
                         </tr>
                     </thead>
@@ -161,6 +178,15 @@
                         <option value="">Choisir Type Salle</option>
                         <option value="SALLE">SALLE</option>
                         <option value="ATELIER">ATELIER</option>
+                    </select>
+                </div>
+                <div class="form-groupe m-4">
+                    <select name="tSecteur" class="inputs form-control">
+                        <option value="choisir">Choisir Secteur</option>
+                        <?php foreach ($AlSecteurs as $sec) {
+                            echo '<option value=' . $sec[0] .'>' . $sec[1] . '</option>';
+                        }
+                        ?>
                     </select>
                 </div>
                 <b style="color: red;">Tout Les Champs obligatoire</b>

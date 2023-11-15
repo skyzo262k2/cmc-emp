@@ -8,6 +8,8 @@ class Groupe extends Connexion
     public $CodeFlr;
     public $Annee;
     public $Fpa;
+    
+    public $taux;
 
     function __construct(){}
 
@@ -34,7 +36,7 @@ class Groupe extends Connexion
         if ($existe == null) {
             
             parent::connexion();
-            $query = "CALL sp_InsertGrp('{$this->CodeGrp}','{$this->CodeFlr}','{$this->CodeEtab}','{$this->Annee}','{$this->Fpa}')";
+            $query = "CALL sp_InsertGrp('{$this->CodeGrp}','{$this->CodeFlr}','{$this->CodeEtab}','{$this->Annee}','{$this->Fpa}',{$this->taux})";
             $n = parent::$cnx->exec($query);
             parent::Deconnexion();
             if ($n)
@@ -61,7 +63,7 @@ class Groupe extends Connexion
         $existe = $this->FindGroupe($this->CodeGrp,$this->CodeEtab);
         if ($existe != null) {
             parent::connexion();
-            $query = "CALL sp_UpdateGrp('{$this->CodeGrp}','{$this->CodeEtab}','{$this->CodeFlr}','{$this->Annee}','{$this->Fpa}')";
+            $query = "CALL sp_UpdateGrp('{$this->CodeGrp}','{$this->CodeEtab}','{$this->CodeFlr}','{$this->Annee}','{$this->Fpa}',{$this->taux})";
             $success = parent::$cnx->exec($query);
             parent::Deconnexion();
             if ($success)

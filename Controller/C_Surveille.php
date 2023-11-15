@@ -22,34 +22,40 @@ if (!isset($_GET["get"])) {
 
 if (isset($_POST["btnAjouter"])) {
     try {
-    
-    if (!empty($_POST["tMatricule"]) && !empty($_POST["tNom"]) && !empty($_POST["tPrenom"])) {
-        $surveille->Matricule = $_POST["tMatricule"];
-        $surveille->Nom = $_POST["tNom"];
-        $surveille->Prenom = $_POST["tPrenom"];
-        $surveille->login =  $_POST["tMatricule"];
-        $surveille->Password =  password_hash("OFPPT",PASSWORD_DEFAULT);
-        $surveille->Add();
-    }
-    }catch (Exception $er){
-        
+        if (!empty($_POST["tMatricule"]) && !empty($_POST["tNom"]) && !empty($_POST["tPrenom"]) && !empty($_POST["typeuser"])) {
+            $surveille->Matricule = $_POST["tMatricule"];
+            $surveille->Nom = $_POST["tNom"];
+            $surveille->Prenom = $_POST["tPrenom"];
+            $surveille->login =  $_POST["tMatricule"];
+            $surveille->typeuser =  $_POST["typeuser"];
+            if(isset($_POST['secteur']) && $_POST["typeuser"]!="Surveille")
+                $surveille->secteur=$_POST['secteur'];
+            else
+                $surveille->secteur="";
+
+
+            $surveille->Password =  password_hash("OFPPT", PASSWORD_DEFAULT);
+            $surveille->Add();
+        }
+    } catch (Exception $er) {
     }
 }
 
 if (isset($_POST["Reinitialiser"])) {
     $surveille->Matricule = $_POST["Reinitialiser"];
-    $surveille->Password =  password_hash("OFPPT",PASSWORD_DEFAULT);
+    $surveille->Password =  password_hash("OFPPT", PASSWORD_DEFAULT);
     $surveille->ModifierMotePasse();
 }
 
-if(isset($_POST["btnModifier"])) {
-    if (!empty($_POST["tMatricule"]) && !empty($_POST["tNom"]) && !empty($_POST["tPrenom"])) {
-        $surveille->Matricule = $_POST["tMatricule"];
-        $surveille->Nom = $_POST["tNom"];
-        $surveille->Prenom = $_POST["tPrenom"];
-        $surveille->Update();
-    }
-}
+// if (isset($_POST["btnModifier"])) {
+//     if (!empty($_POST["tMatricule"]) && !empty($_POST["tNom"]) && !empty($_POST["tPrenom"]) && !empty($_POST["typeuser"])) {
+//         $surveille->Matricule = $_POST["tMatricule"];
+//         $surveille->Nom = $_POST["tNom"];
+//         $surveille->Prenom = $_POST["tPrenom"];
+//         $surveille->typeuser = $_POST["typeuser"];
+//         $surveille->Update();
+//     }
+// }
 
 if (isset($_POST["sup"])) {
     $surveille->Matricule = $_POST["sup"];
@@ -60,11 +66,14 @@ if (isset($_POST["btnSupprimer"])) {
     $surveille->DeleteAll();
 }
 
-if(isset($_GET['info'])) {
+if (isset($_GET['info'])) {
     $info = $_GET['info'];
     $_SESSION["rechinfosur"] = $info;
     if ($info == "") {
-        $_SESSION['Surveilles']=$surveille->GetAll();
+        $_SESSION['Surveilles'] = $surveille->GetAll();
+        $surveille->connexion();
+        $AlSecteurs = $surveille::$cnx->query("select CodeSect,DescpSect from secteur;")->fetchAll(PDO::FETCH_NUM);
+        $surveille->Deconnexion();
     } else {
         $surveille->connexion();
         $_SESSION['Surveilles'] = $surveille->Find($info);
@@ -92,6 +101,7 @@ if(isset($_GET['info'])) {
                         <th scope='col'>Matricule</th>
                         <th scope='col'>Nom</th>
                         <th scope='col'>Prénom</th>
+                        <th scope='col'>Type Utilisateur</th>
                         <th scope='col'>Réinitialiser</th>
                         <th scope='col'>Action</th>
                         </tr>
@@ -99,12 +109,14 @@ if(isset($_GET['info'])) {
                    
             <tbody >
             ";
-    $Pag->GetTablePage($_SESSION['Surveilles'], $_GET['get'],'formateur');
-    echo " 
-            </tbody>
-            </table>
-            </div>";
+    $Pag->GetTablePage($_SESSION['Surveilles'], $_GET['get'], 'formateur');
+    echo "</tbody>
+          </table>
+          </div>";
 } else {
+    $surveille->connexion();
+    $AlSecteurs = $surveille::$cnx->query("select CodeSect,DescpSect from secteur;")->fetchAll(PDO::FETCH_ASSOC);
+    $surveille->Deconnexion();
     if (isset($_SESSION["rechinfosur"])) {
         $info = $_SESSION["rechinfosur"];
         if ($info == "") {
@@ -118,6 +130,3 @@ if(isset($_GET['info'])) {
     }
     require '../View/V_Surveille.php';
 }
-
-
-?>

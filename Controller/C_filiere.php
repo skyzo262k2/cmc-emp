@@ -66,10 +66,20 @@ if (isset($_GET['info'])) {
     $info = $_GET['info'];
     $_SESSION["rechinfofiliere"] = $info;
     if ($info == "") {
-        $_SESSION['filieres'] = $fil->GetAll();
+        $toutfilieres  = $fil->GetAll();
     } else {
         $fil->connexion();
-        $_SESSION['filieres'] = $fil->Find($info);
+        $toutfilieres  = $fil->Find($info);
+    }
+    $_SESSION['filieres'] = [];
+    if ($_SESSION["Admin"]["Poste"] ==  "ChefSecteur") {
+        foreach ($toutfilieres as $f) {
+            if ($f["CodeSect"] == $_SESSION["Admin"]["secteur"]) {
+                $_SESSION['filieres'][] = [$f['CodeFlr'], $f['DescpFlr'], $f['Niveau']];
+            }
+        }
+    } else {
+        $_SESSION['filieres'] = $toutfilieres;
     }
 
 
@@ -90,13 +100,15 @@ if (isset($_GET['info'])) {
                     <thead>
                         <tr class='table-success'>
                             <th scope='col'>code Filiere</th>
-                            <th scope='col'>Description Filiere</th>
-                            <th scope='col'>code Secteur</th>
-                            <th scope='col'>Niveau</th>
-                            <th scope='col'>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody >";
+                            <th scope='col'>Description Filiere</th>";
+
+    if ($_SESSION["Admin"]["Poste"] !=  "ChefSecteur")
+        echo "<th scope='col'>code Secteur</th>";
+    echo "<th scope='col'>Niveau</th>
+        <th scope='col'>Action</th>
+        </tr>
+        </thead>
+        <tbody >";
 
     $page->GetTablePage($_SESSION['filieres'], $_GET['get']);
 
@@ -108,13 +120,23 @@ if (isset($_GET['info'])) {
     if (isset($_SESSION["rechinfofiliere"])) {
         $info = $_SESSION["rechinfofiliere"];
         if ($info == "") {
-            $_SESSION['filieres'] = $fil->GetAll();
+            $toutfilieres = $fil->GetAll();
         } else {
             $fil->connexion();
-            $_SESSION['filieres'] = $fil->Find($info);
+            $toutfilieres = $fil->Find($info);
         }
     } else {
-        $_SESSION['filieres'] = $fil->GetAll();
+        $toutfilieres = $fil->GetAll();
+    }
+    $_SESSION['filieres'] = [];
+    if ($_SESSION["Admin"]["Poste"] ==  "ChefSecteur") {
+        foreach ($toutfilieres as $f) {
+            if ($f["CodeSect"] == $_SESSION["Admin"]["secteur"]) {
+                $_SESSION['filieres'][] = [$f['CodeFlr'], $f['DescpFlr'], $f['Niveau']];
+            }
+        }
+    } else {
+        $_SESSION['filieres'] = $toutfilieres;
     }
     require "../View/V_filiere.php";
 }

@@ -13,37 +13,37 @@ if (!isset($_SESSION["Admin"]) && !isset($_SESSION["userFormateur"])) {
 $empF = new Emploi_fomateur();
 $codetb = $_SESSION['Etablissement']['CodeEtb'];
 $anne = explode('/', $_SESSION['Annee']);
-$Formateurs = $empF->GetFormateur($anne[0], $codetb);
+
+
+if (!isset($_SESSION["userFormateur"])) {
+    if ($_SESSION["Admin"]["Poste"] != 'ChefSecteur') {
+        $Formateurs = $empF->GetFormateur($anne[0], $codetb);
+    } else {
+        $Formateurs = $empF->GetFormateurParSecteur($anne[0], $codetb, $_SESSION['Admin']['secteur']);
+    }
+}
+
 $imprimer = "";
 $test = false;
 
-
-if (isset($_POST["pdfone"])) {
-    $d = $_POST["debut"];
-    $f = $_POST["fin"];
-    $frm = explode('/', $_POST['formateur']);
-    $mat = $frm[0];
-    header("location:../Controller/C_PDF_Emploi_Formateur.php?Mat=$mat&debut=$d&fin=$f");
-}
-
 if (isset($_POST['formateur']) || isset($_SESSION["userFormateur"])) {
-    if(!isset($_SESSION["userFormateur"])):
+    if (!isset($_SESSION["userFormateur"])) :
         $frm = explode('/', $_POST['formateur']);
         $mat = $frm[0];
         $nomp = $frm[1];
         $_SESSION['nf'] = $nomF = json_encode($frm[1]);
-    else:
+    else :
         $mat = $_SESSION["userFormateur"]['Matricule'];
-        $nomp = $_SESSION["userFormateur"]['Nom'].' '.$_SESSION["userFormateur"]['Prenom'];
+        $nomp = $_SESSION["userFormateur"]['Nom'] . ' ' . $_SESSION["userFormateur"]['Prenom'];
     endif;
     $emploiF = $empF->getEmploiFormateur($anne[0], $codetb, $mat);
     $_SESSION['semaine'] = Separer($emploiF);
     $json = json_encode($emploiF);
-    
-    if(!isset($_SESSION["userFormateur"])){
+
+    if (!isset($_SESSION["userFormateur"])) {
         print_r($json);
-    }else {
-        $_SESSION["userFormateur"]["emploi"]=$json;
+    } else {
+        $_SESSION["userFormateur"]["emploi"] = $json;
     }
 }
 
@@ -92,9 +92,9 @@ if (isset($_POST['tous_execl'])) {
 
 
 if (isset($_POST["pdfall"])) {
-        $d = $_POST["debut"];
-        $f = $_POST["fin"];
-        header("location:../Controller/C_PDF_Emploi_All_Formateur.php?debut='$d'&fin='$f'");
+    $d = $_POST["debut"];
+    $f = $_POST["fin"];
+    header("location:../Controller/C_PDF_Emploi_All_Formateur.php?debut='$d'&fin='$f'");
 }
 if (isset($_POST["pdfp"])) {
     $d = $_POST["debut"];
@@ -107,36 +107,43 @@ if (isset($_POST["pdfv"])) {
     header("location:../Controller/C_PDF_Emploi_All_Formateur.php?debut='$d'&fin='$f'&type=V");
 }
 
+if (isset($_POST["pdfone"])) {
 
+    $d = $_POST["debut"];
+    $f = $_POST["fin"];
+    $frm = explode('/', $_POST['formateur']);
+    $mat = $frm[0];
+    header("location:../Controller/C_PDF_Emploi_Formateur.php?Mat='$mat'&debut='$d'&fin='$f'");
+}
 
 
 
 if (isset($_POST['word'])) {
-        $d = $_POST["debut"];
-        $f = $_POST["fin"];
-        $_SESSION['nf'] = trim($_SESSION['nf'], '"');
-        $word = new Word();
-        // $_SESSION['semaine'] contient data
-        $word->Cadre($_SESSION['semaine'], 'Formateur', $_SESSION['nf'], $_SESSION['Annee'],$d,$f);
-        $word->save($_SESSION['nf']);
-        $test = true;
+    $d = $_POST["debut"];
+    $f = $_POST["fin"];
+    $_SESSION['nf'] = trim($_SESSION['nf'], '"');
+    $word = new Word();
+    // $_SESSION['semaine'] contient data
+    $word->Cadre($_SESSION['semaine'], 'Formateur', $_SESSION['nf'], $_SESSION['Annee'], $d, $f);
+    $word->save($_SESSION['nf']);
+    $test = true;
 }
 
 if (isset($_POST['word_all'])) {
 
-        $d = $_POST["debut"];
-        $f = $_POST["fin"];
-        $word = new Word();
-        foreach($Formateurs as $frm):
+    $d = $_POST["debut"];
+    $f = $_POST["fin"];
+    $word = new Word();
+    foreach ($Formateurs as $frm) :
 
-            $emploiFor = $empF->getEmploiFormateur($anne[0], $codetb, $frm['Matricule']);    
-            $_SESSION['semaine'] = Separer($emploiFor);        
-            $nf = $frm['NomPr'];
-            // $_SESSION['semaine'] contient data
-            $word->Cadre($_SESSION['semaine'], 'Formateur', $nf, $_SESSION['Annee'],$d,$f);
-            
-        endforeach;
-        $word->save($nf);
+        $emploiFor = $empF->getEmploiFormateur($anne[0], $codetb, $frm['Matricule']);
+        $_SESSION['semaine'] = Separer($emploiFor);
+        $nf = $frm['NomPr'];
+        // $_SESSION['semaine'] contient data
+        $word->Cadre($_SESSION['semaine'], 'Formateur', $nf, $_SESSION['Annee'], $d, $f);
+
+    endforeach;
+    $word->save($nf);
 }
 
 function Separer($table)
@@ -149,7 +156,7 @@ function Separer($table)
                 for ($i = 1; $i < 5; $i++) {
                     if ($data['Seance'] == $i) {
                         if ($infomation[$k][$i - 1] == "")
-                            $infomation[$k][$i - 1] = $data['CodeGrp'] . '//' . $data['DescpMd'] . '//' . $data['CodeSl'] . '  ' . $data['TypeSc'].'//';
+                            $infomation[$k][$i - 1] = $data['CodeGrp'] . '//' . $data['DescpMd'] . '//' . $data['CodeSl'] . '  ' . $data['TypeSc'] . '//';
                         else
                             $infomation[$k][$i - 1] .= " " . $data['CodeGrp'];
                     }
@@ -160,5 +167,5 @@ function Separer($table)
     return $infomation;
 }
 
-if (!isset($_POST['formateur']) )
+if (!isset($_POST['formateur']))
     require "../View/V_Emploi_Formateur.php";

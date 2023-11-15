@@ -286,7 +286,18 @@
                 <tbody>
                     <?php
 
+                    $top10 = [];
                     foreach ($TopAbsenceStagiaire as $stg) {
+
+                        if ($_SESSION["Admin"]["Poste"] == "ChefSecteur") {
+                            if ($stg[6] == $_SESSION["Admin"]["secteur"]) {
+                                $top10[] = $stg;
+                            }
+                        } else {
+                            $top10[] = $stg;
+                        }
+                    }
+                    foreach ($top10 as $stg) {
                         echo "<tr>";
                         echo "<td>$stg[0]</td>";
                         echo "<td>$stg[1]</td>";

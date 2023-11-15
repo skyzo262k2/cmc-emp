@@ -19,7 +19,11 @@ $AnneeFr = $annees[0];
 
 $absencestg->connexion();
 if (isset($_SESSION["Admin"]))
-    $groupes = AbsenceStagiaire::$cnx->query("select distinct groupe from stagiaire where Etab = '$CodeEtab' order by groupe")->fetchAll(PDO::FETCH_NUM);
+    if ($_SESSION["Admin"]["Poste"] != "ChefSecteur")
+        $groupes = AbsenceStagiaire::$cnx->query("select distinct s.groupe from stagiaire s where s.Etab = '$CodeEtab' and s.AnneF = '$AnneeFr' order by s.groupe")->fetchAll(PDO::FETCH_NUM);
+    else
+        $groupes = AbsenceStagiaire::$cnx->query("select distinct s.groupe from stagiaire s inner join groupe g on g.CodeGrp = s.groupe inner join filiere f using(CodeFlr)
+    where s.Etab = '$CodeEtab' and s.AnneF = '$AnneeFr' and f.CodeSect ='" . $_SESSION["Admin"]["secteur"] . "'   order by s.groupe")->fetchAll(PDO::FETCH_NUM);
 else {
     $mat = $_SESSION["userFormateur"]["Matricule"];
     $groupes = AbsenceStagiaire::$cnx->query("call SP_GroupeAffecterByFormateurAnneeEtab(\"$mat\",\"$annees[0]\",\"$CodeEtab\")")->fetchAll(PDO::FETCH_NUM);
@@ -55,8 +59,8 @@ if (isset($_POST["dtdebut"]) && isset($_POST["dtfin"]) && isset($_POST["seance"]
     $type = $_POST["type"];
     $texttype = $type === "A" ? "Absence" : "Retard";
     $ConsParEtabAbsence = $absencestg->GetConsulterAbsence($dtd, $dtf, $seance, $grp, $stg, $AnneeFr, $CodeEtab, $type);
-    $ConsParEtabGrpNonAbsence = $absencestg->GetGroupeNonAbsence($dtd, $dtf, $type, $seance, $AnneeFr, $CodeEtab);
-    $ConsParEtabStgNonAbsenceByGrp = $absencestg->GetStagiaireNonAbsencebyGroupe($dtd, $dtf, $type, $seance, $AnneeFr, $CodeEtab, $grp);
+    // $ConsParEtabGrpNonAbsence = $absencestg->GetGroupeNonAbsence($dtd, $dtf, $type, $seance, $AnneeFr, $CodeEtab);
+    // $ConsParEtabStgNonAbsenceByGrp = $absencestg->GetStagiaireNonAbsencebyGroupe($dtd, $dtf, $type, $seance, $AnneeFr, $CodeEtab, $grp);
 
     // print_r($ConsParEtabAbsence);
 
@@ -65,10 +69,20 @@ if (isset($_POST["dtdebut"]) && isset($_POST["dtfin"]) && isset($_POST["seance"]
         if (($seance == "choisir" and $grp == "choisir" and $stg == "choisir") || ($seance != "choisir" and $grp == "choisir" and $stg == "choisir")) {
 
             if (count($ConsParEtabAbsence) != 0) {
+                $ab_groupes = [];
+                foreach ($ConsParEtabAbsence as $grp_loop) {
+                    if ($_SESSION["Admin"]["Poste"] == "ChefSecteur") {
+                        if ($grp_loop[2] == $_SESSION["Admin"]["secteur"]) {
+                            $ab_groupes[] = $grp_loop;
+                        }
+                    } else {
+                        $ab_groupes[] = $grp_loop;
+                    }
+                }
                 echo  "<tr>
                     <th>Groupe</th>
                     <th>Nombre $texttype</th></tr>";
-                foreach ($ConsParEtabAbsence as $con) {
+                foreach ($ab_groupes as $con) {
                     foreach ($groupes as $g) {
                         // print_r($g);
                         if ($con[0] == $g[0]) {
@@ -108,10 +122,10 @@ if (isset($_POST["dtdebut"]) && isset($_POST["dtfin"]) && isset($_POST["seance"]
             <th>justify</th>
             </tr>";
             foreach ($ConsParEtabAbsence as $con) {
-                if($con[5] == "-"){
+                if ($con[5] == "-") {
                     $f = "-";
                     $m = "-";
-                }else{
+                } else {
                     $absencestg->connexion();
                     $data = AbsenceStagiaire::$cnx->query("select m.DescpMd,a.matricule from Modules m inner join affectModule a on a.ModuleCode = m.CodeMd 
                     inner join groupe g on g.Codegrp = a.groupe
@@ -164,12 +178,19 @@ if (isset($_POST["dtdebut"]) && isset($_POST["dtfin"]) && isset($_POST["seance"]
     // echo $dtD . "  -  " . $dtF . "  -  " . $seance . "  -  " . $grp . "  -  " . $stg."<br>";
     $Absence = [0];
     $Retard = [0];
-    if ($grp == "choisir" && isset($_SESSION["userFormateur"])) {
-        $Absence = [0];
-        $Retard = [0];
+    if (isset($_SESSION["userFormateur"])) {
+        if ($grp == "choisir" && isset($_SESSION["userFormateur"])) {
+            $Absence = [0];
+            $Retard = [0];
+        }
     } else {
-        $Absence = $absencestg->GetSatatistique($dtD, $dtF, $seance, $grp, $stg, $AnneeFr, $CodeEtab, "A");
-        $Retard = $absencestg->GetSatatistique($dtD, $dtF, $seance, $grp, $stg, $AnneeFr, $CodeEtab, "R");
+        if ($_SESSION["Admin"]["Poste"] == "ChefSecteur") {
+            $Absence = $absencestg->GetSatatistiqueBySecteur($dtD, $dtF, $seance, $grp, $stg, $AnneeFr, $CodeEtab, "A", $_SESSION["Admin"]["secteur"]);
+            $Retard = $absencestg->GetSatatistiqueBySecteur($dtD, $dtF, $seance, $grp, $stg, $AnneeFr, $CodeEtab, "R", $_SESSION["Admin"]["secteur"]);
+        } else {
+            $Absence = $absencestg->GetSatatistique($dtD, $dtF, $seance, $grp, $stg, $AnneeFr, $CodeEtab, "A");
+            $Retard = $absencestg->GetSatatistique($dtD, $dtF, $seance, $grp, $stg, $AnneeFr, $CodeEtab, "R");
+        }
     }
 
     echo "<div class='row nb_statistique'>
@@ -190,8 +211,18 @@ if (isset($_POST["dtdebut"]) && isset($_POST["dtfin"]) && isset($_POST["seance"]
             </div>";
     if ($dtD != "" && $dtF != "" && $seance == "choisir" && $grp == "choisir" &&  $stg == "choisir") {
         if (isset($_SESSION["Admin"])) {
-
             $TopAbsenceStagiaire = $absencestg->GetTopAbsenceStagiaire($dtD, $dtF, "A", $AnneeFr, $CodeEtab);
+            $top10 = [];
+            foreach ($TopAbsenceStagiaire as $stg) {
+
+                if ($_SESSION["Admin"]["Poste"] == "ChefSecteur") {
+                    if ($stg[6] == $_SESSION["Admin"]["secteur"]) {
+                        $top10[] = $stg;
+                    }
+                } else {
+                    $top10[] = $stg;
+                }
+            }
             echo " <div class='m-5'  id='informations'>
         <div>
             <b>Absences Stagiaire : Top 10 </b>
@@ -209,7 +240,7 @@ if (isset($_POST["dtdebut"]) && isset($_POST["dtfin"]) && isset($_POST["seance"]
                     </thead>
                     <tbody>";
 
-            foreach ($TopAbsenceStagiaire as $stg) {
+            foreach ($top10 as $stg) {
                 echo "<tr>";
                 echo "<td>$stg[0]</td>";
                 echo "<td>$stg[1]</td>";
@@ -230,8 +261,13 @@ if (isset($_POST["dtdebut"]) && isset($_POST["dtfin"]) && isset($_POST["seance"]
     $Absence = [0];
     $Retard = [0];
     if (isset($_SESSION["Admin"])) {
-        $Absence = $absencestg->GetSatatistique($datedebut, $sysdate, "choisir", "choisir", "choisir", $AnneeFr, $CodeEtab, "A");
-        $Retard = $absencestg->GetSatatistique($datedebut, $sysdate, "choisir", "choisir", "choisir", $AnneeFr, $CodeEtab, "R");
+        if ($_SESSION["Admin"]["Poste"] == "ChefSecteur") {
+            $Absence = $absencestg->GetSatatistiqueBySecteur($datedebut, $sysdate, "choisir", "choisir", "choisir", $AnneeFr, $CodeEtab, "A", $_SESSION["Admin"]["secteur"]);
+            $Retard = $absencestg->GetSatatistiqueBySecteur($datedebut, $sysdate, "choisir", "choisir", "choisir", $AnneeFr, $CodeEtab, "R", $_SESSION["Admin"]["secteur"]);
+        } else {
+            $Absence = $absencestg->GetSatatistique($datedebut, $sysdate, "choisir", "choisir", "choisir", $AnneeFr, $CodeEtab, "A");
+            $Retard = $absencestg->GetSatatistique($datedebut, $sysdate, "choisir", "choisir", "choisir", $AnneeFr, $CodeEtab, "R");
+        }
         $TopAbsenceStagiaire = $absencestg->GetTopAbsenceStagiaire($datedebut, $sysdate, "A", $AnneeFr, $CodeEtab);
     }
     require "../View/V_ConsulterAbsenceStagiaire.php";

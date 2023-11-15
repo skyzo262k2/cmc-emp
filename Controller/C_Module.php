@@ -9,6 +9,9 @@ if (!isset($_SESSION["Admin"]) || $_SESSION["Admin"]["Poste"] == "Surveille") {
 
 $info = "";
 
+$poste = $_SESSION['Admin']['Poste'];
+$secteur = isset($_SESSION['Admin']['secteur']) ? $_SESSION['Admin']['secteur'] : null;
+
 
 function GetTablePage($tab, $nb)
 {
@@ -45,7 +48,7 @@ if (!isset($_GET["get"])) {
 }
 
 if (isset($_POST["sup"])) {
-    $info = explode(",",$_POST["sup"]);
+    $info = explode(",", $_POST["sup"]);
     $Module->CodeMd = $info[0];
     $Module->CodeFlr = $info[1];
     $Module->DeleteModules();
@@ -92,12 +95,18 @@ if (isset($_GET['info'])) {
     $info = $_GET['info'];
     $_SESSION["rechinfomodule"] = $info;
     if ($info == "") {
-        $_SESSION['modules'] = $Module->GetAllModules();
+        if ($poste != "ChefSecteur")
+            $_SESSION['modules'] = $Module->GetAllModules();
+        else
+            $_SESSION['modules'] = $Module->GetModulesSecteur($secteur);
     } else {
         $Module->connexion();
-        $_SESSION['modules'] = $Module::$cnx->query("call sp_RechercherGlobal('$info','$tblName','$CodeEtab')")->fetchAll(PDO::FETCH_ASSOC);
-    }
 
+        if ($poste != "ChefSecteur")
+            $_SESSION['modules'] = $Module::$cnx->query("call sp_RechercherGlobal('$info','$tblName','$CodeEtab')")->fetchAll(PDO::FETCH_ASSOC);
+        else
+            $_SESSION['modules'] = $Module::$cnx->query("call sp_RechercherGlobalSecteur('$info','$tblName','$CodeEtab','$secteur')")->fetchAll(PDO::FETCH_ASSOC);
+    }
     echo " <div class='pagi_sup'>
 
     <div class='pagination'>";
@@ -139,13 +148,23 @@ if (isset($_GET['info'])) {
     if (isset($_SESSION["rechinfomodule"])) {
         $info = $_SESSION["rechinfomodule"];
         if ($info == "") {
-            $_SESSION['modules'] = $Module->GetAllModules();
+            if ($poste != "ChefSecteur")
+                $_SESSION['modules'] = $Module->GetAllModules();
+            else
+                $_SESSION['modules'] = $Module->GetModulesSecteur($secteur);
         } else {
+
             $Module->connexion();
-            $_SESSION['modules'] = $Module::$cnx->query("call sp_RechercherGlobal('$info','$tblName','$CodeEtab')")->fetchAll(PDO::FETCH_ASSOC);
+            if ($poste != "ChefSecteur")
+                $_SESSION['modules'] = $Module::$cnx->query("call sp_RechercherGlobal('$info','$tblName','$CodeEtab')")->fetchAll(PDO::FETCH_ASSOC);
+            else
+                $_SESSION['modules'] = $Module::$cnx->query("call sp_RechercherGlobalSecteur('$info','$tblName','$CodeEtab','$secteur')")->fetchAll(PDO::FETCH_ASSOC);
         }
     } else {
-        $_SESSION['modules'] = $Module->GetAllModules();
+        if ($poste != "ChefSecteur")
+            $_SESSION['modules'] = $Module->GetAllModules();
+        else
+            $_SESSION['modules'] = $Module->GetModulesSecteur($secteur);
     }
     require "../View/V_Module.php";
 }

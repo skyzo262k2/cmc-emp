@@ -12,6 +12,7 @@ class Formateur extends Connexion implements IMethodeCRUD
     public $Type;
     public $MassHoraire;
     public $Password;
+    public $Secteur;
     // public $Validateur;
     function __construct()
     {
@@ -25,13 +26,21 @@ class Formateur extends Connexion implements IMethodeCRUD
         return $rows;
     }
 
+    public function GetFormateurSecteur($secteur,$anne)
+    {
+        parent::connexion();
+        $rows = parent::$cnx->query("call SP_GetFormateurSecteur('{$anne}','{$this->CodeEtab}','{$secteur}')")->fetchAll(PDO::FETCH_ASSOC);
+        parent::Deconnexion();
+        return $rows;
+    }
+    
     public function Add()
     {
         try {
             parent::connexion();
-            $query = "CALL SP_InsertFormateur(?,?,?,?,?,?,?)";
+            $query = "CALL SP_InsertFormateur(?,?,?,?,?,?,?,?)";
             $n = parent::$cnx->prepare($query);
-            $n->execute(array($this->Matricule, $this->Nom, $this->Prenom, $this->CodeEtab, $this->Type, $this->MassHoraire,$this->Password));
+            $n->execute(array($this->Matricule, $this->Nom, $this->Prenom, $this->CodeEtab, $this->Type, $this->MassHoraire,$this->Password,$this->Secteur));
         } catch (PDOException  $er) {
         }
         parent::Deconnexion();
@@ -40,9 +49,9 @@ class Formateur extends Connexion implements IMethodeCRUD
     public function Update()
     {
         parent::connexion();
-        $query = "call SP_UpdateFormateur(?,?,?,?,?,?)";
+        $query = "call SP_UpdateFormateur(?,?,?,?,?,?,?)";
         $n = parent::$cnx->prepare($query);
-        $n->execute(array($this->Matricule, $this->Nom, $this->Prenom, $this->CodeEtab, $this->Type, $this->MassHoraire));
+        $n->execute(array($this->Matricule, $this->Nom, $this->Prenom, $this->CodeEtab, $this->Type, $this->MassHoraire,$this->Secteur));
         parent::Deconnexion();
     }
 
@@ -68,6 +77,20 @@ class Formateur extends Connexion implements IMethodeCRUD
         try {
             parent::connexion();
             $rows = parent::$cnx->query("call sp_RechercherGlobal('$val','F','{$this->CodeEtab}')")->fetchAll(PDO::FETCH_ASSOC);
+            parent::Deconnexion();
+        } catch (Exception $ex) {
+            // Exception
+        }
+        return $rows;
+    }
+
+
+    public function FindSecteur($val,$secteur)
+    {
+        $rows = [];
+        try {
+            parent::connexion();
+            $rows = parent::$cnx->query("call sp_RechercherGlobalSecteur('$val','F','{$this->CodeEtab}','{$secteur}')")->fetchAll(PDO::FETCH_ASSOC);
             parent::Deconnexion();
         } catch (Exception $ex) {
             // Exception

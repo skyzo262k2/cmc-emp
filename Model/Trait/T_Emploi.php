@@ -14,6 +14,18 @@ trait TEmploi
         return $groupes;
     }
 
+    
+    public function GetAllGroupesParSeteur($codeetab, $anne,$secteur)
+    {
+        parent::connexion();
+        $req = "CALL Sp_GetAllGroupes_EmploiSecteur('$codeetab','$anne','$secteur')";
+        $groupes = parent::$cnx->query($req)->FetchAll(PDO::FETCH_ASSOC);
+        parent::Deconnexion();
+        return $groupes;
+    }
+
+
+
     public function EmploiGroupes($codeetab, $anne, $cdgrp)
     {
         parent::connexion();
