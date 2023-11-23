@@ -84,20 +84,22 @@
             var x = new XMLHttpRequest()
             x.open('GET', '../Controller/C_Surveille.php?info=' + val, true)
             x.onreadystatechange = function() {
-                if (this.readyState == 4 && this.status == 200) {                    
+                if (this.readyState == 4 && this.status == 200) {
                     document.getElementById('infomations').innerHTML = this.responseText;
                 }
             }
             x.send();
         }
-        function Secteur(slc)
-        {
-            let secteur=document.getElementById('secteur')
-            if(slc.value=="ChefSecteur")
-            {
-                secteur.hidden=false
-            }else{
-                secteur.hidden=true
+        setTimeout(function() {
+            document.querySelector('.message').style.display = 'none';
+        }, 5000);
+
+        function Secteur(slc) {
+            let secteur = document.getElementById('secteur')
+            if (slc.value == "ChefSecteur") {
+                secteur.hidden = false
+            } else {
+                secteur.hidden = true
             }
         }
     </script>
@@ -106,24 +108,22 @@
 
 <body>
     <div class="row header">
-        <div class="col-4 title">
-            Gestion Utilisateur
-        </div>
-        <div class="col-2"></div>
-        <div class="col-4 recherche">
+
+        <div class="col-4"></div>
+        <div class="col-8 recherche">
             <form action="" method="post" id="form">
-                <input type="text" id="formateur" class="form-control inp-recherche" name="formateur" value="<?php echo $info; ?>" onkeyup="Recherche()" placeholder="Recherche ....">
+                <input type="text" id="formateur" class="form-control inp-recherche" name="formateur" value="<?= htmlspecialchars($info) ?>" onkeyup="Recherche()" placeholder="Recherche ....">
             </form>
         </div>
-        <div class="col-2"></div>
     </div>
 
     <div class="row content">
         <div class="col-8 justify-content-center position-absolute end-0" id="infomations">
-
+            
+        <?php if (count($_SESSION["Surveilles"]) > 0) : ?>
             <div class="pagi_sup">
                 <?php if (count($_SESSION['Surveilles']) != 0) : ?>
-                    
+
                     <div class="pagination">
                         <?php
                         $Surveilles = $Pag->Pagination_Btn($_SESSION["Surveilles"], $_GET['get']);
@@ -152,12 +152,21 @@
                         </tr>
                     </thead>
                     <tbody>
-                            <?php $Pag->GetTablePage($_SESSION["Surveilles"], $_GET["get"],'formateur'); ?>
+                        <?php $Pag->GetTablePage($_SESSION["Surveilles"], $_GET["get"], 'formateur'); ?>
                     </tbody>
                 </table>
             </div>
+            
+            <?php else : ?>
+                <div><img src='../Images/nodata.jpg' alt='' /></div>
+            <?php endif; ?>
         </div>
         <div class="col-4 justify-content-center  position-fixed start-0">
+        <div class="title">
+                Gestion des Utilisateurs
+            </div>
+
+            <div class='message'><?= $message ?></div>
             <form action="" method="post" id="form">
                 <div class="form-groupe m-4">
                     <input type="text" class="inputs form-control" maxlength="15" name="tMatricule" id="tMatricule" placeholder="Matricule">
@@ -177,11 +186,11 @@
                 </div>
 
                 <div class="form-groupe m-4">
-                    <select name="secteur" id="secteur" hidden  class="form-control">
+                    <select name="secteur" id="secteur" hidden class="form-control">
                         <option value="">Choisir Seteur</option>
-                        <?php foreach($AlSecteurs as  $value) {?>
-                            <option value="<?=$value['CodeSect']?>">
-                                <?=$value['DescpSect']?>
+                        <?php foreach ($AlSecteurs as  $value) { ?>
+                            <option value="<?= htmlspecialchars($value['CodeSect']) ?>">
+                                <?= htmlspecialchars($value['DescpSect']) ?>
                             </option>
                         <?php } ?>
                     </select>
@@ -196,4 +205,5 @@
         </div>
     </div>
 </body>
+
 </html>

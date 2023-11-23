@@ -29,7 +29,7 @@ if (isset($_POST["btnConnecte"])) {
                 $CodeEtab = $user['CodeEtab'];
                 $Etab = $conx::$cnx->query("SELECT * FROM etablissement WHERE CodeEtb='$CodeEtab'")->fetch(PDO::FETCH_ASSOC);
                 $_SESSION["Etablissement"] = $Etab;        
-                header("location:../Controller/C_Home.php");
+                header("location:../Controller/Application");
             } else
                 $erreurpassword = "Login or Password incorrect";
         } else {
@@ -42,7 +42,8 @@ if (isset($_POST["btnConnecte"])) {
                 $CodeEtab = $bol['CodeEtab'];
                 $Etab = $conx::$cnx->query("SELECT * FROM etablissement WHERE CodeEtb='$CodeEtab'")->fetch(PDO::FETCH_ASSOC);
                 $_SESSION["Etablissement"] = $Etab;
-                header("location:../Controller/C_Home.php");
+                
+                header("location:../Controller/Application");
             }
             $erreurpassword = "Login or Password incorrect";
         }

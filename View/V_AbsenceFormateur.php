@@ -15,14 +15,12 @@
         }
 
         .title {
-            margin: 15px;
             text-align: center;
         }
 
-        .title h4 {
+        .title h3 {
             color: blue;
             /* font-size: 2em; */
-            margin-bottom: 25px;
             animation: slideInFromTop 1s ease-in-out;
         }
 
@@ -70,16 +68,16 @@
                     }
                 };
                 request.send(`date=${date}&seance=${seance}`);
-            }else{
-                document.getElementById("informations").innerHTML = "";
+            } else {
+                document.getElementById("informations").innerHTML = "<div class='text-center m-5'>  <img src='../Images/nodata.jpg' width='250px' alt='aucun données' />  </div>";
             }
 
         }
 
+    
 
 
         function tout_checked(chek) {
-            // alert("abilal")
             let bottons_check = document.getElementsByClassName("checked_input");
             if (chek.checked == true) {
                 for (i = 0; i < bottons_check.length; i++) {
@@ -155,29 +153,32 @@
 <body>
 
 
-    <div class="title">
-        <h4>Absence Formateur</h4>
-    </div>
-    <div class="row">
-        <div class="col-3"></div>
-        <div class="col-3">
-            <!-- <label for="">Choisir Date Absence :</label> -->
-            <input type="date" name="date" id="date" value='<?php echo $sysdate ?>' class='form-control' onchange="ChangeDate()">
-        </div>
-        <div class="col-3">
-            <!-- <label for="">Choisir Seance :</label> -->
-            <select name="seance" id="seance" class='form-control' onchange="ChangeDate()">
-                <option value="choisir">Choisir Seance</option>
-                <option value="1">8:30H - 11:00</option>
-                <option value="2">11:00H - 13:30</option>
-                <option value="3">13:30H - 16:00</option>
-                <option value="4">16:00H - 18:30</option>
-            </select>
-        </div>
-        <div class="col-3"></div>
-    </div>
-    <div id="informations" class="m-4">
 
+    <div class="container-fluid">
+        <div class="row m-5">
+            <div class="col-4">
+                <div class="title">
+                    <h3>Absences des formateurs</h3>
+                </div>
+            </div>
+            <div class="col-3">
+                <input type="date" name="date" id="date" value='<?= $sysdate ?>' class='form-control' onchange="ChangeDate()">
+            </div>
+            <div class="col-3">
+                <select name="seance" id="seance" class='form-control' onchange="ChangeDate()">
+                    <option value="choisir">Choisir Seance</option>
+                    <option value="1">8:30H - 11:00</option>
+                    <option value="2">11:00H - 13:30</option>
+                    <option value="3">13:30H - 16:00</option>
+                    <option value="4">16:00H - 18:30</option>
+                </select>
+            </div>
+        </div>
+    </div>
+    <div id="informations">
+        <div class='text-center m-5'>
+            <img src='../Images/nodata.jpg' width='250px' alt='aucun données' />
+        </div>
     </div>
 </body>
 

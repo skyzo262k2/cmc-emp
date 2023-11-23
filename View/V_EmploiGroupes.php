@@ -5,34 +5,34 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../Css/Bootstrap/css/bootstrap.min.css">
+    <script src="../Css/Bootstrap/js/bootstrap.bundle.min.js"></script>
     <title>Document</title>
     <script>
-
-        function GetGroupFormateur(){
+        function GetGroupFormateur() {
             let urlParams = new URLSearchParams(window.location.search);
-            if(urlParams.has('Matricule'))
-            {
-                let mat=urlParams.get('Matricule')
-                mat=mat.split('/')[0]
+            if (urlParams.has('Matricule')) {
+                let mat = urlParams.get('Matricule')
+                mat = mat.split('/')[0]
                 ajax.Ajax(`Matricule=${mat}`, (er, data) => {
                     console.log(data);
-                    
+
                     let groupes = JSON.parse(data);
                     console.log(groupes);
-                    for(group of groupes){
+                    for (group of groupes) {
                         document.getElementsByName(group.Groupe)[0].checked = true;
                     }
                     document.getElementById('vld').click();
                 })
-            } 
+            }
         }
-        
+
         function Creation(tab) {
 
             let semaine = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'];
             let rows = ''
             for (let index = 0; index < tab.length; index++) {
-                rows += `<tr><td>${tab[index][0].CodeGrp}</td>`
+                rows += `<tr><th class='text-success'>${tab[index][0].CodeGrp}</th>`
                 for (let indx = 0; indx < semaine.length; indx++) {
                     for (let id = 1; id < 5; id++) {
                         rows += `<td onclick="openF(this)" class='tdinf' id="${tab[index][0].CodeGrp}/${semaine[indx]}/${id}"></td>`
@@ -176,7 +176,7 @@
         const ajax = new EmploiAjax('../Controller/C_Emploi_Groupes.php');
         var formateur;
 
-        function EmploiGroupes(){
+        function EmploiGroupes() {
             let relaod = document.getElementById('relaod')
             relaod.hidden = true
             let checked = document.querySelectorAll('#check')
@@ -187,7 +187,7 @@
                     groupes.push(checked[index].value)
             }
 
-           if(groupes.length>0){
+            if (groupes.length > 0) {
 
                 relaod.hidden = false
                 ajax.Ajax(`Valider=''&groupes=${JSON.stringify(groupes)}`, (er, data) => {
@@ -307,6 +307,7 @@
                 })
             }
         }
+
         function Modifier() {
 
             let group = document.getElementById('grp').value
@@ -338,7 +339,9 @@
         GetGroupFormateur();
     </script>
     <style>
-        input[type="button"],#relaod,input[type="reset"] {
+        input[type="button"],
+        #relaod,
+        input[type="reset"] {
             background-color: blue;
             color: white;
             padding: 10px 20px;
@@ -350,7 +353,7 @@
             transition: all 0.2s ease-in-out;
         }
 
-        center h1 {
+        center h3 {
             color: blue;
             animation: slideInFromTop 1s ease-in-out;
         }
@@ -365,7 +368,9 @@
             }
         }
 
-        input[type="button"]:active,input[type="reset"]:active,#relaod:active {
+        input[type="button"]:active,
+        input[type="reset"]:active,
+        #relaod:active {
             transform: translateY(0px);
             box-shadow: none;
         }
@@ -470,6 +475,7 @@
             transform: translate(-50%, -50%);
             /* width: 600px; */
             display: none;
+            height: 550px;
         }
 
         #popup #fermer {
@@ -549,134 +555,148 @@
         }
     </style>
 </head>
+
 <body>
-    <center>
-        <h1>Emploi Brouillon Large</h1>
-    </center>
-    <form action="" method="post">
-
-        <details id="detail">
-            <summary>Groupes</summary>
+    <div class="container-fluid">
+        <div class="m-3">
             <center>
-                <div class="container">
-                    <table border="1">
-                        <?php
-                        $i = 0;
-                        foreach ($_SESSION['groupes'] as $grp) {
+                <h3>Emploi Brouillon Large</h3>
+            </center>
+        </div>
+        <form action="" method="post">
+            <details id="detail" class="border p-2">
+                <summary>Groupes</summary>
+                <center>
+                    <div class="">
+                        <table border="1" class="table table-bordered">
+                            <?php
+                            $i = 0;
+                            foreach ($_SESSION['groupes'] as $grp) {
 
-                            if ($i == 9) echo "<tr>";
-                            echo "<td>
+                                if ($i == 9) echo "<tr>";
+                                echo "<td>
                     <input type='checkbox' id='check'  name='" . $grp['CodeGrp'] . "'  value='" . $grp['CodeGrp'] . "'></td>
                     <td>" . $grp['CodeGrp'] . "</td>";
-                            $i++;
-                            if ($i == 9) {
-                                echo "</tr>";
-                                $i = 0;
-                            };
+                                $i++;
+                                if ($i == 9) {
+                                    echo "</tr>";
+                                    $i = 0;
+                                };
+                            }
+                            ?>
+                        </table>
+                    </div>
+                    <input type="button" onclick="EmploiGroupes()" id="vld" name="Valider" value="Valider">
+                    <input type="reset" value="reset" />
+                </center>
+            </details>
+        </form>
+
+        <form action="" method="post">
+            <div class="text-end">
+                <input type="button" onclick="Utiliser()" value='Utiliser' name='utl'>
+                <button onclick="EmploiGroupes()" id="relaod" hidden type="button">
+                    reload
+                </button>
+            </div>
+            <table border="1" id="table" class="table table-bordered">
+                <tr>
+                    <th width="10%">Jour</th>
+                    <th id='td' colspan="4">Lundi</th>
+                    <th id='td' colspan="4">Mardi</th>
+                    <th id='td' colspan="4">Mercredi</th>
+                    <th id='td' colspan="4">Jeudi</th>
+                    <th id='td' colspan="4">Vendredi</th>
+                    <th id='td' colspan="4">Samedi</th>
+                </tr>
+                <tr>
+                    <th>Séance<br />Groupes</th>
+                    <script>
+                        for (let index = 0; index < 6; index++) {
+                            for (let index = 1; index < 5; index++) {
+                                document.write(`<th>${index}</th>`)
+                            }
                         }
-                        ?>
-                    </table>
-                </div>
-                <input type="button" onclick="EmploiGroupes()" id="vld" name="Valider" value="Valider">
-                <input type="reset" value="reset"/>
-            </center>
-        </details>
-    </form>
-    <form action="" method="post">
-        <input type="button" onclick="Utiliser()" value='Utiliser' name='utl'>
-        <button onclick="EmploiGroupes()" id="relaod" hidden type="button">
-                reload
-            </button>
-        <table border="1" id="table">
-            <tr>
-                <td>Jour</td>
-                <td id='td' colspan="4">Lundi</td>
-                <td id='td' colspan="4">Mardi</td>
-                <td id='td' colspan="4">Mercredi</td>
-                <td id='td' colspan="4">Jeudi</td>
-                <td id='td' colspan="4">Vendredi</td>
-                <td id='td' colspan="4">Samedi</td>
-            </tr>
-            <tr>
-                <td>Séance<br />Groupes</td>
-                <script>
-                    for (let index = 0; index < 6; index++) {
-                        for (let index = 1; index < 5; index++) {
-                            document.write(`<td>${index}</td>`)
-                        }
-                    }
-                </script>
-            </tr>
-            <tbody id="data">
+                    </script>
+                </tr>
+                <tbody id="data">
 
-            </tbody>
-        </table>
-        </div>
-        <div id="popup">
-            <center>
-                <input type="button" value="X" onclick="Fermer()" id='fermer'>
-                <input type="hidden" value="<?= $hidden ?>" id="hidd" name="hidden">
-                <input type="hidden" value="" id="frm_hid" name="hidden">
-                <div id="inp">
-                    <label>Groupe:</label>
-                    <input type="text" readonly value="<?= $grop ?>" name="grp" id="grp"><br>
-                    <label>Jour :</label>
-                    <input type="text" readonly value="<?= $jour ?>" name="jour" id="jour"><br>
-                    <label>Seance :</label>
-                    <input type="text" readonly value="<?= $seance ?>" name="seance" id="seance">
-                    <p id="p" style="color:red;">
+                </tbody>
+            </table>
 
-                    </p>
-                </div>
-                <div id="supprimer" <?= $hiddensup ?>>
+            <div id="popup">
+                <center>
+                    <input type="button" value="X" onclick="Fermer()" id='fermer'>
+                    <input type="hidden" value="<?= $hidden ?>" id="hidd" name="hidden">
+                    <input type="hidden" value="" id="frm_hid" name="hidden">
+                    <div id="inp">
+                        <label>Groupe:</label>
+                        <input type="text" readonly value="<?= $grop ?>" name="grp" id="grp"><br>
+                        <label>Jour :</label>
+                        <input type="text" readonly value="<?= $jour ?>" name="jour" id="jour"><br>
+                        <label>Seance :</label>
+                        <input type="text" readonly value="<?= $seance ?>" name="seance" id="seance">
+                        <p id="p" style="color:red;">
 
-                    <p><strong>Formateur :</strong></p> <input type="text" readonly id="sup_frm" name="sup_frm">
-                    <p><strong>Type Seance :</strong></p> <input type="text" readonly id="sup_typsc" name="sup_typsc">
-                    <p><strong>Salle :</strong></p>
-                    <!-- <input type="text" readonly id="sup_sal" name="sup_sal"> -->
-                    <select name="sup_sal" id="sup_sal">
-                        <option value=""></option>
-                    </select>
-                    <p><strong>Module :</strong></p>
-                    <!-- <input type="text" readonly id="sup_mdl" name="sup_mdl"><br><br> -->
-                    <select name="sup_mdl" id="sup_mdl">
-                        <option value=""></option>
-                    </select>
-                    <br><br>
-                    <input type="button" onclick="Supprimer()" value="supprimer" id="sup" name="sup">
-                    <input type="button" onclick="Modifier()" value="Modifier" name="mod">
+                        </p>
+                    </div>
+                    <div id="supprimer" <?= $hiddensup ?> class="m-3">
 
-                </div>
-                <div id="ajouter">
-                    <h2>Ajouter leçon</h2>
-                    <label for="Form"><strong>Formateur :</strong></label><br>
-                    <select class="inputs" name="frm" onchange="FormateurC(this)" id="Form">
-                        <option value="<?php if (isset($mat)) echo $mat . '/' . $nomp; ?>"><?php if (isset($nomp)) echo $nomp; ?></option>
-                        <!-- Remplit par un script js -->
-                    </select>
-                    <br>
-                    <label for="type"><strong>Type Séance :</strong></label><br>
-                    <select class="inputs" name="typesc" <?= $blocktype ?> onchange="TypeSeance(this)" id="type">
-                        <option value="<?php if (isset($types)) echo $types; ?>"><?php if (isset($types)) echo $types; ?></option>
-                        <option value="Présentiel">Présentiel</option>
-                        <option value="Distance">Distance</option>
-                    </select>
-                    <br>
-                    <div class="salles">
-                        <label for="sal"><strong>Salle :</strong></label><br>
-                        <select class="inputs" name="salle" <?= $blocksalle ?> id="sal">
-                            <option value=""></option>
-                        </select>
-                        <div id="meme">
+                        <div id="inp">
+                            <p class='d-flex'><span class="fw-bold w-25  p-2 text-end"  width='120px'>Formateur : </span> <input type="text" class="w-75" readonly id="sup_frm" name="sup_frm"></p>
+                            <p class='d-flex'><span class="fw-bold w-25  p-2 text-end" width='120px'>Type Seance : </span><input type="text" class="w-75" readonly id="sup_typsc" name="sup_typsc"></p>
+                            <p class='d-flex'>
+                                <span class="fw-bold  w-25 text-end p-2">Salle : </span>
+                                <!-- <input type="text" readonly id="sup_sal" name="sup_sal"> -->
+                                <select name="sup_sal" id="sup_sal" class="w-75">
+                                    <option value=""></option>
+                                </select>
+                            </p>
+                            <p class='d-flex'>
+                                <span class="fw-bold w-25 text-end p-2">Module : </span>
+                                <!-- <input type="text" readonly id="sup_mdl" name="sup_mdl"><br><br> -->
+                                <select name="sup_mdl" id="sup_mdl" class="w-75">
+                                    <option value=""></option>
+                                </select>
+                            </p>
+                        </div>
+                        <input type="button" onclick="Supprimer()" value="supprimer" id="sup" name="sup">
+                        <input type="button" onclick="Modifier()" value="Modifier" name="mod">
+
+                    </div>
+                    <div id="ajouter">
+                        <div id="inp">
+                            <label for="Form" width="w-100"><span class="fw-bold">Formateur: </span></label>
+                            <select class="inputs" name="frm" onchange="FormateurC(this)" id="Form">
+                                <option value="<?php if (isset($mat)) echo $mat . '/' . $nomp; ?>"><?php if (isset($nomp)) echo $nomp; ?></option>
+                                <!-- Remplit par un script js -->
+                            </select></br>
+                            <label for="type" width="w-100"><span class="fw-bold">Type : </span></label>
+                            <select class="inputs" name="typesc" <?= $blocktype ?> onchange="TypeSeance(this)" id="type">
+                                <option value="<?php if (isset($types)) echo $types; ?>"><?php if (isset($types)) echo $types; ?></option>
+                                <option value="Présentiel">Présentiel</option>
+                                <option value="Distance">Distance</option>
+                            </select></br>
+                            <div class="salles">
+                                <label for="sal" width="w-100"><span class="fw-bold">Salle: </span></label>
+                                <select class="inputs" name="salle" <?= $blocksalle ?> id="sal">
+                                    <option value=""></option>
+                                </select>
+
+                                <div id="meme">
+
+                                </div>
+                            </div>
 
                         </div>
+                        <br><br>
+                        <input type="button" onclick="Ajouter()" value="Ajouter" id='ajt' name="ajt">
                     </div>
-                    <br><br>
-                    <input type="button" onclick="Ajouter()" value="Ajouter" id='ajt' name="ajt">
-                </div>
-        </div>
-        </center>
-        </div>
-    </form>
+                </center>
+            </div>
+        </form>
+
+    </div>
 </body>
+
 </html>

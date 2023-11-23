@@ -13,7 +13,13 @@ $cnnx = new Connexion();
 $pdf = new FPDF('L', 'mm', 'A4');
 $cnnx->connexion();
 
-$Groupes = $cnnx::$cnx->query("select CodeGrp from Groupe where CodeEtab = '$CodeEtab'")->fetchAll(PDO::FETCH_NUM);
+if ($_SESSION["Admin"]["Poste"] == "ChefSecteur")
+    $Groupes = $cnnx::$cnx->query("select g.CodeGrp from Groupe g inner join Filiere f using(CodeFlr)  
+                                    where f.CodeSect = '" . $_SESSION["Admin"]["secteur"] . "' and CodeEtab = '$CodeEtab'")->fetchAll(PDO::FETCH_NUM);
+else
+    $Groupes = $cnnx::$cnx->query("select CodeGrp from Groupe where CodeEtab = '$CodeEtab'")->fetchAll(PDO::FETCH_NUM);
+
+
 $page = new PagePDF_Emploi($pdf, $_SESSION['Annee'], $_SESSION['Etablissement']["DescpFr"]);
 foreach ($Groupes as $Grp) {
     $T_Jours = [

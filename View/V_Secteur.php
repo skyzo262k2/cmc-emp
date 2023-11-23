@@ -90,6 +90,9 @@
             }
             x.send();
         }
+        setTimeout(function() {
+            document.querySelector('.message').style.display = 'none';
+        }, 5000);
     </script>
 </head>
 
@@ -98,44 +101,43 @@
 
 
     <div class="row header">
-        <div class="col-4 title">
-            Gestion Secteur
+
+        <div class="col-4"></div>
+
+        <div class="col-8 recherche">
+            <input type="text" id="secteur" class="form-control inp-recherche" name="secteur" value="<?= htmlspecialchars($info) ?>" onkeyup="Recherche()" placeholder="Recherche ....">
         </div>
-        <div class="col-2"></div>
-        <div class="col-4 recherche">
-            <input type="text" id="secteur" class="form-control inp-recherche" name="secteur" value="<?php echo $info; ?>" onkeyup="Recherche()" placeholder="Recherche ....">
-        </div>
-        <div class="col-2"></div>
     </div>
     <div class="row content">
-        <div class="col-8 justify-content-center position-absolute end-0"  id="infomations">
+        <div class="col-8 justify-content-center position-absolute end-0" id="infomations">
 
-            <div class="pagi_sup">
+            <?php if (count($_SESSION["Secteur"]) > 0) : ?>
+                <div class="pagi_sup">
 
-                <div class="pagination">
-                    <?php
-                    $tab = $page->Pagination_Btn($_SESSION['Secteur'], $_GET['get']);
-                    $page->Pagination_Nb($tab, $_GET['get']);
-                    ?>
+                    <div class="pagination">
+                        <?php
+                        $tab = $page->Pagination_Btn($_SESSION['Secteur'], $_GET['get']);
+                        $page->Pagination_Nb($tab, $_GET['get']);
+                        ?>
+                    </div>
+                    <div class="deleteAll">
+                        <form action="" method="post">
+                            <input type="submit" value="Supprimer tous" name="btnSupprimer" class="btn btn-primary end-0" onclick="return confirm('Tu es Sure pour Supprimer Tous ?')" id="btnSupprimer">
+                        </form>
+                    </div>
+
                 </div>
-                <div class="deleteAll">
-                    <form action="" method="post">
-                        <input type="submit" value="Supprimer tous" name="btnSupprimer" class="btn btn-primary end-0" onclick="return confirm('Tu es Sure pour Supprimer Tous ?')" id="btnSupprimer">
-                    </form>
-                </div>
 
-            </div>
+                <div class="table-affiche">
 
-            <div class="table-affiche">
-
-                <table class="table table-striped table-sm table-bordered">
-                    <thead>
-                        <tr class="table-success">
-                            <th scope="col">Code Secteur</th>
-                            <th scope="col">Description De Secteur</th>
-                            <th scope="col">Action</th>
-                        </tr>
-                    </thead>
+                    <table class="table table-striped table-sm table-bordered">
+                        <thead>
+                            <tr class="table-success">
+                                <th scope="col">Code Secteur</th>
+                                <th scope="col">Description De Secteur</th>
+                                <th scope="col">Action</th>
+                            </tr>
+                        </thead>
                         <tbody>
                             <?php
 
@@ -143,10 +145,18 @@
 
                             ?>
                         </tbody>
-                </table>
-            </div>
+                    </table>
+                </div>
+            <?php else : ?>
+                <div><img src='../Images/nodata.jpg' alt='' /></div>
+            <?php endif; ?>
         </div>
         <div class="col-4 justify-content-center  position-fixed start-0">
+            <div class="title">
+                Gestion des Secteurs
+            </div>
+            
+            <div class='message'><?= $message ?></div>
             <form action="" method="post" id="form">
                 <div class="form-groupe m-4">
                     <input type="text" name="tSect" maxlength="15" id="tSect" class="inputs form-control" placeholder="Code Secteur">

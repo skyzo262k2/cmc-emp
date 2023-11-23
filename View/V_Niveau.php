@@ -9,7 +9,7 @@
     <script src="../Css/Bootstrap/js/bootstrap.bundle.min.js"></script>
     <script src="../JS/re.js"></script>
 
-    <title>Secteurs</title>
+    <title>Niveaux</title>
     <style>
         .row {
             width: 95%;
@@ -90,6 +90,10 @@
             }
             x.send();
         }
+
+        setTimeout(function() {
+            document.querySelector('.message').style.display = 'none';
+        }, 5000);
     </script>
 
 </head>
@@ -98,14 +102,11 @@
 
 
     <div class="row header">
-        <div class="col-4 title">
-            Gestion Niveau
+
+        <div class="col-4"></div>
+        <div class="col-8 recherche">
+            <input type="text" id="niveau" class="form-control inp-recherche" name="niveau" value="<?= htmlspecialchars($info) ?>" onkeyup="Recherche()" placeholder="Recherche ....">
         </div>
-        <div class="col-2"></div>
-        <div class="col-4 recherche">
-            <input type="text" id="niveau" class="form-control inp-recherche" name="niveau" value="<?php echo $info; ?>" onkeyup="Recherche()" placeholder="Recherche ....">
-        </div>
-        <div class="col-2"></div>
     </div>
 
 
@@ -113,47 +114,57 @@
 
 
     <div class="row content">
-        <div class="col-8 justify-content-center position-absolute end-0"  id="infomations">
+        <div class="col-8 justify-content-center position-absolute end-0" id="infomations">
 
-            <div class="pagi_sup">
+            <?php if (count($_SESSION["Niveau"]) > 0) : ?>
+                <div class="pagi_sup">
 
-                <div class="pagination">
-                    <?php
-                    $tab = $page->Pagination_Btn($_SESSION['Niveau'], $_GET['get']);
-                    $page->Pagination_Nb($tab, $_GET['get']);
-                    ?>
+                    <div class="pagination">
+                        <?php
+                        $tab = $page->Pagination_Btn($_SESSION['Niveau'], $_GET['get']);
+                        $page->Pagination_Nb($tab, $_GET['get']);
+                        ?>
+                    </div>
+                    <div class="deleteAll">
+                        <form action="" method="post">
+
+                            <input type="submit" value="Supprimer tous" name="btnSupprimer" class="btn btn-primary end-0" onclick="return confirm('Tu es Sure pour Supprimer Tous ?')" id="btnSupprimer">
+                        </form>
+                    </div>
+
                 </div>
-                <div class="deleteAll">
-                    <form action="" method="post">
 
-                        <input type="submit" value="Supprimer tous" name="btnSupprimer" class="btn btn-primary end-0" onclick="return confirm('Tu es Sure pour Supprimer Tous ?')" id="btnSupprimer">
+                <div class="table-affiche">
+
+                    <form action="" method="post">
+                        <table class="table table-striped table-sm table-bordered">
+                            <thead>
+                                <tr class="table-success">
+                                    <th scope="col">Code Niveau</th>
+                                    <th scope="col">Description De Niveau</th>
+                                    <th scope="col">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php
+
+                                $page->GetTablePage($_SESSION['Niveau'], $_GET['get']);
+                                ?>
+                            </tbody>
+                        </table>
                     </form>
                 </div>
 
-            </div>
-
-            <div class="table-affiche">
-
-                <form action="" method="post">
-                    <table class="table table-striped table-sm table-bordered">
-                        <thead>
-                            <tr class="table-success">
-                                <th scope="col">Code Niveau</th>
-                                <th scope="col">Description De Niveau</th>
-                                <th scope="col">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php
-
-                            $page->GetTablePage($_SESSION['Niveau'], $_GET['get']);
-                            ?>
-                        </tbody>
-                    </table>
-                </form>
-            </div>
+            <?php else : ?>
+                <div><img src='../Images/nodata.jpg' alt='' /></div>
+            <?php endif; ?>
         </div>
         <div class="col-4 justify-content-center  position-fixed start-0 m-4">
+            <div class="title">
+                Gestion des niveaux
+            </div>
+
+            <div class='message'><?= $message ?></div>
             <form action="" method="post" id="form">
                 <div class="form-groupe m-4">
                     <input type="text" name="tCodeNiv" maxlength="2" id="tCodeNiv" class="inputs form-control" placeholder="Code Niveau">

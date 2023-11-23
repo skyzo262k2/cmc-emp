@@ -139,15 +139,11 @@
 
 
     <div class="row header">
-        <div class="col-4 title">
-            Gestion Validateur
+
+        <div class="col-4"></div>
+        <div class="col-8 recherche">
+            <input type="text" id="salle" class="form-control inp-recherche" name="salle" value="<?= htmlspecialchars($info) ?>" onkeyup="Recherche(this)" placeholder="Recherche ....">
         </div>
-        <div class="col-2"></div>
-        <div class="col-4 recherche">
-            <input type="text" id="salle" class="form-control inp-recherche" name="salle" value="<?php echo $info;
-                                                                                                    ?>" onkeyup="Recherche(this)" placeholder="Recherche ....">
-        </div>
-        <div class="col-2"></div>
     </div>
 
     <div class="row content">
@@ -158,12 +154,15 @@
 
         </div>
         <div class="col-4 justify-content-center  position-fixed start-0">
+            <div class="title">
+                Gestion Validateur
+            </div>
             <div class="form-groupe m-4">
                 <select name="filiere" id="filiere" class="inputs form-control">
                     <option value="choisir">Choisir Filière</option>
                     <?php
                     foreach ($Filieres as $flr) {
-                            echo "<option value='$flr[0]'>$flr[1]</option>";
+                        echo "<option value='".htmlspecialchars($flr[0])."'>".htmlspecialchars($flr[1])."</option>";
                     }
                     ?>
                 </select>
@@ -173,7 +172,7 @@
                     <option value="choisir">Choisir Formateur</option>
                     <?php
                     foreach ($Formateurs as $for) {
-                            echo "<option value='$for[0]'>$for[1] $for[2]</option>";
+                        echo "<option value='".htmlspecialchars($for[0])."'>".htmlspecialchars($for[1]. " ".  $for[2])."</option>";
                     }
                     ?>
                 </select>

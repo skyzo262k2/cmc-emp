@@ -17,7 +17,12 @@ $pdf = new FPDF('L', 'mm', 'A4');
 
 $cnnx->connexion();
 
-$Groupes =  $cnnx::$cnx->query("select CodeGrp from groupe where CodeEtab = '$CodeEtab'")->fetchAll(PDO::FETCH_NUM);
+if ($_SESSION["Admin"]["Poste"] == "ChefSecteur")
+    $Groupes = $cnnx::$cnx->query("select g.CodeGrp from Groupe g inner join Filiere f using(CodeFlr)  
+                                    where f.CodeSect = '" . $_SESSION["Admin"]["secteur"] . "' and CodeEtab = '$CodeEtab'")->fetchAll(PDO::FETCH_NUM);
+else
+    $Groupes = $cnnx::$cnx->query("select CodeGrp from Groupe where CodeEtab = '$CodeEtab'")->fetchAll(PDO::FETCH_NUM);
+
 
 $info = $cnnx::$cnx->query("select DescpFr from etablissement where CodeEtb = '$CodeEtab'")->fetch(PDO::FETCH_NUM);
 

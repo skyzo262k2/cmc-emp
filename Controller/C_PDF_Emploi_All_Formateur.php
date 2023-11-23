@@ -14,10 +14,13 @@ $cnnx->connexion();
 
 
 $query = "select Matricule,concat(Nom ,' ',Prenom) from Formateur where CodeEtab = '$CodeEtab'";
-if (isset($_GET["type"])){
+if (isset($_GET["type"])) {
     $type = $_GET["type"];
     $query .= " and Type = '$type'";
 }
+
+if ($_SESSION["Admin"]["Poste"] == "ChefSecteur")
+    $query .= " and secteur = '".$_SESSION["Admin"]["secteur"]."'";
 
 $Formateurs = $cnnx::$cnx->query($query)->fetchAll(PDO::FETCH_NUM);
 $page = new PagePDF_Emploi($pdf,  $_SESSION['Annee'], $_SESSION['Etablissement']["DescpFr"]);

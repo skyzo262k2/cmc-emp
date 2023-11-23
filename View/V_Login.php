@@ -1,7 +1,8 @@
 <html>
 
 <head>
-    <title>Login</title>
+    <title>Connexion</title>
+    <link rel="icon" type="image/jpg" href="../Images/CMC.ico">
 
     <link rel="stylesheet" href="../Css/Bootstrap/css/bootstrap.min.css">
     <style>
@@ -16,16 +17,32 @@
             height: 100%;
         }
 
-        a,
-        input[type='submit'] {
-            cursor: pointer;
+        label {
+            font-weight: 600;
         }
+
 
         body {
             display: grid;
             place-items: center;
             margin: 0;
-            animation: pan 6s infinite alternate linear;
+            background: linear-gradient(5deg, #000000,blueviolet, #A9A9A9, gray);
+            background-size: 200% 200%;
+            animation: gradientBG 15s ease infinite;
+        }
+
+        @keyframes gradientBG {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
         }
 
         @media (width >=500px) {
@@ -42,9 +59,9 @@
             padding: 0px 20px;
             border-radius: 24px;
             /* background: #ffffff; */
-            background-color: #f9f9f9;
+            background-color: #fff;
             /* text-align: center; */
-            opacity: 0.8;
+            opacity: 0.9;
             box-shadow: 1px 0px 10px 0px gray;
         }
 
@@ -55,7 +72,6 @@
                 margin: 0;
                 width: 400px;
             }
-
         }
 
 
@@ -67,132 +83,48 @@
             display: grid;
             /* gap: 16px; */
         }
-
-        .login-form>a {
-            color: #216ce7;
-        }
-
-
-
-        .login-form>input,
-        select {
-            height: 56px;
-
-            border-radius: 8px;
-            font-size: larger;
-
-        }
-
-
-        .login-form input,
-        select {
-
-            border: 2px solid #ebebeb;
-            outline: 1px solid gray;
-
-
-        }
-
-
-
-        .login-form input[type='submit'] {
-            border: 0;
-            background: #216ce7;
-            height: 56px;
-            color: #f9f9f9;
-            font-weight: 600;
-
-        }
-
-        label {
-            margin-bottom: 10px;
-            padding-left: 10px;
-        }
-
-        h1 {
-            margin-top: 20px;
-        }
-
-        img {
-            border-radius: 50%;
-            /* opacity: 0.7; */
-        }
-
-        /* .login-card{
-            opacity: 0.7;
-        } */
-
-        h1 {
-            color: blue;
-            /* font-size: 2em; */
-            margin-bottom: 25px;
-            animation: slideInFromTop 1s ease-in-out;
-        }
-
-        @keyframes slideInFromTop {
-            from {
-                transform: translateY(-60%);
-            }
-
-            to {
-                transform: translateY(0%);
-            }
-        }
-
     </style>
 
 </head>
 
 <body>
-    <div class="row">
-
-        <div class="col-7">
-            <img src="../Images/logo.jpg" width="85%">
+    <div class="row pb-3 login-card">
+        <div class='text-center'>
+            <img src="../Images/cmc.jpg" width="150px">
         </div>
-
-        <div class="col-4 login-card m-4">
-
-            <center>
-                <h1>Bienvenue</h1>
-            </center>
-            <form action="" method="POST" class="login-form">
-
-                <label for="login"><b>Login</b></label>
-                <input type="text" name="tlogin" id="login" value="<?php echo $login ?>" required><br>
-                <p style="color: red;"><?php echo $erreurlogin
-                                        ?></p>
-
-
-                <label for="Password"><b>Password</b></label>
-                <input type="password" name="tPassword" id="Password" value="<?php echo $password ?>" required><br>
-
-
-
-                <label for="tAnnee"><b>Année Formation</b></label>
-                <select class="inputs" name="tAnnee" id="tAnnee">
+        <form action="" method="POST" class="login-form">
+            <div class="form-group mt-2">
+                <label for="login" class="p-2">Identifient</label>
+                <input type="text" name="tlogin" id="login" value="<?= htmlspecialchars($login) ?>" class="form-control" required>
+            </div>
+            <div class="form-group mt-2">
+                <label for="Password" class="p-2">Mot de passe</label>
+                <input type="password" name="tPassword" id="Password" value="<?= htmlspecialchars($password) ?>" class="form-control" required>
+                <p class="text-danger"><?= $erreurpassword ?></p>
+            </div>
+            <div class="form-group">
+                <label for="tAnnee" class="p-2">Année Formation</label>
+                <select name="tAnnee" id="tAnnee" class="form-control">
                     <option value="choisir">Choisir Année</option>
                     <?php
                     foreach ($Annees as $an) {
                         $oldanne = explode("/", $Annee);
                         $anneprochaine = $an[0] + 1;
                         if ($oldanne[0] == $an[0]) {
-                            echo "<option selected value='$an[0]/$anneprochaine'>$an[0]/$anneprochaine</option>";
+                            echo "<option selected value='" . htmlspecialchars($an[0] . "/" . $anneprochaine) . "'>" . htmlspecialchars($an[0] . "/" . $anneprochaine) . "</option>";
                         } else {
-                            echo "<option value='$an[0]/$anneprochaine'>$an[0]/$anneprochaine</option>";
+                            echo "<option value='" . htmlspecialchars($an[0] . "/" . $anneprochaine) . "'>" . htmlspecialchars($an[0] . "/" . $anneprochaine) . "</option>";
                         }
                     }
                     ?>
-
                 </select>
-                <p style="color: red;"><b><?php echo $erreuranne
-                                            ?></b></p>
-                <p style="color: red;"><b><?php echo $erreurpassword
-                                            ?></b></p>
+                <p class="text-danger"><?= $erreuranne ?></p>
+            </div>
 
-
-                <input type="submit" name="btnConnecte" value="Connecte">
-            </form>
-        </div>
+            <div class="form-group m-2">
+                <input type="submit" name="btnConnecte" class="btn btn-primary w-100" value="Connexion">
+            </div>
+        </form>
     </div>
 
 </body>

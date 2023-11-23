@@ -87,36 +87,9 @@
             border-radius: 50px;
         }
 
-        .statistique {
-            width: 190px;
-            height: 100px;
-            background-color: antiquewhite;
-            box-shadow: 1px 1px 16px 1px #ccc;
-            margin-left: 10px;
-            padding: 20px;
-            border-radius: 20px;
-            text-align: center;
-        }
-
-        .statistique div span {
-            /* margin: 5px; */
-            font-size: 20px;
+        .nb_stat {
+            font-size: 25px;
             font-weight: 700;
-            padding-left: 20px;
-        }
-
-        .statistique .title {
-            font-size: 18px;
-            /* margin: 5px; */
-            font-weight: 600;
-        }
-
-        #informations {
-            margin: 10px 50px;
-        }
-
-        .nb_statistique {
-            margin-top: 20px;
         }
     </style>
 
@@ -137,6 +110,7 @@
             request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
             request.onload = function() {
                 if (this.status == 200 && this.readyState == 4) {
+                    // console.log(this.responseText);
                     document.getElementById("informations").innerHTML = this.responseText;
                 }
             };
@@ -151,11 +125,11 @@
 
 
         function ChangeDate() {
-            document.getElementById("informations").innerHTML = "";
             const dtdebut = document.getElementById("datedebut").value;
             const dtfin = document.getElementById("datefin").value;
             const seance = document.getElementById("seance").value;
             const groupe = document.getElementById("groupe").value;
+
             if (groupe != "choisir")
                 var stg = document.getElementById("stagiaire").value;
 
@@ -170,7 +144,7 @@
                 request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
                 request.onload = function() {
                     if (this.status == 200 && this.readyState == 4) {
-                        console.log(this.responseText);
+                        // console.log(this.responseText);
                         document.getElementById("statistique").innerHTML = this.responseText;
                     }
                 };
@@ -178,26 +152,26 @@
             } else {
                 document.getElementById("nbR").innerHTML = "0";
                 document.getElementById("nbA").innerHTML = "0";
-
             }
+
+            Detail("A")
         }
     </script>
 </head>
 
 <body>
     <div class="title">
-        <h4>Consulter Absence Stagiaire</h4>
+        <h4>Consultation Absences des stagiaires</h4>
     </div>
     <div class="row">
         <div class="col-3">
             <div class="form-groupe">
-                <input type="date" name="datedebut" id="datedebut" class="form-control" value='<?php echo $datedebut ?>' onchange="ChangeDate()">
+                <input type="date" name="datedebut" id="datedebut" class="form-control" value='<?= $datedebut ?>' onchange="ChangeDate()">
             </div>
         </div>
         <div class="col-3">
             <div class="form-groupe">
-
-                <input type="date" name="datefin" id="datefin" class="form-control" value='<?php echo $sysdate ?>' onchange="ChangeDate()">
+                <input type="date" name="datefin" id="datefin" class="form-control" value='<?= $sysdate ?>' onchange="ChangeDate()">
             </div>
         </div>
         <div class="col-3">
@@ -205,11 +179,9 @@
                 <select name="groupe" id="groupe" class="form-control" onchange="ChangeGroupe()">
                     <option value="choisir">Choisir Groupe</option>
                     <?php
-
                     foreach ($groupes as $grp) {
-                        echo "<option value='$grp[0]'>$grp[0]</option>";
+                        echo "<option value='" . htmlspecialchars($grp[0]) . "'>" . htmlspecialchars($grp[0]) . "</option>";
                     }
-
                     ?>
                 </select>
             </div>
@@ -229,7 +201,6 @@
 
 
     <div id="statistique">
-
         <div class='row m-2'>
             <div class="col-4"></div>
             <div class="col-4">
@@ -240,85 +211,77 @@
                 </div>
             </div>
         </div>
-        <div class="col-4"></div>
 
-        <div class='row nb_statistique'>
-            <div class='col-4'></div>
-            <div class='col-2 statistique'>
+        <div class="container">
+            <div class='row mt-3 nb_statistique'>
 
-                <span class='title'>Absence</span>
-                <div>
-                    <span id="nbA"><?php echo $Absence[0]; ?></span><span onclick='Detail("A")'><img class='icon' src='../Images/Icon_Find.png' /></span>
+                <div class='col-sm-6 statistique text-center  '>
+                    <div class="alert alert-info">
+                        <span class='h5 title'>Les absences : </span>
+                        <span id="nbA" class='m-5  nb_stat'><?= htmlspecialchars($Absence[0]) ?></span>
+                        <span onclick='Detail("A")'><img class='icon' src='../Images/Icon_Find.png' /></span>
+                    </div>
+                </div>
+                <div class='col-sm-6 statistique text-center'>
+                    <div class="alert alert-primary">
+                        <span class='h5 title'>Les retards :</span>
+                        <span id="nbR" class='m-5 nb_stat'><?= htmlspecialchars($Retard[0]) ?></span>
+                        <span onclick='Detail("R")'><img class='icon' src='../Images/Icon_Find.png' /></span>
+                    </div>
                 </div>
             </div>
-            <div class='col-2 statistique'>
-                <span class='title'>Retard</span>
-                <div>
-                    <span id="nbR"><?php echo $Retard[0]; ?></span><span onclick='Detail("R")'><img class='icon' src='../Images/Icon_Find.png' /></span>
-                </div>
-            </div>
-            <div class='col-4'></div>
         </div>
 
+        <div id="informations" class='m-5'>
 
+            <?php if (isset($_SESSION["Admin"])) : ?>
+                <div>
+                    <div class='h6 fw-bold text-decoration-underline text-primary'>Absences Stagiaire : Top 10 </div>
+                </div>
+                <table class='table table-striped table-sm table-bordered'>
+                    <thead>
+                        <tr>
+                            <th>CEF</th>
+                            <th>Nom</th>
+                            <th>Prénom</th>
+                            <th>Groupe</th>
+                            <th>Discipline</th>
+                            <th>Nombre Absence</th>
 
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php
+                        $top10 = [];
+                        foreach ($TopAbsenceStagiaire as $stg) {
 
-    </div>
-
-    <div id="informations">
-
-        <?php if (isset($_SESSION["Admin"])) : ?>
-            <div>
-                <b>Absences Stagiaire : Top 10 </b>
-            </div>
-            <table class='table table-striped table-sm table-bordered'>
-                <thead>
-                    <tr>
-                        <th>CEF</th>
-                        <th>Nom</th>
-                        <th>Prénom</th>
-                        <th>Groupe</th>
-                        <th>Discipline</th>
-                        <th>Nombre Absence</th>
-
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php
-
-                    $top10 = [];
-                    foreach ($TopAbsenceStagiaire as $stg) {
-
-                        if ($_SESSION["Admin"]["Poste"] == "ChefSecteur") {
-                            if ($stg[6] == $_SESSION["Admin"]["secteur"]) {
+                            if ($_SESSION["Admin"]["Poste"] == "ChefSecteur") {
+                                if ($stg[6] == $_SESSION["Admin"]["secteur"]) {
+                                    $top10[] = $stg;
+                                }
+                            } else {
                                 $top10[] = $stg;
                             }
-                        } else {
-                            $top10[] = $stg;
                         }
-                    }
-                    foreach ($top10 as $stg) {
-                        echo "<tr>";
-                        echo "<td>$stg[0]</td>";
-                        echo "<td>$stg[1]</td>";
-                        echo "<td>$stg[2]</td>";
-                        echo "<td>$stg[3]</td>";
-                        echo "<td>$stg[4]</td>";
-                        echo "<td>$stg[5]</td>";
-                        echo "</tr>";
-                    }
+                        foreach ($top10 as $stg) {
+                            echo "<tr>";
+                            echo "<td>".htmlspecialchars($stg[0])."</td>";
+                            echo "<td>".htmlspecialchars($stg[1])."</td>";
+                            echo "<td>".htmlspecialchars($stg[2])."</td>";
+                            echo "<td>".htmlspecialchars($stg[3])."</td>";
+                            echo "<td>".htmlspecialchars($stg[4])."</td>";
+                            echo "<td>".htmlspecialchars($stg[5])."</td>";
+                            echo "</tr>";
+                        }
+                        ?>
+                    </tbody>
+                </table>
+
+            <?php endif; ?>
 
 
-
-                    ?>
-                </tbody>
-            </table>
-
-        <?php endif; ?>
-
-
+        </div>
     </div>
-
 
 
 

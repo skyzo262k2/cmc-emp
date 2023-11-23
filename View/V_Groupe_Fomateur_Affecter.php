@@ -7,153 +7,153 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../Css/Bootstrap/css/bootstrap.min.css">
     <script src="../Css/Bootstrap/js/bootstrap.bundle.min.js"></script>
-    <title>Document</title>
-  
+    <title>Modules Affecter</title>
+
 </head>
 <style>
     body {
-  font-family: Arial, sans-serif;
-  margin: 0;
-  padding: 0;
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
     }
 
     h1 {
-    font-size: 28px;
-    text-align: center;
-    margin: 20px 0;
+        font-size: 28px;
+        text-align: center;
+        margin: 20px 0;
     }
 
     a {
-    display: block;
-    text-align: center;
-    margin-bottom: 20px;
+        display: block;
+        text-align: center;
+        margin-bottom: 20px;
     }
 
     select {
-    font-size: 16px;
-    padding: 5px;
-    margin-bottom: 20px;
+        font-size: 16px;
+        padding: 5px;
+        margin-bottom: 20px;
     }
 
-    table {
-    width: 100%;
-    border-collapse: collapse;
+
+    h3 {
+        color: blue;
+        animation: slideInFromTop 1s ease-in-out;
     }
 
-    table td, table th {
-    border: 1px solid #ccc;
-    padding: 10px;
-    text-align: center;
-    }
-
-    table th {
-    background-color: #eee;
-    font-weight: bold;
-    }
-
-    table tr:nth-child(even) {
-    background-color: #f2f2f2;
-    }
-    center h1 {
-            color: blue;
-            animation: slideInFromTop 1s ease-in-out;
+    @keyframes slideInFromTop {
+        from {
+            transform: translateY(-100%);
         }
 
-        @keyframes slideInFromTop {
-            from {
-                transform: translateY(-100%);
-            }
-
-            to {
-                transform: translateY(0);
-            }
+        to {
+            transform: translateY(0);
         }
+    }
 </style>
-<body>
-    <center>
-        <h1>Module Affecter pour le groupe</h1>
-        <a href='../Controller/C_PDF_Affectation_AllGrp.php'>
-        <img src='../Images/pdf.png' alt='not found' style='width: 35px;height: 35px;'>
-        </a>
-    </center>
 
-    <form action="" method="post">
-        <select name="group" onchange="this.form.submit()" id="grp">
-            <option value="<?php if (isset($grp)) echo $grp; ?>"><?php if (isset($grp)) echo $grp; ?></option>
-            <?php
-            if (isset($Groupes)) :
-                foreach ($Groupes as $inf) {
-                    echo "<option value='{$inf['CodeGrp']}/{$inf['CodeFlr']}/{$inf['annee']}/{$inf['Fpa']}/{$inf['tauxfpa']}'>
+<body>
+    <div class="container-fluid">
+        <div class='row m-4'>
+            <div class='col-4'>
+                <h3>Modules de groupe</h3>
+            </div>
+            <div class='col-5'>
+                <form action="" method="post" class="d-flex">
+                    <select name="group" class="form-control w-75" onchange="this.form.submit()" id="grp">
+                        <option value="<?php if (isset($grp)) echo $grp; ?>"><?php if (isset($grp)) echo $grp; ?></option>
+                        <?php
+                        if (isset($Groupes)) :
+                            foreach ($Groupes as $inf) {
+                                echo "<option value='{$inf['CodeGrp']}/{$inf['CodeFlr']}/{$inf['annee']}/{$inf['Fpa']}/{$inf['tauxfpa']}'>
                              {$inf['CodeGrp']} 
                              </option>";
-                }
-            endif;
-            ?>
-        </select><br><br>
-        <span><?= $lien; ?></span>
-        
-            <table border="1">
+                            }
+                        endif;
+                        ?>
+                    </select>
+                    <span class="w-25"><?= $lien; ?></span>
+
+                </form>
+            </div>
+            <div class='col-3'>
+                <a href='../Controller/C_PDF_Affectation_AllGrp.php'>
+                    Modules pour tous les groupes
+                    <img src='../Images/pdf.png' alt='not found' style='width: 35px;height: 35px;'>
+                </a>
+            </div>
+        </div>
+
+
+
+        <?php if (isset($groupe) || isset($ModuleNoaffe)) : ?>
+            <table border="1" class="table table-bordered table-light table-striped">
                 <tr>
-                    <td>Formateur</td>
-                    <td>Description Module</td>
-                    <td>Code Module</td>
-                    <td>Code Filière</td>
-                    <td>Annee Formation</td>
-                    <td>S1</td>
-                    <td>S2</td>
-                    <td>Masse Horaire</td>
-                    <td>Avc</td>
-                    <td>Taux</td>
+                    <th>Formateur</th>
+                    <th>Description Module</th>
+                    <th>Code Module</th>
+                    <th>Code Filière</th>
+                    <th>Annee Formation</th>
+                    <th>S1</th>
+                    <th>S2</th>
+                    <th>Masse Horaire</th>
+                    <th>Avc</th>
+                    <th>Taux</th>
                 </tr>
                 <?php
-                if (isset($groupe)) {
-                    foreach ($groupe as $grop){
-                        if( $Fpa=='O'){
-                            $grop['s1']=($tauxfpaGrp/100)*$grop['s1'];
-                            $grop['s2']=($tauxfpaGrp/100)*$grop['s2'];;
-                            $grop['masshoraire']=$grop["s1"]+ $grop["s2"];
 
-                            $grop['taux']=$grop["avc"]!=0?number_format($grop["avc"]/($grop['masshoraire'])*100,2):0;
+                if (isset($groupe)) {
+                    foreach ($groupe as $grop) {
+                        if ($Fpa == 'O') {
+                            $grop['s1'] = ($tauxfpaGrp / 100) * $grop['s1'];
+                            $grop['s2'] = ($tauxfpaGrp / 100) * $grop['s2'];;
+                            $grop['masshoraire'] = $grop["s1"] + $grop["s2"];
+
+                            $grop['taux'] = $grop["avc"] != 0 ? number_format($grop["avc"] / ($grop['masshoraire']) * 100, 2) : 0;
                         }
                         echo "
                         <tr>
-                            <td>" . $grop['nomp'] . "</td>
-                            <td>" . $grop['descpMd'] . "</td>
-                            <td>" . $grop['CodeMd'] . "</td>
-                            <td>" . $grop['flr'] . "</td>
-                            <td>" . $anneGrp . "</td>
-                            <td>" . $grop['s1'] . "</td>
-                            <td>" . $grop['s2'] . "</td>
-                            <td>" . $grop['masshoraire'] . "</td> 
-                            <td>" . $grop['avc'] . "</td> 
-                            <td>" . $grop['taux'] . "%</td>                                
+                            <td>" . htmlspecialchars($grop['nomp']) . "</td>
+                            <td>" . htmlspecialchars($grop['descpMd']) . "</td>
+                            <td>" . htmlspecialchars($grop['CodeMd']) . "</td>
+                            <td>" . htmlspecialchars($grop['flr']) . "</td>
+                            <td>" . htmlspecialchars($anneGrp) . "</td>
+                            <td>" . htmlspecialchars($grop['s1']) . "</td>
+                            <td>" . htmlspecialchars($grop['s2']) . "</td>
+                            <td>" . htmlspecialchars($grop['masshoraire']) . "</td> 
+                            <td>" . htmlspecialchars($grop['avc']) . "</td> 
+                            <td>" . htmlspecialchars($grop['taux']) . "%</td>                                
                         </tr>";
                     }
                 }
                 if (isset($ModuleNoaffe)) {
                     foreach ($ModuleNoaffe as $grop) {
-                        if( $Fpa=='O'){
-                            $grop['s1']=($tauxfpaGrp/100)*$grop['s1'];
-                            $grop['s2']=($tauxfpaGrp/100)*$grop['s2'];;
-                            
+                        if ($Fpa == 'O') {
+                            $grop['s1'] = ($tauxfpaGrp / 100) * $grop['s1'];
+                            $grop['s2'] = ($tauxfpaGrp / 100) * $grop['s2'];;
                         }
                         echo "
                         <tr>
                             <td>------</td>
-                                <td>" . $grop['DescpMd'] . "</td>
-                                <td>" . $grop['CodeMd'] . "</td>
-                                <td>" . $grop['CodeFlr'] . "</td>
-                                <td>" . $grop['Annee'] . "</td>
-                                <td>" . $grop['s1'] . "</td>
-                                <td>" . $grop['s2'] . "</td>
-                                <td>" . $grop["s1"]+ $grop["s2"] . "</td>                            
+                                <td>" . htmlspecialchars($grop['DescpMd']) . "</td>
+                                <td>" . htmlspecialchars($grop['CodeMd']) . "</td>
+                                <td>" . htmlspecialchars($grop['CodeFlr']) . "</td>
+                                <td>" . htmlspecialchars($grop['Annee']) . "</td>
+                                <td>" . htmlspecialchars($grop['s1']) . "</td>
+                                <td>" . htmlspecialchars($grop['s2']) . "</td>
+                                <td>" . htmlspecialchars($grop["s1"] + $grop["s2"]) . "</td>                            
                                 <td>0</td> 
                                 <td>0%</td>   
                         </tr>";
                     }
                 }
+
                 ?>
             </table>
-    </form>
+        <?php else : ?>
+            <div class='text-center'><img src='../Images/nodata.jpg' alt='' /></div>";
+        <?php endif ?>
+    </div>
 </body>
+
 </html>

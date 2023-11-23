@@ -22,22 +22,22 @@ if (isset($_POST["type"]) && isset($_POST["taux"])) {
     $informations = [];
     foreach ($informations_donnnees as $donne) {
         if ($_SESSION["Admin"]["Poste"] == "ChefSecteur") {
-                if ($_SESSION["Admin"]["secteur"] ==  $donne[7]) {
-                        $informations[] =  $donne;
-                }
-        } else {
+            if ($_SESSION["Admin"]["secteur"] ==  $donne[7]) {
                 $informations[] =  $donne;
+            }
+        } else {
+            $informations[] =  $donne;
         }
-}
+    }
     if (count($informations) != 0) {
         echo " <table width='100%' class='table table-bordered table-borderless'>
                         <thead>
                             <tr class='table-info'>
-                                <th colspan='2'>Formateur</th>
-                                <th rowspan='2'>Groupe</th>
-                                <th colspan='2'>Module</th>
-                                <th rowspan='2'>Avancement</th>
-                                <th rowspan='2'>Message</th>
+                                <th colspan='2' class='text-center'>Formateur</th>
+                                <th rowspan='2' class='text-center'>Groupe</th>
+                                <th colspan='2' class='text-center'>Module</th>
+                                <th rowspan='2' class='text-center'>Avancement</th>
+                                <th rowspan='2' width='10%' class='text-center'>Message</th>
                             </tr>
                             <tr class='table-info'>
                                 <th>Matricule</th>
@@ -57,16 +57,21 @@ if (isset($_POST["type"]) && isset($_POST["taux"])) {
             $avc = intval($info[5]);
 
             echo "<tr class='trinfo'>
-                            <td>$info[0]</td>
-                            <td>$info[1]</td>
-                            <td>$info[4]</td>
-                            <td>$info[3]</td>
-                            <td>$info[2]</td>
-                            <td>$avc %</td>
-                            <td>$message</td>
+                            <td>".htmlspecialchars($info[0])."</td>
+                            <td>".htmlspecialchars($info[1])."</td>
+                            <td>".htmlspecialchars($info[4])."</td>
+                            <td>".htmlspecialchars($info[3])."</td>
+                            <td>".htmlspecialchars($info[2])."</td>
+                            <td class='text-center'>".htmlspecialchars($avc)." %</td>
+                            <td class='text-center'>".htmlspecialchars($message)."</td>
                     </tr>";
         }
         echo "</tbody></table>";
+    } else {
+        echo "  <div class='text-center m-5'>
+       <h3 class='text-danger'>Aucun données !</h3>
+        <img src='../Images/nodata.jpg' width='250px' alt='aucun données' />
+    </div>";
     }
 } else
     require "../View/V_TauxAvancemant_affectation.php";

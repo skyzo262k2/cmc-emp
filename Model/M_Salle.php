@@ -37,55 +37,73 @@ class Salle extends Connexion
 
     public function AddSalle()
     {
+        $n = null;
         try {
             parent::connexion();
             $req = "CALL SP_Add_Salle(?,?,?,?,?)";
-            $exec = parent::$cnx->prepare($req);
-            $exec->bindParam(1, $this->codesalle);
-            $exec->bindParam(2, $this->descrpsal);
-            $exec->bindParam(3, $this->type);
-            $exec->bindParam(4, $this->CodeEtab);
-            $exec->bindParam(5, $this->Secteur);
-            $exec->execute();
-
+            $n = parent::$cnx->prepare($req);
+            $n->bindParam(1, $this->codesalle);
+            $n->bindParam(2, $this->descrpsal);
+            $n->bindParam(3, $this->type);
+            $n->bindParam(4, $this->CodeEtab);
+            $n->bindParam(5, $this->Secteur);
+            $n->execute();
             parent::Deconnexion();
         } catch (PDOException  $er) {
+            $n = null;
         }
+        return $n;
     }
 
     public function Updatesalle()
     {
-        parent::connexion();
-        $req = "CALL SP_Update_Salle(?,?,?,?,?)";
-        $exec = parent::$cnx->prepare($req);
-        $exec->bindParam(1, $this->codesalle);
-        $exec->bindParam(2, $this->descrpsal);
-        $exec->bindParam(3, $this->type);
-        $exec->bindParam(4, $this->CodeEtab);
-        $exec->bindParam(5, $this->Secteur);
-        $exec->execute();
-
-        parent::Deconnexion();
+        $n = null;
+        try {
+            parent::connexion();
+            $req = "CALL SP_Update_Salle(?,?,?,?,?)";
+            $n = parent::$cnx->prepare($req);
+            $n->bindParam(1, $this->codesalle);
+            $n->bindParam(2, $this->descrpsal);
+            $n->bindParam(3, $this->type);
+            $n->bindParam(4, $this->CodeEtab);
+            $n->bindParam(5, $this->Secteur);
+            $n->execute();
+            parent::Deconnexion();
+        } catch (PDOException  $er) {
+            $n = null;
+        }
+        return $n;
     }
 
     public function Deletesalle()
     {
-        parent::connexion();
-        $req = "CALL SP_Delete_Salle(?,?)";
-        $exec = parent::$cnx->prepare($req);
-        $exec->bindParam(1, $this->codesalle);
-        $exec->bindParam(2, $this->CodeEtab);
-        $exec->execute();
+        $n = null;
+        try {
+            parent::connexion();
+            $req = "CALL SP_Delete_Salle(?,?)";
+            $n = parent::$cnx->prepare($req);
+            $n->bindParam(1, $this->codesalle);
+            $n->bindParam(2, $this->CodeEtab);
+            $n->execute();
 
-        parent::Deconnexion();
+            parent::Deconnexion();
+        } catch (PDOException  $er) {
+            $n = null;
+        }
+        return $n;
     }
 
 
     public function DeleteAllSalle()
     {
-        parent::connexion();
-        parent::$cnx->query("CALL SP_DeleteAllSalles('{$this->CodeEtab}')");
-
-        parent::Deconnexion();
+        $n = null;
+        try {
+            parent::connexion();
+            $n = parent::$cnx->exec("CALL SP_DeleteAllSalles('{$this->CodeEtab}')");
+            parent::Deconnexion();
+        } catch (PDOException  $er) {
+            $n = null;
+        }
+        return $n;
     }
 }

@@ -39,20 +39,22 @@
                 request.onload = function() {
                     if (this.status == 200) {
                         document.getElementById('tbody').innerHTML = this.responseText
-                        document.getElementById('name').innerHTML = `<b>Formateur : ${document.getElementById('frm').selectedOptions[0].innerText}</b>`
+                        document.getElementById('name').innerHTML = `<span class='fw-bold'>Formateur : ${document.getElementById('frm').selectedOptions[0].innerText}</span>`
                         data()
                     }
                 }
                 request.send(`formateur=${frm}`);
             } else {
                 document.getElementById('popup').style.display = 'none'
-                document.getElementById('tbody').innerHTML = ""
+                document.getElementById('tbody').innerHTML = "<tr> <td colspan='12' class='text-center'><img src='../Images/nodata.jpg' alt='' /></td></tr>"
                 document.getElementById('name').innerHTML = ""
-                document.getElementById('ss1').innerText = ""
-                document.getElementById('ss2').innerText = ""
-                document.getElementById('mas').innerText = ""
-                document.getElementById('nbs').innerText = ""
-                document.getElementById('impri').innerHTML = ""
+                document.getElementById('ss1').innerText = " - "
+                document.getElementById('ss2').innerText = " - "
+                document.getElementById('mas').innerText = " - "
+                document.getElementById('nbs').innerText = " - "
+                document.getElementById('impri').innerHTML = " - "
+                document.getElementById('avc').innerText = " - "
+                document.getElementById('reste').innerHTML = " - "
             }
         }
 
@@ -274,22 +276,7 @@
             font-size: 16px;
         }
 
-        #tbl_Saisir {
-            border-collapse: collapse;
-            width: 100%;
-        }
 
-        #tbl_Saisir th {
-            background-color: #f2f2f2;
-            text-align: left;
-            padding: 8px;
-        }
-
-        #tbl_Saisir td {
-            border: 1px solid #ddd;
-            text-align: left;
-            padding: 8px;
-        }
 
         button[type='submit'],
         button[type='button'],
@@ -304,7 +291,7 @@
             /* height:max-content; */
         }
 
-        center h1 {
+        h3 {
             color: blue;
             animation: slideInFromTop 1s ease-in-out;
         }
@@ -353,7 +340,6 @@
         }
 
         input[type='checkbox'] {
-            -webkit-appearance: none;
             width: 20px;
             height: 20px;
             border: 1px solid #ddd;
@@ -446,77 +432,67 @@
         <button type="button" onclick="EfmPasser(this)" id="btnv" name="efm">Valider</button>
     </form>
 
-    <center>
-        <h1>Affectation Module</h1>
-    </center>
     <?php if (!isset($_SESSION["userFormateur"])) : ?>
-        <table>
-            <tr>
-                <td colspan="2">
-                    <b>Tableau Service</b>
-                </td>
-            </tr>
-            <tr>
-                <td>
-
-                    <a href="../Controller/C_Tableau_Service_All_Form.php"> <img src="../Images/pdf.png" style='width: 35px;height: 35px;' alt="not found"></a>
-                    <!-- <a href="C_tableserviceAllFormateur.php?tous=all"> <img src="../Images/word.png" style='width: 50px;height: 50px;' alt="not found"></a> -->
-                </td>
-                <td>
-                    <form action="" method="post"><button style="background: none;border:none;" name="execl_tous"><img src="../Images/execl.jpeg" style='width: 35px;height: 35px;' alt="not found"></button></form>
-                </td>
-                <td>
-                    <form action="" method="post">
-                        <button style="background: none;border:none;" name="execltaux">
-                            TX_AVC_Tous <img src="../Images/execl.jpeg" style='width: 35px;height: 35px;' alt="not found">
-                        </button>
-                    </form>
-                </td>
-            </tr>
-        </table>
-        </div>
-        <div>
-            <div class="">
-                <div>
-                    <form action="" method="post">
-                        <table id="ch">
-                            <thead>
-                                <tr>
-                                    <th>Choisir le Formateur</th>
-                                    <td>
-                                        <select name="formateur" onchange="ChangeF(this)" id='frm'>
-                                            <option value="<?= $mat_F ?>"><?= $nom_F ?></option>
-                                            <?php
-                                            $i = 0;
-                                            foreach ($Formateur as $Frm) {
-                                                echo "<option value='" . $Frm['Matricule'] . "'>" . $Frm['Nom'] . ' ' . $Frm['Prenom'] . "</option>";
-                                                $i++;
-                                            }
-                                            ?>
-                                        </select>
-                                    </td>
-                                    <th>Choisir le Groupe</th>
-                                    <td>
-                                        <select name="groupe" onchange="ChangeG(this)" id='grp'>
-                                            <option value="<?= $grp ?>"><?= $grp ?></option>
-                                            <?php
-                                            foreach ($Groupes as $group) {
-                                                echo "<option value='" . $group['CodeGrp'] . "'>" . $group['CodeGrp'] . "</option>";
-                                            }
-                                            ?>
-                                        </select>
-                                    </td>
-                                </tr>
-                            </thead>
-                        </table>
-                    </form>
+        <div class='container-fluid'>
+            <div class="row m-3">
+                <div class="col-3">
+                    <h3>Affectations des modules</h3>
                 </div>
-                <br>
+                <div class="col-5">
+                    <div class='d-flex'>
+                        <span class='text-danger fw-bold m-2'>Exporter Tableau de service pour tous les formateurs : </span>
+                        <a href="../Controller/C_Tableau_Service_All_Form.php"> <img src="../Images/pdf.png" style='width: 35px;height: 35px;' alt="not found"></a>
+                        <form action="" method="post"><button style="background: none;border:none;" name="execl_tous"><img src="../Images/execl.jpeg" style='width: 35px;height: 35px;' alt="not found"></button></form>
+                    </div>
+                    <div class='d-flex'>
+                        <span class='text-danger fw-bold m-2'>Taux d'avancement pour tout les fourmateurs : </span>
+                        <form action="" method="post">
+                            <button style="background: none;border:none;" name="execltaux">
+                                <img src="../Images/execl.jpeg" style='width: 35px;height: 35px;' alt="not found">
+                            </button>
+                        </form>
+                    </div>
+
+                </div>
+
+                <div class="col-4">
+                    <div class='form-groupe'>
+                        <label class='form-label fw-bold'>Choisir le Formateur :</label>
+                        <select name="formateur" onchange="ChangeF(this)" id='frm' class='form-control'>
+                            <option value="<?= $mat_F ?>"><?= $nom_F ?></option>
+                            <?php
+                            $i = 0;
+                            foreach ($Formateur as $Frm) {
+                                echo "<option value='" . $Frm['Matricule'] . "'>" . $Frm['Nom'] . ' ' . $Frm['Prenom'] . "</option>";
+                                $i++;
+                            }
+                            ?>
+                        </select>
+                    </div>
+
+                    <div class='form-groupe'>
+                        <label class='form-label fw-bold'>Choisir le Groupe :</label>
+                        <select name="groupe" onchange="ChangeG(this)" id='grp' class='form-control'>
+                            <option value="<?= $grp ?>"><?= $grp ?></option>
+                            <?php
+                            foreach ($Groupes as $group) {
+                                echo "<option value='" . $group['CodeGrp'] . "'>" . $group['CodeGrp'] . "</option>";
+                            }
+                            ?>
+                        </select>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="container-fluid">
+            <div class="">
                 <form methode='post'>
                     <details id='detail'>
-                        <summary>Module No Affecter</summary>
+                        <summary>Modules n'est pas affecté</summary>
                         <div id="affe"></div>
-                        <table id="tbl_Saisir">
+                        <table id="tbl_Saisir" class='table table-bordered'>
                             <tr>
                                 <th> Code Module</th>
                                 <th>Description</th>
@@ -526,37 +502,40 @@
                             </tr>
                             <tbody id='tbodyG'>
 
+
                             </tbody>
 
                         </table>
                     </details>
-                <?php endif; ?>
+                    <div>
 
-                <div>
-                    <p id='name'>
-                        <b>Formateur :<?= $nom_F ?></b>
-                    </p>
+                        <p id='name'>
+                            <span class='fw-bold'>Formateur :<?= $nom_F ?> </span>
+                        </p>
+                    <?php endif; ?>
 
-                    <table id="tbl_Saisir">
+
+
+                    <table id="tbl_Saisir" class='table table-bordered'>
                         <tr>
-                            <td id='col'>table service</td>
-                            <td id='impri' title="Imprimer"></td>
-                            <td id='col'>S1</td>
-                            <td id="ss1"></td>
-                            <td id='col'>S2</td>
-                            <td id="ss2"></td>
-                            <td id='col' title="Masse Horaire">M.H</td>
-                            <td id="mas" title="Masse Horaire"></td>
-                            <td id='col'>nombre Par semaine</td>
-                            <td id="nbs"></td>
-                            <td id='col'>Taux Avancement</td>
-                            <td id="avc"></td>
-                            <td id='col'>Reste M.H</td>
-                            <td id="reste"></td>
+                            <th>table service</th>
+                            <td class="text-center" id='impri' title="Imprimer"> - </td>
+                            <th>S1</th>
+                            <td class="text-center" id="ss1"> - </td>
+                            <th>S2</th>
+                            <td class="text-center" id="ss2"> - </td>
+                            <th title="Masse Horaire">M.H</th>
+                            <td class="text-center" id="mas" title="Masse Horaire"> - </td>
+                            <th>nombre Par semaine</th>
+                            <td class="text-center" id="nbs"> - </td>
+                            <th>Taux Avancement</th>
+                            <td class="text-center" id="avc"> - </td>
+                            <th>Reste M.H</th>
+                            <td class="text-center" id="reste"> - </td>
                         </tr>
                     </table>
 
-                    <table id="tbl_Saisir">
+                    <table id="tbl_Saisir" class='table table-bordered'>
                         <tr>
                             <th>Groupe</th>
                             <th>Description Module</th>
@@ -578,12 +557,17 @@
                                 <script>
                                     data()
                                 </script>
+                            <?php else : ?>
+
+                                <tr>
+                                    <td colspan="12" class='text-center'><img src='../Images/nodata.jpg' alt='' /></td>
+                                </tr>
                             <?php endif; ?>
 
                         </tbody>
                     </table>
                     <br>
-                </div>
+                    </div>
                 </form>
 
             </div>

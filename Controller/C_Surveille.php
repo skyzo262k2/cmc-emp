@@ -16,6 +16,8 @@ $surveille = new Surveille();
 $surveille->CodeEtab = $_SESSION["Etablissement"]["CodeEtb"];
 
 
+$message = "";
+
 if (!isset($_GET["get"])) {
     $_GET["get"] = 1;
 }
@@ -28,14 +30,20 @@ if (isset($_POST["btnAjouter"])) {
             $surveille->Prenom = $_POST["tPrenom"];
             $surveille->login =  $_POST["tMatricule"];
             $surveille->typeuser =  $_POST["typeuser"];
-            if(isset($_POST['secteur']) && $_POST["typeuser"]!="Surveille")
-                $surveille->secteur=$_POST['secteur'];
+            if (isset($_POST['secteur']) && $_POST["typeuser"] != "Surveille")
+                $surveille->secteur = $_POST['secteur'];
             else
-                $surveille->secteur="";
-
-
-            $surveille->Password =  password_hash("OFPPT", PASSWORD_DEFAULT);
-            $surveille->Add();
+                $surveille->secteur = "";
+            $surveille->Password =  password_hash("CMC", PASSWORD_DEFAULT);
+            $n = null;
+            if ($_POST["typeuser"] == "Surveille")
+                $n =  $surveille->Add();
+            if ($_POST["typeuser"] == "ChefSecteur" && $_POST['secteur'] != "")
+                $n =  $surveille->Add();
+            if ($n)
+                $message = $Pag->message("Utilisateur a été ajouté avec succès", "primary");
+            else
+                $message = $Pag->message("Tout les champs sont oobligatoires", "danger");
         }
     } catch (Exception $er) {
     }
@@ -43,8 +51,11 @@ if (isset($_POST["btnAjouter"])) {
 
 if (isset($_POST["Reinitialiser"])) {
     $surveille->Matricule = $_POST["Reinitialiser"];
-    $surveille->Password =  password_hash("OFPPT", PASSWORD_DEFAULT);
-    $surveille->ModifierMotePasse();
+    $surveille->Password =  password_hash("CMC", PASSWORD_DEFAULT);
+    $n = $surveille->ModifierMotePasse();
+
+    if ($n)
+        $message = $Pag->message("Mot de pas a été reinitialisé avec succès", "primary");
 }
 
 // if (isset($_POST["btnModifier"])) {
@@ -59,11 +70,15 @@ if (isset($_POST["Reinitialiser"])) {
 
 if (isset($_POST["sup"])) {
     $surveille->Matricule = $_POST["sup"];
-    $surveille->Delete();
+    $n = $surveille->Delete();
+    if ($n)
+        $message = $Pag->message("Utilisateur a été supprimé avec succès", "danger");
 }
 
 if (isset($_POST["btnSupprimer"])) {
-    $surveille->DeleteAll();
+    $n = $surveille->DeleteAll();
+    if ($n)
+        $message = $Pag->message("Utilisateurs a été supprimés avec succès", "danger");
 }
 
 if (isset($_GET['info'])) {
@@ -80,13 +95,14 @@ if (isset($_GET['info'])) {
     }
 
 
-    echo "<div class='pagi_sup'>
+    if (count($_SESSION["Surveilles"]) > 0) {
+        echo "<div class='pagi_sup'>
                 <div class='pagination'>";
 
-    $Surveilles = $Pag->Pagination_Btn($_SESSION['Surveilles'], $_GET['get']);
-    $Pag->Pagination_Nb($Surveilles, $_GET['get']);
+        $Surveilles = $Pag->Pagination_Btn($_SESSION['Surveilles'], $_GET['get']);
+        $Pag->Pagination_Nb($Surveilles, $_GET['get']);
 
-    echo "</div>
+        echo "</div>
                 <div class='deleteAll'>
                     <form action='' method='post'>
                         <input type='submit' value='Supprimer tous' class='btn btn-primary' name='btnSupprimer' class='end-0' onclick='return confirm('Tu es Sure pour Supprimer Tous ?')' id='btnSupprimer'>
@@ -109,10 +125,13 @@ if (isset($_GET['info'])) {
                    
             <tbody >
             ";
-    $Pag->GetTablePage($_SESSION['Surveilles'], $_GET['get'], 'formateur');
-    echo "</tbody>
+        $Pag->GetTablePage($_SESSION['Surveilles'], $_GET['get'], 'formateur');
+        echo "</tbody>
           </table>
-          </div>";
+          </div>";;
+    } else {
+        echo "<div><img src='../Images/nodata.jpg' alt='' /></div>";
+    }
 } else {
     $surveille->connexion();
     $AlSecteurs = $surveille::$cnx->query("select CodeSect,DescpSect from secteur;")->fetchAll(PDO::FETCH_ASSOC);

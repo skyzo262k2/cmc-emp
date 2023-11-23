@@ -2,6 +2,8 @@
 require "../Model/M_Formateur.php";
 require "../Model/M_Pagination.php";
 
+
+
 session_start();
 if (!isset($_SESSION["Admin"]) || $_SESSION["Admin"]["Poste"] == "Surveille") {
     header("location:../Controller/C_Login.php");
@@ -15,7 +17,11 @@ $Formateur->CodeEtab = $_SESSION["Etablissement"]["CodeEtb"];
 
 
 $Formateur->connexion();
-$AlSecteurs = $Formateur::$cnx->query("select CodeSect,DescpSect from secteur;")->fetchAll(PDO::FETCH_NUM);
+
+$query = "SELECT CodeSect,DescpSect FROM secteur ";
+$query .= isset($_SESSION['Admin']['secteur']) ? "WHERE CodeSect='{$_SESSION['Admin']['secteur']}';" : ";";
+
+$AlSecteurs = $Formateur::$cnx->query($query)->fetchAll(PDO::FETCH_NUM);
 $Formateur->Deconnexion();
 
 $Pag = new Pagination();
@@ -25,21 +31,25 @@ $secteur = isset($_SESSION['Admin']['secteur']) ? $_SESSION['Admin']['secteur'] 
 
 $anne = explode('/', $_SESSION['Annee'])[0];
 
-$cryptage_password = password_hash('OFPPT', PASSWORD_DEFAULT);
+$cryptage_password = password_hash('CMC', PASSWORD_DEFAULT);
 
+$message = "";
 
-// Utilisation de la page 1 par defaut
 if (!isset($_GET["get"])) {
     $_GET["get"] = 1;
 }
 
-if (isset($_POST["sup"])) {
+if (isset($_POST["sup"]) && $_POST["sup"] != "") {
     $Formateur->Matricule = $_POST["sup"];
-    $Formateur->Delete();
+    $n = $Formateur->Delete();
+    if ($n)
+        $message = $Pag->message("Formateur a été supprimé avec succès", "danger");
 }
 if (isset($_POST["Reinitialiser"])) {
     $Formateur->connexion();
-    $Formateur::$cnx->exec("UPDATE formateur SET Mdp='$cryptage_password' WHERE Matricule='{$_POST["Reinitialiser"]}'");
+    $n = $Formateur::$cnx->exec("UPDATE formateur SET Mdp='$cryptage_password' WHERE Matricule='{$_POST["Reinitialiser"]}'");
+    if ($n)
+        $message = $Pag->message("Mot de passe a été reinitialisé avec succès", "primary");
 }
 
 // Methode Ajouter un formateur quant en click le button Ajouter
@@ -52,7 +62,9 @@ if (isset($_POST["btnAjouter"])) {
         $Formateur->MassHoraire = $_POST["tMasseHoraire"];
         $Formateur->Password = $cryptage_password;
         $Formateur->Secteur = $_POST["tSecteur"];
-        $Formateur->Add();
+        $n = $Formateur->Add();
+        if ($n)
+            $message = $Pag->message("Formateur a été ajouté avec succès", "primary");
     }
 }
 
@@ -65,13 +77,17 @@ if (isset($_POST["btnModifier"])) {
         $Formateur->Type = $_POST["tType"];
         $Formateur->MassHoraire = $_POST["tMasseHoraire"];
         $Formateur->Secteur = $_POST["tSecteur"];
-        $Formateur->Update();
+        $n = $Formateur->Update();
+        if ($n)
+            $message = $Pag->message("Formateur a été modifié avec succès", "primary");
     }
 }
 
 // Methode Supprimer un formateur quant en click le button Supprimer
 if (isset($_POST["btnSupprimer"])) {
-    $Formateur->DeleteAll();
+    $n = $Formateur->DeleteAll();
+    if ($n)
+        $message = $Pag->message("Formateurs a été modifiés avec succès", "danger");
 }
 
 
@@ -84,7 +100,7 @@ if (isset($_GET['info'])) {
         if ($poste != "ChefSecteur")
             $_SESSION['Formateurs'] = $Formateur->GetAll();
         else
-            $_SESSION['Formateurs'] = $Formateur->GetFormateurSecteur($secteur,$anne);
+            $_SESSION['Formateurs'] = $Formateur->GetFormateurSecteur($secteur);
     } else {
         $Formateur->connexion();
         if ($poste != "ChefSecteur")
@@ -99,16 +115,17 @@ if (isset($_GET['info'])) {
         }
     }
 
-    echo "<div class='pagi_sup'>
+    if (count($_SESSION["Formateurs"]) > 0) {
+        echo "<div class='pagi_sup'>
                 <div class='pagination'>";
 
-    $Formateus = $Pag->Pagination_Btn($_SESSION['Formateurs'], $_GET['get']);
-    $Pag->Pagination_Nb($Formateus, $_GET['get']);
+        $Formateus = $Pag->Pagination_Btn($_SESSION['Formateurs'], $_GET['get']);
+        $Pag->Pagination_Nb($Formateus, $_GET['get']);
 
-    echo "</div>
+        echo "</div>
                 <div class='deleteAll'>
                     <form action='' method='post'>
-                        <input type='submit' value='Supprimer tous' class='btn btn-primary' name='btnSupprimer' class='end-0' onclick='return confirm('Tu es Sure pour Supprimer Tous ?')' id='btnSupprimer'>
+                        <input type='submit' value='Supprimer tous' class='btn btn-primary' name='btnSupprimer' class='end-0' onclick='return confirm(`Tu es Sure pour Supprimer Tous ?`)' id='btnSupprimer'>
                     </form>
                 </div>
             </div>
@@ -130,11 +147,14 @@ if (isset($_GET['info'])) {
                    
             <tbody >
             ";
-    $Pag->GetTablePage($_SESSION['Formateurs'], $_GET['get'], 'formateur');
-    echo " 
+        $Pag->GetTablePage($_SESSION['Formateurs'], $_GET['get'], 'formateur');
+        echo " 
             </tbody>
             </table>
             </div>";
+    } else {
+        echo "<div><img src='../Images/nodata.jpg' alt='' /></div>";
+    }
 } else {
     if (isset($_SESSION["rechinfoformateur"])) {
         $info = $_SESSION["rechinfoformateur"];
@@ -142,7 +162,7 @@ if (isset($_GET['info'])) {
             if ($poste != "ChefSecteur")
                 $_SESSION['Formateurs'] = $Formateur->GetAll();
             else
-                $_SESSION['Formateurs'] = $Formateur->GetFormateurSecteur($secteur,$anne);
+                $_SESSION['Formateurs'] = $Formateur->GetFormateurSecteur($secteur);
         } else {
             $Formateur->connexion();
             if ($poste != "ChefSecteur")
@@ -154,7 +174,7 @@ if (isset($_GET['info'])) {
         if ($poste != "ChefSecteur")
             $_SESSION['Formateurs'] = $Formateur->GetAll();
         else
-            $_SESSION['Formateurs'] = $Formateur->GetFormateurSecteur($secteur,$anne);
+            $_SESSION['Formateurs'] = $Formateur->GetFormateurSecteur($secteur);
     }
     for ($i = 0; $i < count($_SESSION['Formateurs']); $i++) {
         if ($_SESSION['Formateurs'][$i]["secteur"] == "") {
@@ -162,6 +182,6 @@ if (isset($_GET['info'])) {
         }
     }
 
-    
+
     require "../View/V_Formateur.php";
 }

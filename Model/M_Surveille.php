@@ -1,4 +1,4 @@
-<?php 
+<?php
 require "M_Connexion.php";
 require "M_IMethodeCRUD.php";
 
@@ -12,7 +12,7 @@ class Surveille extends Connexion implements IMethodeCRUD
     public $login;
     public $Password;
     public $CodeEtab;
-    
+
     public function GetAll()
     {
         parent::connexion();
@@ -22,56 +22,86 @@ class Surveille extends Connexion implements IMethodeCRUD
     }
     public function Add()
     {
-        parent::connexion();
-        $req="call SP_AddSureille(?,?,?,?,?,?,?,?)";
-        $requete=parent::$cnx->prepare($req);
-        $requete->execute([$this->Matricule, $this->Nom, $this->Prenom,$this->typeuser, $this->CodeEtab, $this->login, $this->Password, $this->secteur]);
-        parent::Deconnexion();
+        $n = null;
+        try {
+            parent::connexion();
+            $req = "call SP_AddSureille(?,?,?,?,?,?,?,?)";
+            $n = parent::$cnx->prepare($req);
+            $n->execute([$this->Matricule, $this->Nom, $this->Prenom, $this->typeuser, $this->CodeEtab, $this->login, $this->Password, $this->secteur]);
+            parent::Deconnexion();
+        } catch (PDOException  $er) {
+            $n = null;
+        }
+        return $n;
     }
 
     public function Update()
     {
-        parent::connexion();
-        $req="call SP_UpdateSurveille(?,?,?,?)";
-        $requete=parent::$cnx->prepare($req);
-        $requete->bindParam(1,$this->Matricule);
-        $requete->bindParam(2,$this->Nom);
-        $requete->bindParam(3,$this->Prenom);
-        $requete->bindParam(4,$this->CodeEtab);
-        $requete->bindParam(4,$this->typeuser);
-        $requete->execute();
-        parent::Deconnexion();
+        $n = null;
+        try {
+            parent::connexion();
+            $req = "call SP_UpdateSurveille(?,?,?,?)";
+            $n = parent::$cnx->prepare($req);
+            $n->bindParam(1, $this->Matricule);
+            $n->bindParam(2, $this->Nom);
+            $n->bindParam(3, $this->Prenom);
+            $n->bindParam(4, $this->CodeEtab);
+            $n->bindParam(4, $this->typeuser);
+            $n->execute();
+            parent::Deconnexion();
+        } catch (PDOException  $er) {
+            $n = null;
+        }
+        return $n;
     }
 
     public function Delete()
     {
-        parent::connexion();
-        $req="call SP_DeleteSurveille(?,?)";
-        $requete=parent::$cnx->prepare($req);
-        $requete->bindParam(1,$this->Matricule);
-        $requete->bindParam(2,$this->CodeEtab);
-        $requete->execute();
-        parent::Deconnexion();
+        $n = null;
+        try {
+            parent::connexion();
+            $req = "call SP_DeleteSurveille(?,?)";
+            $n = parent::$cnx->prepare($req);
+            $n->bindParam(1, $this->Matricule);
+            $n->bindParam(2, $this->CodeEtab);
+            $n->execute();
+            parent::Deconnexion();
+        } catch (PDOException  $er) {
+            $n = null;
+        }
+        return $n;
     }
     public function DeleteAll()
     {
-        parent::connexion();
-        $req="call SP_DeleteAllSurveille(?)";
-        $requete=parent::$cnx->prepare($req);
-        $requete->bindParam(1,$this->CodeEtab);
-        $requete->execute();
-        parent::Deconnexion();
+        $n = null;
+        try {
+            parent::connexion();
+            $req = "call SP_DeleteAllSurveille(?)";
+            $n = parent::$cnx->prepare($req);
+            $n->bindParam(1, $this->CodeEtab);
+            $n->execute();
+            parent::Deconnexion();
+        } catch (PDOException  $er) {
+            $n = null;
+        }
+        return $n;
     }
     public function ModifierMotePasse()
     {
-        parent::connexion();
-        $req="call SP_ReinitialiserMotepasse(?,?,?)";
-        $requete=parent::$cnx->prepare($req);
-        $requete->bindParam(1,$this->Matricule);
-        $requete->bindParam(2,$this->Password);
-        $requete->bindParam(3,$this->CodeEtab);
-        $requete->execute();
-        parent::Deconnexion();
+        $n = null;
+        try {
+            parent::connexion();
+            $req = "call SP_ReinitialiserMotepasse(?,?,?)";
+            $n = parent::$cnx->prepare($req);
+            $n->bindParam(1, $this->Matricule);
+            $n->bindParam(2, $this->Password);
+            $n->bindParam(3, $this->CodeEtab);
+            $n->execute();
+            parent::Deconnexion();
+        } catch (PDOException  $er) {
+            $n = null;
+        }
+        return $n;
     }
 
     public function Find($val)

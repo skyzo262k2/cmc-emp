@@ -22,23 +22,27 @@ $poste = $_SESSION['Admin']['Poste'];
 $secteur = isset($_SESSION['Admin']['secteur']) ? $_SESSION['Admin']['secteur'] : null;
 
 
+$message = "";
 $stagiaire->etab = $etab;
 $stagiaire->annef = $anne;
 
+$query = "SELECT g.CodeGrp FROM groupe g ";
+$query .= isset($_SESSION['Admin']['secteur']) ? "INNER JOIN filiere f ON g.CodeFlr=f.CodeFlr WHERE f.CodeSect='{$_SESSION['Admin']['secteur']}'" : "";
+
+
 $stagiaire->connexion();
-$groupes = Stagiaire::$cnx->query("select CodeGrp from groupe")->fetchAll(PDO::FETCH_NUM);
+$groupes = Stagiaire::$cnx->query($query)->fetchAll(PDO::FETCH_NUM);
 $stagiaire->Deconnexion();
 
-if (!isset($_SESSION["Admin"]))
-    header("location:../Controller/C_Login.php");
 
 if (!isset($_GET['get']))
     $_GET['get'] = 1;
 
 if (isset($_POST["sup"])) {
     $stagiaire->cef = $_POST["sup"];
-    $stagiaire->Delete();
-    header("location:../Controller/C_Stagiaire.php");
+    $n = $stagiaire->Delete();
+    if ($n)
+        $message = $page->message("Stagiaire a été supprimé avec succès", "danger");
 }
 
 if (isset($_POST["btnAjouter"])) {
@@ -48,7 +52,9 @@ if (isset($_POST["btnAjouter"])) {
         $stagiaire->prenom = $_POST["prenom"];
         $stagiaire->groupe = $_POST["groupe"];
         $stagiaire->discipline = "discipline";
-        $stagiaire->Add();
+        $n = $stagiaire->Add();
+        if ($n)
+            $message = $page->message("Stagiaire a été ajouté avec succès", "primary");
     }
 }
 if (isset($_POST["btnModifier"])) {
@@ -57,10 +63,14 @@ if (isset($_POST["btnModifier"])) {
     $stagiaire->prenom = $_POST["prenom"];
     $stagiaire->groupe = $_POST["groupe"];
     $stagiaire->discipline = $_POST["discipline"];
-    $stagiaire->update();
+    $n = $stagiaire->update();
+    if ($n)
+        $message = $page->message("Stagiaire a été modifié avec succès", "primary");
 }
 if (isset($_POST["btnSupprimer"])) {
-    $stagiaire->DeleteAll();
+    $n = $stagiaire->DeleteAll();
+    if ($n)
+        $message = $page->message("Stagiaires a été supprimés avec succès", "danger");
 }
 
 
@@ -82,19 +92,20 @@ if (isset($_GET['info'])) {
             $_SESSION['Stagiaire'] = $stagiaire->FindStagiaire($info, $secteur);
     }
 
+    if (count($_SESSION["Stagiaire"]) > 0) {
 
-    echo "<div class='pagi_sup'>
+        echo "<div class='pagi_sup'>
                 <div class='pagination'>";
 
 
 
-    $tab = $page->Pagination_Btn($_SESSION['Stagiaire'], $_GET['get']);
-    $page->Pagination_Nb($tab, $_GET['get']);
+        $tab = $page->Pagination_Btn($_SESSION['Stagiaire'], $_GET['get']);
+        $page->Pagination_Nb($tab, $_GET['get']);
 
-    echo "</div>
+        echo "</div>
                 <div class='deleteAll'>
                     <form action='' method='post'>
-                        <input type='submit' value='Supprimer tous' class='btn btn-primary' name='btnSupprimer' class='end-0' onclick='return confirm('Tu es Sure pour Supprimer Tous ?')' id='btnSupprimer'>
+                        <input type='submit' value='Supprimer tous' class='btn btn-primary' name='btnSupprimer' class='end-0' onclick='return confirm(`Tu es Sure pour Supprimer Tous ?`)' id='btnSupprimer'>
                     </form>
                 </div>
             </div>
@@ -112,11 +123,14 @@ if (isset($_GET['info'])) {
                         </tr>
                     </thead>
                     <tbody >";
-    $page->GetTablePage($_SESSION['Stagiaire'], $_GET['get']);
-    echo "
+        $page->GetTablePage($_SESSION['Stagiaire'], $_GET['get']);
+        echo "
                     </tbody>
                 </table>
             </div>";
+    } else {
+        echo "<div><img src='../Images/nodata.jpg' alt='' /></div>";
+    }
 } else {
     if (isset($_SESSION["rechinfostag"])) {
         $info = $_SESSION["rechinfostag"];

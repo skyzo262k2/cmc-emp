@@ -6,7 +6,7 @@ class Niveau extends Connexion implements IMethodeCRUD
 {
     public $CodeNiv;
     public $DescpNiv;
-    
+
     public $etab;
 
     function __construct()
@@ -23,50 +23,57 @@ class Niveau extends Connexion implements IMethodeCRUD
 
     public function Add()
     {
+        $n = null;
         try {
             parent::connexion();
             $query = "CALL sp_InsertNiveau(?,?)";
-           $n = parent::$cnx->prepare($query);
-           $n->execute(array($this->CodeNiv,$this->DescpNiv));
-            
+            $n = parent::$cnx->prepare($query);
+            $n->execute(array($this->CodeNiv, $this->DescpNiv));
+            parent::Deconnexion();
         } catch (PDOException  $er) {
-            
+            $n = null;
         }
-        parent::Deconnexion();
+        return $n;
     }
 
     public function Delete()
     {
-        parent::connexion();
-        $success = parent::$cnx->prepare("CALL sp_DeleteNiv(?)");
-        $success->execute(array($this->CodeNiv));
-        parent::Deconnexion();
-        if ($success)
-            return true;
-        else
-            return false;
+        $n = null;
+        try {
+            parent::connexion();
+            $n = parent::$cnx->prepare("CALL sp_DeleteNiv(?)");
+            $n->execute(array($this->CodeNiv));
+            parent::Deconnexion();
+        } catch (PDOException  $er) {
+            $n = null;
+        }
+        return $n;
     }
     public function Update()
     {
-        parent::connexion();
-        $query = "CALL sp_UpdateNiv(?,?)";
-        $success = parent::$cnx->prepare($query);
-        $success->execute(array($this->CodeNiv,$this->DescpNiv));
-        parent::Deconnexion();
-        if ($success)
-            return true;
-        else
-            return false;
+        $n = null;
+        try {
+            parent::connexion();
+            $query = "CALL sp_UpdateNiv(?,?)";
+            $n = parent::$cnx->prepare($query);
+            $n->execute(array($this->CodeNiv, $this->DescpNiv));
+            parent::Deconnexion();
+        } catch (PDOException  $er) {
+            $n = null;
+        }
+        return $n;
     }
     public function DeleteAll()
     {
-        parent::connexion();
-        $success = parent::$cnx->query("CALL SP_DeleteAllNiveaux()");
-        parent::Deconnexion();
-        if ($success)
-            return true;
-        else
-            return false;
+        $n = null;
+        try {
+            parent::connexion();
+            $n = parent::$cnx->query("CALL SP_DeleteAllNiveaux()");
+            parent::Deconnexion();
+        } catch (PDOException  $er) {
+            $n = null;
+        }
+        return $n;
     }
 
     public function Find($val)
@@ -76,6 +83,4 @@ class Niveau extends Connexion implements IMethodeCRUD
         parent::Deconnexion();
         return $rows;
     }
-
-
 }

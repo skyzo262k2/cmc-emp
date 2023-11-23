@@ -15,14 +15,11 @@
         }
 
         .title {
-            margin: 15px;
             text-align: center;
         }
 
-        .title h4 {
+        .title h3 {
             color: blue;
-            /* font-size: 2em; */
-            margin-bottom: 25px;
             animation: slideInFromTop 1s ease-in-out;
         }
 
@@ -166,35 +163,35 @@
 </head>
 
 <body>
-    <div class="title">
-        <h4>Consulter Absence Formateur</h4>
-    </div>
-    <div class="row">
-        <div class="col-2"></div>
-        <div class="col-3">
-            <!-- <label for="">De :</label> -->
-            <input type="date" name="date1" id="date1" class='form-control' value="<?php echo $datedebut ?>" onchange="ChangeDate()">
-        </div>
-        <div class="col-3">
-            <!-- <label for="">Au :</label> -->
-            <input type="date" name="date2" id="date2" class='form-control' value="<?php echo $sysdate ?>" onchange="ChangeDate()">
-        </div>
-        <div class="col-3">
-            <!-- <label for="">Choisir Seance :</label> -->
-            <select name="seance" id="seance" class='form-control' onchange="ChangeDate()">
-                <option value="choisir">Choisir Seance</option>
-                <option value="1">8:30H - 11:00</option>
-                <option value="2">11:00H - 13:30</option>
-                <option value="3">13:30H - 16:00</option>
-                <option value="4">16:00H - 18:30</option>
-            </select>
+    <div class="container-fluid mt-4">
+        <div class="row">
+            <div class="col-6">
+                <div class="title">
+                    <h3>Consultation Absences des Formateurs</h3>
+                </div>
+            </div>
+            <div class="col-2">
+                <input type="date" name="date1" id="date1" class='form-control' value="<?= $datedebut ?>" onchange="ChangeDate()">
+            </div>
+            <div class="col-2">
+                <input type="date" name="date2" id="date2" class='form-control' value="<?= $sysdate ?>" onchange="ChangeDate()">
+            </div>
+            <div class="col-2">
+                <select name="seance" id="seance" class='form-control' onchange="ChangeDate()">
+                    <option value="choisir">Choisir Seance</option>
+                    <option value="1">8:30H - 11:00</option>
+                    <option value="2">11:00H - 13:30</option>
+                    <option value="3">13:30H - 16:00</option>
+                    <option value="4">16:00H - 18:30</option>
+                </select>
+            </div>
         </div>
     </div>
 
 
-    <div id="informations">
+    <div id="informations" class='m-4'>
         <div class='row m-4 total'>
-            <span>Total Absences : <b><?= $nb[0] ?></b></span>
+            <span class="h4 text-danger">Total Absences : <b><?= htmlspecialchars($nb[0]) ?></b></span>
         </div>
         <?php if (count($Formateur) != 0) : ?>
             <div class='table_info m-4'>
@@ -214,10 +211,10 @@
                         foreach ($Formateur as $form) {
 
                             echo "<tr>
-                        <td>$form[0]</td>
-                        <td>$form[1]</td>
-                        <td>$form[2]</td>
-                        <td><div onclick='Detail(this)'><span><img class='icon' src='../Images/Icon_Find.png'/></span><span style='display:none;'>$form[0]</span></div></td>
+                        <td>" . htmlspecialchars($form[0]) . "</td>
+                        <td>" . htmlspecialchars($form[1]) . "</td>
+                        <td>" . htmlspecialchars($form[2]) . "</td>
+                        <td><div onclick='Detail(this)'><span><img class='icon' src='../Images/Icon_Find.png'/></span><span style='display:none;'>" . htmlspecialchars($form[0]) . "</span></div></td>
                         </tr>";
                         }
 

@@ -19,7 +19,7 @@ class PagePDF_TableauService
     public function AddPagePDF($year, $NameEsta, $grp, $InformationHour, $Affectations)
     {
         // $this->pdf->AddPage();
-        $this->pdf->Image('../Images/logo.jpeg', 10, 2, 25, 25);
+        $this->pdf->Image('../Images/cmc.jpg', 10, 2, 25, 25);
 
         $this->pdf->SetY(20);
         $this->pdf->SetX(10);
@@ -151,7 +151,7 @@ class PagePDF_Emploi
         $this->pdf->Cell(0, -10, "Emploi Du temps " . $this->Annee, 0, 1, "C", 0);
         $this->pdf->Cell(0, 25, "Du " . $dtDebut . " Au " . $dtFin, 0, 1, "C", 0);
 
-        $this->pdf->Image('../Images/logo.jpeg', 265, 5, 20, 20);
+        $this->pdf->Image('../Images/cmc.jpg', 265, 5, 20, 20);
         $this->pdf->SetY(30);
         $this->pdf->SetX(10);
         $this->pdf->Cell(0, 0, '', 'B', 0, 'C', 0);
@@ -416,7 +416,7 @@ class PagePDF_AffectationGrp
     public function AddPagePDF($year, $grp, $NameEsta,  $InformationHour, $Affectations)
     {
         // $this->pdf->AddPage();
-        $this->pdf->Image('../Images/logo.jpeg', 10, 2, 25, 25);
+        $this->pdf->Image('../Images/cmc.jpg', 10, 2, 25, 25);
 
         $this->pdf->SetY(20);
         $this->pdf->SetX(10);
@@ -537,7 +537,7 @@ class Proposition_EFM
 
     public function AddPagePDF()
     {
-        $this->pdf->Image('../Images/logo.jpeg', 10, 5, 30, 30);
+        $this->pdf->Image('../Images/cmc.jpg', 10, 5, 30, 30);
 
         $this->pdf->SetY(20);
         $this->pdf->SetX(45);

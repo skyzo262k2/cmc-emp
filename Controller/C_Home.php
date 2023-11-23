@@ -28,7 +28,7 @@ elseif (isset($_SESSION['userFormateur'])) {
     $data=$validateur->validateur($_SESSION["userFormateur"]['Matricule']);
 }
 else{
-    header("location:../Controller/C_Login.php");
+    header("location:../Controller/Connexion");
 }
 
 require "../View/V_Home.php";

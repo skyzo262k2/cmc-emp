@@ -27,52 +27,61 @@ class Secteur extends Connexion
     }
     public function AddSecteur()
     {
+        $n = null;
         $existe = $this->FindSecteur($this->CodeSect);
         if ($existe == null) {
-
-            parent::connexion();
-            $query = "CALL sp_InsertSec('$this->CodeSect','$this->DescpSect')";
-            $n = parent::$cnx->exec($query);
-            parent::Deconnexion();
-            if ($n)
-                return true;
-            else
-                return false;
-        }
+            try {
+                parent::connexion();
+                $query = "CALL sp_InsertSec('$this->CodeSect','$this->DescpSect')";
+                $n = parent::$cnx->exec($query);
+                parent::Deconnexion();
+            } catch (PDOException  $er) {
+                $n = null;
+            }
+        } else
+            $n = null;
+        return $n;
     }
 
     public function DeleteSecteur()
     {
-        parent::connexion();
-        $n = parent::$cnx->exec("CALL sp_DeleteSec('{$this->CodeSect}')");
-        parent::Deconnexion();
-        if ($n)
-            return true;
-        else
-            return false;
+        $n = null;
+        try {
+            parent::connexion();
+            $n = parent::$cnx->exec("CALL sp_DeleteSec('{$this->CodeSect}')");
+            parent::Deconnexion();
+        } catch (PDOException  $er) {
+            $n = null;
+        }
+        return $n;
     }
     public function UpdateSecteur()
     {
+        $n = null;
         $existe = $this->FindSecteur($this->CodeSect);
         if (isset($existe)) {
-            parent::connexion();
-            $query = "CALL sp_UpdateSec('{$this->CodeSect}','{$this->DescpSect}')";
-            $n = parent::$cnx->exec($query);
-            parent::Deconnexion();
-            if ($n)
-                return true;
-            else
-                return false;
-        }
+            try {
+                parent::connexion();
+                $query = "CALL sp_UpdateSec('{$this->CodeSect}','{$this->DescpSect}')";
+                $n = parent::$cnx->exec($query);
+                parent::Deconnexion();
+            } catch (PDOException  $er) {
+                $n = null;
+            }
+        } else
+            $n = null;
+        return $n;
     }
     public function DeleteAllSecteurs()
     {
-        parent::connexion();
-        $n = parent::$cnx->query("CALL SP_DeleteAllSecteurs()");
-        parent::Deconnexion();
-        if ($n)
-            return true;
-        else
-            return false;
+        $n = null;
+        try {
+            parent::connexion();
+            $n = parent::$cnx->query("CALL SP_DeleteAllSecteurs()");
+            parent::Deconnexion();
+        } catch (PDOException  $er) {
+            $n = null;
+        }
+        return $n;
     }
 }

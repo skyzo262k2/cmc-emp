@@ -15,6 +15,7 @@
     <style>
         body {
             background-color: #F0F2F5;
+            overflow-x: hidden;
         }
 
         .effectif {
@@ -62,11 +63,36 @@
 
 
 
-        /* canvas {
-            -moz-user-select: none;
-            -webkit-user-select: none;
-            -ms-user-select: none;
-        } */
+
+        #popup {
+            min-height: 500px;
+            max-height: 500px;
+            background-color: aliceblue;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px #ccc;
+            overflow: auto;
+            z-index: 1;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 400px;
+            display: none;
+        }
+
+        #popup input[type="button"] {
+            background-color: #ff0000;
+            color: white;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 5px;
+            float: right;
+            cursor: pointer;
+            position: fixed;
+            left: 90%;
+
+        }
 
 
         .grafique {
@@ -81,62 +107,25 @@
         .col-6 {
             text-align: center;
         }
-
-        .tool {
-            position: relative;
-            display: inline-block;
-            color: white;
-            text-decoration: none;
-        }
-
-        .tool::before {
-            content: attr(data-tooltip);
-            position: absolute;
-            width: 120px;
-            background-color: rgba(0, 0, 0, 0.8);
-            color: white;
-            padding: 5px 10px;
-            border-radius: 5px;
-            z-index: 1;
-            opacity: 0;
-            transition: opacity 0.3s;
-            bottom: 100%;
-            left: 50%;
-            transform: translateX(-50%);
-        }
-
-        .tool:hover::before {
-            opacity: 1;
-        }
-
-        .tool1 {
-            position: relative;
-            display: inline-block;
-            color: white;
-            text-decoration: none;
-        }
-
-        .tool1::before {
-            content: attr(data-tooltip);
-            font-size: 12px;
-            width: 150px;
-            position: absolute;
-            background-color: rgba(0, 0, 0, 0.8);
-            color: white;
-            padding: 5px 10px;
-            border-radius: 5px;
-            z-index: 1;
-            opacity: 0;
-            transition: opacity 0.3s;
-            bottom: 0px;
-            left: 100%;
-            transform: translateX(-50%);
-        }
-
-        .tool1:hover::before {
-            opacity: 1;
-        }
     </style>
+    <script>
+        function Detail(type,titre) {
+            var request = new XMLHttpRequest();
+            request.open('POST', '../Controller/C_Dashboard.php', true);
+            request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            request.onload = function() {
+                if (this.status == 200 && this.readyState == 4) {
+                    document.getElementById("popup").innerHTML = this.responseText;
+                }
+            };
+            request.send(`type=${type}&titre=${titre}`);
+            document.getElementById("popup").style.display = "block";
+        }
+
+        function Fermer() {
+            document.getElementById("popup").style.display = "none"
+        }
+    </script>
 </head>
 
 <body>
@@ -169,8 +158,7 @@
             </div>
 
         </div>
-        <div class="row statistique">
-            <div class="col-md-1"></div>
+        <div class="row statistique ">
 
             <div class="col-md-2">
                 <div class="stat stat1">
@@ -192,113 +180,110 @@
             </div>
             <div class="col-md-2">
                 <div class="stat stat3">
-                    <?php if (count($GrpNonAffecter) == 0) : ?>
-                        <div class="effectif">
-                    <?php else : ?>
-                        <div class="effectif tool" data-tooltip="<?= $chaine_GrpNonAffecter ?>">
-                    <?php endif; ?>
-                            <div>Groupes n'ont pas terminé affectations
-                                <div class="nbr"><?php echo count($GrpNonAffecter); ?></div>
-                            </div>
+                    <div class="effectif" onclick="Detail('groupeaffectation','Groupes n\'ont pas terminé affectations')">
+                        <div>Groupes n'ont pas terminé affectations
+                            <div class="nbr"><?php echo count($GrpNonAffecter); ?></div>
                         </div>
+                    </div>
 
                 </div>
             </div>
 
-                <div class="col-md-2">
-                    <div class="stat stat1">
-                    <?php if (count($GrpNonEmploi) == 0) : ?>
-                        <div class="effectif">
-                    <?php else : ?>
-                        <div class="effectif tool" data-tooltip="<?= $chaine_GrpNonEmploi ?>">
-                    <?php endif; ?>
-                            <div> Les groupes ne sont pas un emploi
-                                <div class="nbr"><?php echo count($GrpNonEmploi); ?></div>
-                            </div>
+            <div class="col-md-2">
+                <div class="stat stat1" onclick="Detail('groupeemploi','Les groupes ne sont pas un emploi')">
+                    <div class="effectif">
+                        <div> Les groupes ne sont pas un emploi
+                            <div class="nbr"><?php echo count($GrpNonEmploi); ?></div>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-2">
-                    <div class="stat stat2">
-                        <div class="effectif">
-                            <div> Les formateurs n'ont aucune affectation
-                                <div class="nbr"><?php echo count($FrmNonAffectation); ?></div>
-                            </div>
+            </div>
+            <div class="col-md-2">
+                <div class="stat stat2" onclick="Detail('formateuraffectation','Les formateurs n\'ont aucune affectation')">
+                    <div class="effectif">
+                        <div> Les formateurs n'ont aucune affectation
+                            <div class="nbr"><?php echo count($FrmNonAffectation); ?></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2" onclick="Detail('groupestg','Les groupes n\'ont aucun stagiaire')">
+                <div class="stat stat3">
+                    <div class="effectif">
+                        <div> Les groupes n'ont aucun stagiaire
+                            <div class="nbr"><?php echo count($nbGrpSansStg); ?></div>
                         </div>
                     </div>
                 </div>
 
-                <!-- <div class="col-md-2">
+            </div>
+
+            <div class="col-md-2">
+                <div class="stat stat1">
+                    <div class="effectif">
+                        Formateurs
+                        <div class="nbr"><?php echo $nbfrm[0]; ?></div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="col-md-2">
                 <div class="stat stat2">
                     <div class="effectif">
-                    Les groupes n'ont aucun stagiaire
-                        <div class="nbr"><?php //echo $nbGrpSansStg[0]; 
-                                            ?> </div>
+                        Stagiaires
+                        <div class="nbr"><?php echo $nbstg[0]; ?></div>
                     </div>
+
                 </div>
-            </div> -->
-
-                <div class="col-md-2">
-                    <div class="stat stat1">
-                        <div class="effectif">
-                            Formateurs
-                            <div class="nbr"><?php echo $nbfrm[0]; ?></div>
-                        </div>
-
-                    </div>
-                </div>
-                <div class="col-md-2">
-                    <div class="stat stat2">
-                        <div class="effectif">
-                            Stagiaires
-                            <div class="nbr"><?php echo $nbstg[0]; ?></div>
-                        </div>
-
-                    </div>
-                </div>
-
-
-
-                <div class="col-md-2">
-                    <div class="stat stat3">
-                        <div class="effectif">
-                            Groupes
-                            <div class="nbr"><?php echo $nbgrp[0]; ?></div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-2">
-                    <div class="stat stat1">
-                        <div class="effectif">
-                            Salles
-                            <div class="nbr"><?php echo $nbsalle[0]; ?></div>
-                        </div>
-
-                    </div>
-                </div>
-
-
-                <div class="col-md-2">
-                    <div class="stat stat2">
-                        <div class="effectif">
-                            Modules 1<sup>ére</sup> Année
-                            <div class="nbr"><?php echo $nbmodule1[0]; ?></div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-2">
-                    <div class="stat stat3">
-                        <div class="effectif">
-                            Modules 2<sup>éme</sup> Année
-                            <div class="nbr"><?php echo $nbmodule2[0]; ?></div>
-                        </div>
-                    </div>
-                </div>
-
             </div>
 
 
+
+            <div class="col-md-2">
+                <div class="stat stat3">
+                    <div class="effectif">
+                        Groupes
+                        <div class="nbr"><?php echo $nbgrp[0]; ?></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="stat stat1">
+                    <div class="effectif">
+                        Salles
+                        <div class="nbr"><?php echo $nbsalle[0]; ?></div>
+                    </div>
+
+                </div>
+            </div>
+
+
+            <div class="col-md-2">
+                <div class="stat stat2">
+                    <div class="effectif">
+                        Modules 1<sup>ére</sup> Année
+                        <div class="nbr"><?php echo $nbmodule1[0]; ?></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="stat stat3">
+                    <div class="effectif">
+                        Modules 2<sup>éme</sup> Année
+                        <div class="nbr"><?php echo $nbmodule2[0]; ?></div>
+                    </div>
+                </div>
+            </div>
+
         </div>
+
+
+    </div>
+
+    <div id='popup' class='popup'>
+        
+
+    </div>
 
 
 

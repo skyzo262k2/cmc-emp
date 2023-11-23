@@ -48,11 +48,17 @@
         td {
             text-align: center;
         }
-        #remarque{
-            width:270px
+
+        #remarque {
+            width: 270px
         }
-        #pdf{
-            width:110px
+
+        #pdf {
+            width: 110px
+        }
+
+        .row {
+            width: 100%;
         }
     </style>
 
@@ -129,15 +135,15 @@
                     <input type="file" accept=".pdf" name="fileurl" class="form-control">
                 </div>
             </div>
-            <div class="col-3" style="padding-left:30px;padding-top:7px;font-size:13px">
-                    <input type="radio" value="Synthèse" name="typeEFM" id='Synthèse'> <label for='Synthèse'>Synthèse</label> &nbsp;&nbsp;
-                    <input type="radio" value="Pratique" name="typeEFM" id='Pratique'> <label for='Pratique'>Pratique</label>
-            
+            <div class="col-3" style="font-size:20px">
+                <input type="radio" value="Synthèse" name="typeEFM" id='Synthèse'> <label for='Synthèse' class="m-1">Synthèse</label> &nbsp;&nbsp;
+                <input type="radio" value="Pratique" name="typeEFM" id='Pratique'> <label for='Pratique' class="m-1">Pratique</label>
+
 
             </div>
 
             <div class="col-1">
-                <input type="submit" name="add" class="btn btn-info text-light" value="Ajouter">
+                <input type="submit" name="add" class="btn btn-info text-light" value="Sauvgarder">
 
             </div>
 
@@ -146,21 +152,21 @@
     </form>
 
     <center>
-        <p class='text-danger'><b><?php echo $message ?></b></p>
+        <p class='text-danger'><b><?= $message ?></b></p>
     </center>
-    <div class='row'>
+    <div class='container-fluid'>
         <?php if (count($EFMS) != 0) : ?>
-            <table class="table table-striped table-sm table-bordered m-3">
+            <table class="table table-light table-bordered">
                 <thead>
                     <tr class="table-success">
                         <th scope="col">Groupe</th>
                         <th scope="col">Description Module</th>
                         <th scope="col">Type EFM</th>
                         <th scope="col">Date Entrée</th>
-                        <th scope="col">EFM </th>
-                        <th scope="col">Date Valider</th>
+                        <th scope="col">Fichier </th>
+                        <th scope="col">Date Validation</th>
                         <th scope="col">Remarque</th>
-                        <th scope="col">Proposition de l’EFM</th>
+                        <th scope="col">Proposition de l'EFM</th>
                         <th scope="col">Action</th>
                     </tr>
                 </thead>
@@ -172,8 +178,10 @@
                     ?>
                 </tbody>
             </table>
+        <?php else : ?>
+            <div class='m-5 text-center '><img src='../Images/nodata.jpg' alt='' /></div>
         <?php endif; ?>
-    </div>
+    </div>  
 </body>
 
 </html>

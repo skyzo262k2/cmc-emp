@@ -78,7 +78,7 @@
 
         .sauvgarder {
             margin-right: 75px;
-            margin-top:50px;
+            margin-top: 5px;
             text-align: right;
         }
 
@@ -109,7 +109,9 @@
         .popup {
             visibility: hidden;
             position: absolute;
-            width: 380px;
+            top: 50%;
+            right: 30%;
+            width: 600px;
             padding: 15px 25px;
             background: #fff;
             box-shadow: 2px 2px 7px 7px gray;
@@ -148,7 +150,6 @@
 
         .title {
 
-            margin-bottom: 25px;
             animation: slideInFromTop 1s ease-in-out;
         }
 
@@ -233,11 +234,15 @@
                 PopUp.style.visibility = "hidden";
             }
         }
+        setTimeout(function() {
+            document.querySelector('.message').style.display = 'none';
+        }, 5000);
     </script>
 </head>
 
 <body>
     <div class="principale">
+
         <div class="row header title">
             <div class="col-8 text-center">
                 <h3>Profil</h3>
@@ -251,67 +256,57 @@
         </div>
 
 
+        <div class="row message m-2">
+            <?= $message ?>
+        </div>
         <div class="informations-sauvgarder">
             <form action="" method="post">
                 <div class="info">
                     <div class="personnale">
-
-                        <!-- <h3>Information personnel</h3> -->
-                        <input type="hidden" name="matold" value="<?php echo $user["Matricule"] ?>">
-
                         <div class="form-group">
                             <label for="mat">Matricule : </label>
                             <div class="checkinput">
-                                <input type="text" name="mat" id="mat" value="<?php echo $user["Matricule"] ?>" readonly class="form-control inR">
-                                <!-- <input type="checkbox" name="chekmat" id="chekmat" onchange="DisabledInput()" class="chek"> -->
+                                <input type="text" id="mat" value="<?= htmlspecialchars($user["Matricule"]) ?>" disabled class="form-control">
                             </div>
                         </div>
                         <div class="form-group">
                             <label for="poste">Poste : </label>
-                            <input type="text" name="poste" value="<?php echo $user["Poste"] ?>" id="poste" readonly class="form-control inR">
+                            <input type="text" value="<?= htmlspecialchars($user["Poste"]) ?>" id="poste" disabled class="form-control">
                         </div>
                         <div class="form-group">
                             <label for="prenom">Prénom : </label>
-                            <input type="text" name="prenom" value="<?php echo $user["Prenom"] ?>" id="prenom" class="form-control">
+                            <input type="text"  value="<?= htmlspecialchars($user["Prenom"]) ?>" disabled id="prenom" class="form-control">
                         </div>
                         <div class="form-group">
                             <label for="nom">Nom : </label>
-                            <input type="text" name="nom" value="<?php echo $user["Nom"] ?>" id="nom" class="form-control">
+                            <input type="text" value="<?= htmlspecialchars($user["Nom"]) ?>"  disabled id="nom" class="form-control">
                         </div>
 
                     </div>
                     <div class="etabliessement">
-                        <!-- <h3>Information Etablissement</h3> -->
-
-                        <input type="hidden" name="codeetabold" value="<?php echo $etab["CodeEtb"] ?>">
                         <div class="form-group">
                             <label for="codeetab">Code Etablissement : </label>
                             <div class="checkinput">
-                                <input type="text" name="codeetab" value="<?php echo $etab["CodeEtb"] ?>" id="codeetab" readonly class="form-control ">
-                                <!-- <input type="checkbox" name="chekcodeetab" id="chekcodeetab" onchange="DisabledInput()" class="chek"> -->
+                                <input type="text" name="codeetab" value="<?= htmlspecialchars($etab["CodeEtb"]) ?>" id="codeetab" readonly class="form-control inR">
                             </div>
                         </div>
                         <div class="form-group">
                             <label for="descp">Description : </label>
-                            <input type="text" name="descp" value="<?php echo $etab["DescpFr"] ?>" id="descp" class="form-control">
+                            <input type="text" name="descp" value="<?= htmlspecialchars($etab["DescpFr"]) ?>" id="descp" class="form-control">
                         </div>
                         <div class="form-group">
                             <label for="ville">Ville : </label>
-                            <input type="text" name="ville" value="<?php echo $etab["Ville"] ?>" id="ville" class="form-control ">
+                            <input type="text" name="ville" value="<?= htmlspecialchars($etab["Ville"]) ?>" id="ville" class="form-control ">
                         </div>
-
                         <div class="form-group">
                             <label for="semanne">Semaine par Année : </label>
-                            <input type="text" name="semanne" value="<?php echo $etab["Sem_Annee"] ?>" id="semanne" class="form-control ">
+                            <input type="text" name="semanne" value="<?= htmlspecialchars($etab["Sem_Annee"]) ?>" id="semanne" class="form-control ">
                         </div>
-
                     </div>
                 </div>
                 <div class="sauvgarder">
                     <input type="submit" name="sauvgarder" class="btn btn-primary" value="Sauvgarder">
                 </div>
-
-
             </form>
         </div>
 
@@ -354,66 +349,18 @@
         <div class="btnClose" onclick="AjouterAnnee(event)">&times;</div>
         <div class="formulaire">
             <form method="POST" action="../Controller/C_Profil.php">
-                <h6>Voulez Vous Ajouter l'annee prochaine? (<?php
-                                                            echo $PAnne;
-                                                            ?>)</h6>
-                <p class="text-success"><?= $mes ?></p>
+                <h6>Voulez Vous Ajouter l'annee prochaine? (<?= htmlspecialchars($PAnne) ?>)</h6>
+                <p class="text-success"><?= htmlspecialchars($mes) ?></p>
                 <div class="form-input">
                     <input type="checkbox" id="confirmer" required>
                     <label for="confirmer">Confirmer</label>
                 </div>
                 <div class="form-input">
-                    <button type="submit" <?= $btn; ?> value="<?= $PAnne ?>" name="btnAjouterAnnee" class="btn btn-primary" id="btnAjouterAnnee">Ajouter</button>
+                    <button type="submit" <?= $btn; ?> value="<?= htmlspecialchars($PAnne) ?>" name="btnAjouterAnnee" class="btn btn-primary" id="btnAjouterAnnee">Ajouter</button>
                 </div>
             </form>
         </div>
     </div>
-
-
-
-
-    <!-- <div id="addSurveilleModal" class="modal fade">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <form action="" method="post" id="form">
-                    <div class="modal-header">
-                        <h4 class="modal-title">Ajouter Surveille</h4>
-                        <button type="button" class="close btn" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="form-group">
-                            <input type="text" name="matsur" id="mat" class="form-control" placeholder="Matricule" required>
-                        </div>
-                        <div class="form-group">
-                            <input type="text" name="nomsur" id="nom" class="form-control" placeholder="Nom" required>
-                        </div>
-                        <div class="form-group">
-                            <input type="text" id="prenom" name="prenomsur" class="form-control" placeholder="Prénom" required>
-                        </div>
-
-                        <div class="form-group">
-                            <input type="text" id="prenom" name="usersur" class="form-control" placeholder="Login" required>
-                        </div>
-
-                        <div class="form-group">
-                            <input type="password" name="passnewsur1" id="passnew1" class="form-control" placeholder="Mot de passe " required>
-                        </div>
-                        <div class="form-group">
-                            <input type="password" name="passnewsur2" id="passnew2" class="form-control" placeholder="Retapez le mot de passe" required>
-                        </div>
-
-                    </div>
-                    <div class="modal-footer">
-                        <input type="button" class="btn btn-default" data-dismiss="modal" value="Annuler">
-                        <input type="submit" name="AddSurveille" id="btnmotpass" class="btn btn-primary" value="Ajouter">
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div> -->
-
-
-
 </body>
 
 </html>

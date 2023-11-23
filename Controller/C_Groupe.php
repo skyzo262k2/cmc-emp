@@ -14,13 +14,16 @@ if (!isset($_SESSION["Admin"]) || $_SESSION["Admin"]["Poste"] == "Surveille") {
 $groupe = new Groupe();
 $groupe->CodeEtab = $_SESSION["Etablissement"]["CodeEtb"];
 
+$message = "";
 if (!isset($_GET["get"])) {
     $_GET["get"] = 1;
 }
 
 if (isset($_POST["sup"])) {
     $groupe->CodeGrp = $_POST["sup"];
-    $groupe->DeleteGroupe();
+    $n = $groupe->DeleteGroupe();
+    if ($n)
+        $message = $page->message("Groupe a été supprimé avec succès", "danger");
 }
 
 if (isset($_POST["btnAjouter"])) {
@@ -34,7 +37,9 @@ if (isset($_POST["btnAjouter"])) {
         } else {
             $groupe->taux = 100;
         }
-        $boolAdd = $groupe->AddGroupe();
+        $n = $groupe->AddGroupe();
+        if ($n)
+            $message = $page->message("Groupe a été ajouté avec succès", "primary");
     }
 }
 
@@ -49,12 +54,16 @@ if (isset($_POST["btnModifier"])) {
         } else {
             $groupe->taux = 100;
         }
-        $boolAdd = $groupe->UpdateGroupe();
+        $n = $groupe->UpdateGroupe();
+        if ($n)
+            $message = $page->message("groupe a été modifé avec succès", "primary");
     }
 }
 
 if (isset($_POST["btnSupprimer"])) {
-    $boolSpAll = $groupe->DeleteAllGroupes();
+    $n = $groupe->DeleteAllGroupes();
+    if ($n)
+        $message = $page->message("groupes a été supprimés avec succès", "danger");
 }
 
 $groupe->connexion();
@@ -90,18 +99,20 @@ if (isset($_GET['info'])) {
     }
 
 
-    echo "
+
+    if (count($_SESSION["Groupe"]) > 0) {
+        echo "
     <div class='pagi_sup'>
 
         <div class='pagination'>
             ";
-    $groupes = $page->Pagination_Btn($_SESSION['Groupe'], $_GET['get']);
-    $page->Pagination_Nb($groupes, $_GET['get']);
+        $groupes = $page->Pagination_Btn($_SESSION['Groupe'], $_GET['get']);
+        $page->Pagination_Nb($groupes, $_GET['get']);
 
-    echo "  </div>
+        echo "  </div>
         <div class='deleteAll'>
             <form action='' method='post'>
-                <input type='submit' value='Supprimer tous' name='btnSupprimer' class='btn btn-primary end-0' onclick='return confirm('Tu es Sure pour Supprimer Tous ?')' id='btnSupprimer'>
+                <input type='submit' value='Supprimer tous' name='btnSupprimer' class='btn btn-primary end-0' onclick='return confirm(`Tu es Sure pour Supprimer Tous ?`)' id='btnSupprimer'>
             </form>
         </div>
 
@@ -121,11 +132,14 @@ if (isset($_GET['info'])) {
                 </tr>
             </thead>
                 <tbody>";
-    $page->GetTablePage($_SESSION['Groupe'], $_GET['get']);
+        $page->GetTablePage($_SESSION['Groupe'], $_GET['get']);
 
-    echo "   </tbody>
+        echo "   </tbody>
         </table>
     </div>";
+    } else {
+        echo "<div><img src='../Images/nodata.jpg' alt='' /></div>";
+    }
 } else {
     if (isset($_SESSION["rechinfogroupe"])) {
         $info = $_SESSION["rechinfogroupe"];

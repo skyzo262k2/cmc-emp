@@ -94,6 +94,9 @@
             }
             x.send();
         }
+        setTimeout(function() {
+            document.querySelector('.message').style.display = 'none';
+        }, 5000);
     </script>
 
 </head>
@@ -103,61 +106,68 @@
 
 
     <div class="row header">
-        <div class="col-4 title">
-            Gestion Module
+        <div class="col-4"></div>
+        <div class="col-8 recherche">
+            <input type="text" id="module" class="form-control inp-recherche" name="module" value="<? htmlspecialchars($info) ?>" onkeyup="Recherche()" placeholder="Recherche ....">
         </div>
-        <div class="col-2"></div>
-        <div class="col-4 recherche">
-            <input type="text" id="module" class="form-control inp-recherche" name="module" value="<?php echo $info; ?>" onkeyup="Recherche()" placeholder="Recherche ....">
-        </div>
-        <div class="col-2"></div>
     </div>
 
 
     <div class="row content">
         <div class="col-8 justify-content-center position-absolute end-0" id="infomations">
 
-            <div class="pagi_sup">
+            <?php if (count($_SESSION["modules"]) > 0) : ?>
+                <div class="pagi_sup">
 
-                <div class="pagination">
-                    <?php
-                    $modules = $Pag->Pagination_Btn($_SESSION["modules"], $_GET['get']);
-                    $Pag->Pagination_Nb($modules, $_GET['get'])
-                    ?>
+                    <div class="pagination">
+                        <?php
+                        $modules = $Pag->Pagination_Btn($_SESSION["modules"], $_GET['get']);
+                        $Pag->Pagination_Nb($modules, $_GET['get'])
+                        ?>
+                    </div>
+                    <div class="deleteAll">
+                        <form action="" method="post">
+                            <input type="submit" value="Supprimer tous" name="btnSupprimer" class="btn btn-primary end-0" onclick="return confirm('Tu es Sure pour Supprimer Tous ?')" id="btnSupprimer">
+                        </form>
+                    </div>
+
                 </div>
-                <div class="deleteAll">
-                    <form action="" method="post">
-                        <input type="submit" value="Supprimer tous" name="btnSupprimer" class="btn btn-primary end-0" onclick="return confirm('Tu es Sure pour Supprimer Tous ?')" id="btnSupprimer">
-                    </form>
-                </div>
 
-            </div>
+                <div class="table-affiche">
 
-            <div class="table-affiche">
-
-                <table class="table table-striped table-sm table-bordered">
-                    <thead>
-                        <tr class="table-success">
-                            <th scope="col">Code module </th>
-                            <th scope="col">Code Filiere</th>
-                            <th scope="col">Annee</th>
-                            <th scope="col">Description module</th>
-                            <th scope="col">Pressentielle</th>
-                            <th scope="col">Distance</th>
-                            <th scope="col">Semestre 1</th>
-                            <th scope="col">Semestre 2</th>
-                            <th scope="col">Action</th>
-                        </tr>
-                    </thead>
-                        <tbody >
+                    <table class="table table-striped table-sm table-bordered">
+                        <thead>
+                            <tr class="table-success">
+                                <th scope="col">Code module </th>
+                                <th scope="col">Code Filiere</th>
+                                <th scope="col">Annee</th>
+                                <th scope="col">Description module</th>
+                                <th scope="col">Pressentielle</th>
+                                <th scope="col">Distance</th>
+                                <th scope="col">Semestre 1</th>
+                                <th scope="col">Semestre 2</th>
+                                <th scope="col">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
                             <?php
                             GetTablePage($_SESSION["modules"], $_GET["get"]);
                             ?>
                         </tbody>
-                </table>
-            </div>
+                    </table>
+                </div>
+            <?php else : ?>
+                <div><img src='../Images/nodata.jpg' alt='' /></div>
+            <?php endif; ?>
+
         </div>
         <div class="col-4 justify-content-center  position-fixed start-0">
+
+            <div class="title">
+                Gestion des modules
+            </div>
+
+            <div class='message'><?= $message ?></div>
             <form action="" method="post" id="form">
                 <div class="form-groupe m-1">
                     <input type="text" class="inputs form-control" maxlength="15" name="tCodeMd" id="tCodeMd" placeholder="Code Module">
@@ -166,7 +176,7 @@
                     <select class="inputs form-control" name="tCodeFlr">
                         <option value="choisir">Choisir Filiere</option>
                         <?php foreach ($Filiers as $filiere) : ?>
-                            <option value="<?php echo $filiere['CodeFlr'] ?>"><?php echo $filiere['CodeFlr']; ?></option>
+                            <option value="<?= htmlspecialchars($filiere['CodeFlr']) ?>"><?= htmlspecialchars($filiere['DescpFlr']) ?></option>
                         <?php endforeach; ?>
 
                     </select>

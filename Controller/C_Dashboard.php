@@ -61,24 +61,42 @@ if (isset($_GET['get'])) {
     $nbAbsenceStg = $cnnx::$cnx->query("call SP_TotalAbsenceStg('$CodeEtab','$anne[0]')")->fetch(PDO::FETCH_NUM);
     $nbAbsenceFrm = $cnnx::$cnx->query("call SP_TotalAbsenceFormateur('$CodeEtab','$anne[0]')")->fetch(PDO::FETCH_NUM);
     $TauxAvan = $cnnx::$cnx->query("call SP_TauxAvancementByEtabAnneF('$CodeEtab','$anne[0]')")->fetch(PDO::FETCH_NUM);
-    // $nbGrpSansStg = $cnnx::$cnx->query("call SP_NbGroupeSansStagiaire('$CodeEtab','$anne[0]')")->fetch(PDO::FETCH_NUM);
+    $nbGrpSansStg = $cnnx::$cnx->query("call SP_NbGroupeSansStagiaire('$CodeEtab','$anne[0]')")->fetchAll(PDO::FETCH_NUM);
     $cnnx->Deconnexion();
 
-    $chaine_GrpNonAffecter = "";
-    foreach ($GrpNonAffecter as $Grp) {
-
-$ki = str_replace(" ", "_", $Grp[0]);
-        $chaine_GrpNonAffecter .= $ki . "       ";
-    }
-    $chaine_GrpNonEmploi = "";
-    foreach ($GrpNonEmploi as $Grp) {
-$ki = str_replace(" ", "_", $Grp[0]);
-        $chaine_GrpNonEmploi .= $ki. "        ";
-    }
-    // $chaine_FrmNonAffectation = "";
-    // foreach ($FrmNonAffectation as $Form) {
-    //     $chaine_FrmNonAffectation .= $Form[1]." ". $Form[2] . "     ";
-    // }
-    // echo print_r($GrpNonAffecter);
-    require "../View/V_Dashboard.php";
+    if (isset($_POST["type"]) && $_POST["titre"]) {
+        $titre = $_POST["titre"];
+        echo "<input type='button' value='X' onclick='Fermer()' id='fermer'>";
+        echo "<table class='table'>";
+        $i = 1;
+        echo "<tr><th colspan='2' class='text-primary'>".htmlspecialchars($titre)."</th></tr>";
+        switch ($_POST["type"]) {
+            case "groupeaffectation":
+                foreach ($GrpNonAffecter as $Grp) {
+                    echo "<tr><td>#$i</td><td>" . htmlspecialchars($Grp[0]) . "</td></tr>";
+                    $i++;
+                }
+                break;
+            case "groupeemploi":
+                foreach ($GrpNonEmploi as $Grp) {
+                    echo "<tr><td>#$i</td><td>" . htmlspecialchars($Grp[0]) . "</td></tr>";
+                    $i++;
+                }
+                break;
+            case "formateuraffectation":
+                foreach ($FrmNonAffectation as $form) {
+                    echo "<tr><td>#$i</td><td>" . htmlspecialchars($form[1] . " " . $form[2]) . "</td></tr>";
+                    $i++;
+                }
+                break;
+            case "groupestg":
+                foreach ($nbGrpSansStg as $Grp) {
+                    echo "<tr><td>#$i</td><td>" . htmlspecialchars($Grp[0]) . "</td></tr>";
+                    $i++;
+                }
+                break;
+        }
+        echo "</table>";
+    } else
+        require "../View/V_Dashboard.php";
 }

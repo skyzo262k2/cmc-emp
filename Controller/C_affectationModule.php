@@ -30,9 +30,9 @@ if (!isset($_SESSION["userFormateur"])) {
     $Formateur = $FormateursGroups[1];
 }
 
-$grp = "";
+$grp = "choisir groupe";
 $mat_F = "";
-$nom_F = "";
+$nom_F = " choisir formateur";
 $modules = "";
 $btn_ajt = "";
 $moduleFomateur = "";
@@ -141,19 +141,19 @@ if (isset($_POST['formateur']) ||  isset($_SESSION["userFormateur"])) :
 
         $tbody .= "<tr>      <td>" . $MdFrmt["Groupe"] . "</td>";
         $tbody .=    "<td>" . $MdFrmt["descpMd"] . "</td>
-                            <td>" . $MdFrmt["CodeMd"] . "</td>
-                            <td>" . $MdFrmt["s1"] . "</td>
-                            <td>" . $MdFrmt["s2"] . "</td>
-                            <td>" . $MdFrmt["codeflr"] . "</td>
-                            <td>" . $MdFrmt["annee"] . "</td>
-                            <td>" . $MdFrmt["Fpa"] . "</td>
-                            <td>" . $MdFrmt["avc"] . "</td>
+                            <td>" . htmlspecialchars($MdFrmt["CodeMd"]) . "</td>
+                            <td>" . htmlspecialchars($MdFrmt["s1"]) . "</td>
+                            <td>" . htmlspecialchars($MdFrmt["s2"]) . "</td>
+                            <td>" . htmlspecialchars($MdFrmt["codeflr"]) . "</td>
+                            <td>" . htmlspecialchars($MdFrmt["annee"]) . "</td>
+                            <td>" . htmlspecialchars($MdFrmt["Fpa"]) . "</td>
+                            <td>" . htmlspecialchars($MdFrmt["avc"]) . "</td>
                             <td style='background-color:$color;'>" . number_format($MdFrmt["taux"], 2) . "%</td>
-                            <td><button type='button' $dis onclick='openF(this)' value='" . $MdFrmt["efm"] . "/" . $mat_F . "/" . $MdFrmt["Groupe"] . "/" . $MdFrmt["CodeMd"] . "/" . $MdFrmt['anneefr'] . "'>" . $MdFrmt["efm"] . "</button></td>
+                            <td><button type='button' $dis onclick='openF(this)' value='" . htmlspecialchars($MdFrmt["efm"]) . "/" . htmlspecialchars($mat_F) . "/" . htmlspecialchars($MdFrmt["Groupe"]) . "/" . htmlspecialchars($MdFrmt["CodeMd"]) . "/" . htmlspecialchars($MdFrmt['anneefr']) . "'>" . htmlspecialchars($MdFrmt["efm"]) . "</button></td>
                             <td  $hid>
                                 <div id='flex'>
-                                    <button type='button' onclick='TestTransfereModule(this)'  value='" . $mat_F . "/" . $MdFrmt["Groupe"] . "/" . $MdFrmt["CodeMd"] . "/" . $MdFrmt['anneefr'] . "' name='trans_test'>tr.Module</button>
-                                    <button type='button' onclick='SupprimerAffectation(this)' value='" . $mat_F . "/" . $MdFrmt["Groupe"] . "/" . $MdFrmt["CodeMd"] . "/" . $MdFrmt['anneefr'] . "' name='sup'>Sup</button>
+                                    <button type='button' onclick='TestTransfereModule(this)'  value='" . htmlspecialchars($mat_F ). "/" . htmlspecialchars($MdFrmt["Groupe"]) . "/" . htmlspecialchars($MdFrmt["CodeMd"]) . "/" . htmlspecialchars($MdFrmt['anneefr']) . "' name='trans_test'>tr.Module</button>
+                                    <button type='button' onclick='SupprimerAffectation(this)' value='" . htmlspecialchars($mat_F) . "/" . htmlspecialchars($MdFrmt["Groupe"]) . "/" . htmlspecialchars($MdFrmt["CodeMd"]) . "/" . htmlspecialchars($MdFrmt['anneefr']) . "' name='sup'>Sup</button>
                                 </div>
                             </td>                         
                 </tr>";
@@ -169,12 +169,12 @@ if (isset($_POST['formateur']) ||  isset($_SESSION["userFormateur"])) :
     $heureparsemaine = $masshorraire / $_SESSION["Etablissement"]["Sem_Annee"];
 
     $_SESSION['masshorraire'] = $masshorraire;
-    $tbody .= "<div id='inf' hidden><span style='margin-left:0px;' id='s1'> " . $s1 . "</span>";
-    $tbody .= "<span id='s2'> " . $s2 . "</span>";
-    $tbody .= "<span id='resete'> " . $masshorraire - $avc . "</span>";
-    $tbody .= "<span id='mass'>" . $masshorraire . "</span>";
-    $tbody .= "<span id='nbsemaine'>" . number_format($heureparsemaine, 2) . "</span></div>";
-    $tbody .= "<span id='to_avc' hidden>" . $_SESSION['avc'] . "</span></div>";
+    $tbody .= "<div id='inf' hidden><span style='margin-left:0px;' id='s1'> " . htmlspecialchars(number_format($s1, 2)) . "</span>";
+    $tbody .= "<span id='s2'> " . htmlspecialchars(number_format($s2, 2)) . "</span>";
+    $tbody .= "<span id='resete'> " . htmlspecialchars(number_format($masshorraire - $avc, 2)) . "</span>";
+    $tbody .= "<span id='mass'>" . htmlspecialchars(number_format($masshorraire, 2)) . "</span>";
+    $tbody .= "<span id='nbsemaine'>" . htmlspecialchars(number_format($heureparsemaine, 2) ). "</span></div>";
+    $tbody .= "<span id='to_avc' hidden>" . htmlspecialchars($_SESSION['avc']) . "</span></div>";
 
     $tbody .= "<div id='imp' hidden><a href='../Controller/C_Tableu_Service.php?Mat=$mat_F'>
         <img src='../Images/pdf.png' alt='not found' style='width: 35px;height: 35px;'>
@@ -269,9 +269,9 @@ if (isset($_POST['groupe']) and $_POST['groupe'] != "") :
 
         foreach ($modules as $module) {
             $tbody .= "<tr>
-                            <td>" . $module["CodeMd"] . "</td>";
-            $tbody .=        "<td>" . $module["DescpMd"] . "</td><td>" . $module["CodeFlr"] . "</td><td>" . $module["Annee"] . "</td>
-                            <td><input type='checkbox' id='check' value='" . $module["CodeMd"] . "' name='" . $module["CodeMd"] . "' ></td>
+                            <td>" . htmlspecialchars($module["CodeMd"]) . "</td>";
+            $tbody .=        "<td>" . htmlspecialchars($module["DescpMd"]) . "</td><td>" . htmlspecialchars($module["CodeFlr"]) . "</td><td>" . htmlspecialchars($module["Annee"]) . "</td>
+                            <td><input type='checkbox' id='check' value='" . htmlspecialchars($module["CodeMd"]) . "' name='" . htmlspecialchars($module["CodeMd"]) . "' ></td>
                     </tr>";
         }
         print_r($tbody);

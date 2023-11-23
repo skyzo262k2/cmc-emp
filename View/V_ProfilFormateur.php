@@ -1,89 +1,60 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../Css/Bootstrap/css/bootstrap.min.css">
+  <title>Profile</title>
+  <script>
+    setTimeout(function() {
+      document.querySelector('.message').style.display = 'none';
+    }, 5000);
+  </script>
 </head>
-<style>
-    /* Applique un style au tableau */
-table {
-  border-collapse: collapse;
-  width: 100%;
-}
 
-/* Applique un style à toutes les cellules de tableau */
-td {
-  border: 1px solid #ddd;
-  padding: 8px;
-  text-align: left;
-}
-
-/* Applique un style à toutes les étiquettes de formulaire */
-label {
-  display: inline-block;
-  margin-bottom: 5px;
-}
-
-/* Applique un style aux champs de formulaire */
-input[type="text"],
-input[type="password"] {
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  box-sizing: border-box;
-  width: 100%;
-}
-
-/* Applique un style au bouton de soumission */
-input[type="submit"] {
-  background-color: #4CAF50;
-  color: white;
-  padding: 8px 16px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-/* Applique un style au bouton de soumission lorsque la souris passe dessus */
-input[type="submit"]:hover {
-  background-color: #45a049;
-}
-
-</style>
 <body>
-    <form action="" method="post">
-        <table>
-            <tr>
-                <td>Matricule</td>
-                <td><input type="text"  disabled name="nom" value="<?=$mat?>"></td>
-            </tr>
-            <tr>
-                <td><label for='nom'>Nom</label></td>
-                <td><input type="text"  disabled name="nom" value="<?=$nom?>"></td>
-            </tr>
-            <tr>
-                <td><label for='prenom'>Prenom</label></td>
-                <td><input type="text" disabled name="prenom" value="<?=$prenom?>"></td>
-            </tr>
-            <tr>
-                <td><label for='motA'>Mot de passe actuel</label></td>
-                <td><input type="password" name="motA" value=""></td>
-            </tr>
-            <tr>
-                <td><label for='MotN'>Nouveau Mot de passe</label></td>
-                <td><input type="password" name="MotN" value=""></td>
-            </tr>
-            <tr>
-                <td><label for='MotC'>Confirmer Mot de passe</label></td>
-                <td><input type="password" name="MotC" value=""></td>
-            </tr>
-            <tr>
-                <td></td>
-                <td><input type="submit"  name="valider"></td>
-            </tr>
-        </table>
-    </form>
+  <div class='container'>
+
+    <div class='row message'><?= $message ?></div>
+    <div class="row">
+      <div class="col-6 ">
+        <div class='form-groupe mt-4'>
+          <label class='form-label'>Matricule</label>
+          <td><input type="text" disabled class="form-control" name="nom" value="<?= htmlspecialchars($mat) ?>"></td>
+        </div>
+        <div class='form-groupe mt-4'>
+          <label class='form-label'>Nom</label>
+          <input type="text" disabled class="form-control" name="nom" value="<?= htmlspecialchars($nom) ?>">
+        </div>
+        <div class='form-groupe mt-4'>
+          <label class='form-label'>Prénom</label>
+          <input type="text" disabled class="form-control" name="prenom" value="<?= htmlspecialchars($prenom)?>">
+        </div>
+      </div>
+      <div class="col-6">
+        <form action="" method="post">
+          <div class='form-groupe mt-4'>
+            <label class='form-label'>Mot de passe actuel</label>
+            <input type="password" class="form-control" name="motA" value="">
+          </div>
+          <div class='form-groupe mt-4'>
+            <label class='form-label'>Nouveau Mot de passe</label>
+            <input type="password" class="form-control" name="MotN" value="">
+          </div>
+          <div class='form-groupe mt-4'>
+            <label class='form-label'>Confirmer Mot de passe</label>
+            <input type="password" class="form-control" name="MotC" value="">
+          </div>
+          <div class='form-groupe mt-4'>
+            <input type="submit" class="btn btn-primary w-100" name="valider" value="Sauvegarder">
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
 </body>
+
 </html>

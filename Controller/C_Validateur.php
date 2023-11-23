@@ -24,10 +24,10 @@ function GetTablePage($tab, $nb)
                 break;
             };
             foreach ($tab[$i] as $col) {
-                echo "<td>" . $col . "</td>";
+                echo "<td>" . htmlspecialchars($col) . "</td>";
             }
             echo "<td>
-                <button class='sup' onclick='Delete(\"" . $tab[$i]["matricule"] . "\",\"" . $tab[$i]["filiere"] . "\")'><img src='../Images/Icon_Delete.png' width='30px' /></button>
+                <button class='sup' onclick='Delete(\"" . htmlspecialchars($tab[$i]["matricule"]) . "\",\"" . htmlspecialchars($tab[$i]["filiere"]) . "\")'><img src='../Images/Icon_Delete.png' width='30px' /></button>
                 </td>";
             echo " </tr>";
         }
@@ -50,18 +50,15 @@ function AjaxInfor($table)
             $donnees[] = ["filiere" => $t["filiere"], "DescpFlr" => $t["DescpFlr"], "matricule" => $t["matricule"], "nom" => $t["nom"]];
         }
     }
-    echo "   <div class='pagi_sup'>
+    if (count($donnees) > 0) {
+        echo "   <div class='pagi_sup'>
 
     <div class='pagination'>
         ";
-    $salles = $page->Pagination_Btn($donnees, $_GET['get']);
-    $page->Pagination_Nb($salles, $_GET['get']);
+        $salles = $page->Pagination_Btn($donnees, $_GET['get']);
+        $page->Pagination_Nb($salles, $_GET['get']);
 
-    echo " </div>
-    <div class='deleteAll'>
-            <input type='button' value='Supprimer tous' name='btnSupprimer' class='btn btn-primary end-0'  onclick='DeleteAll()'>
-     
-    </div>
+        echo " </div>
 
 </div>
 
@@ -80,11 +77,13 @@ function AjaxInfor($table)
         <tbody id='info_tbody'>
            ";
 
-    GetTablePage($donnees, $_GET['get']);
+        GetTablePage($donnees, $_GET['get']);
 
-    echo "</tbody>
+        echo "</tbody>
     </table>
 </div>";
+    } else
+        echo "<div><img src='../Images/nodata.jpg' alt='' /></div>";
 }
 
 

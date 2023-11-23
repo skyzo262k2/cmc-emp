@@ -36,19 +36,11 @@
     body {
         overflow-x: hidden;
     }
-    /* thead{
-        position:fixed;
-    }
-    .salle{
-        width: 500px;
-    } */
+    
 </style>
 
 
 <body>
-    <!-- <div class="row title text-center m-2">
-        <h4>Emploi salles</h4>
-    </div> -->
     <div class="row m-1">
         <table class="table table-striped table-sm table-bordered">
             <thead>

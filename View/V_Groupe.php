@@ -128,6 +128,10 @@
                 select.disabled = true;
             }
         }
+
+        setTimeout(function() {
+            document.querySelector('.message').style.display = 'none';
+        }, 5000);
     </script>
 
 </head>
@@ -136,57 +140,63 @@
 
 
     <div class="row header">
-        <div class="col-4 title">
-            Gestion Groupe
-        </div>
-        <div class="col-2"></div>
-        <div class="col-4 recherche">
-            <input type="text" id="groupe" class="form-control inp-recherche" name="groupe" value="<?php echo $info; ?>" onkeyup="Recherche()" placeholder="Recherche ....">
+        <div class="col-4"></div>
+        <div class="col-8 recherche">
+            <input type="text" id="groupe" class="form-control inp-recherche" name="groupe" value="<?= htmlspecialchars($info) ?>" onkeyup="Recherche()" placeholder="Recherche ....">
 
         </div>
-        <div class="col-2"></div>
     </div>
     <div class="row content">
         <div class="col-8 justify-content-center position-absolute end-0" id="infomations">
 
-            <div class="pagi_sup">
+            <?php if (count($_SESSION["Groupe"]) > 0) : ?>
+                <div class="pagi_sup">
 
-                <div class="pagination">
-                    <?php
-                    $groupes = $page->Pagination_Btn($_SESSION['Groupe'], $_GET['get']);
-                    $page->Pagination_Nb($groupes, $_GET['get']);
-                    ?>
-                </div>
-                <div class="deleteAll">
-                    <form action="" method="post">
-                        <input type="submit" value="Supprimer tous" name="btnSupprimer" class="btn btn-primary end-0" onclick="return confirm('Tu es Sure pour Supprimer Tous ?')" id="btnSupprimer">
-                    </form>
-                </div>
-
-            </div>
-
-            <div class="table-affiche">
-
-                <table class="table table-striped table-sm table-bordered">
-                    <thead>
-                        <tr class="table-success">
-                            <th scope="col">Code Groupe</th>
-                            <th scope="col">Code Filiere</th>
-                            <th scope="col">Annee</th>
-                            <th scope="col">Fpa</th>
-                            <th scope="col">Taux </th>
-                            <th scope="col">Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
+                    <div class="pagination">
                         <?php
-                        $page->GetTablePage($_SESSION['Groupe'], $_GET['get']);
+                        $groupes = $page->Pagination_Btn($_SESSION['Groupe'], $_GET['get']);
+                        $page->Pagination_Nb($groupes, $_GET['get']);
                         ?>
-                    </tbody>
-                </table>
-            </div>
+                    </div>
+                    <div class="deleteAll">
+                        <form action="" method="post">
+                            <input type="submit" value="Supprimer tous" name="btnSupprimer" class="btn btn-primary end-0" onclick="return confirm('Tu es Sure pour Supprimer Tous ?')" id="btnSupprimer">
+                        </form>
+                    </div>
+
+                </div>
+
+                <div class="table-affiche">
+
+                    <table class="table table-striped table-sm table-bordered">
+                        <thead>
+                            <tr class="table-success">
+                                <th scope="col">Code Groupe</th>
+                                <th scope="col">Code Filiere</th>
+                                <th scope="col">Annee</th>
+                                <th scope="col">Fpa</th>
+                                <th scope="col">Taux </th>
+                                <th scope="col">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php
+                            $page->GetTablePage($_SESSION['Groupe'], $_GET['get']);
+                            ?>
+                        </tbody>
+                    </table>
+                </div>
+            <?php else : ?>
+                <div><img src='../Images/nodata.jpg' alt='' /></div>
+            <?php endif; ?>
+
         </div>
-        <div class="col-4 justify-content-center  position-fixed start-0 m-4">
+        <div class="col-4 justify-content-center position-fixed start-0 m-4">
+            <div class="title">
+                Gestion Stagiaire
+            </div>
+
+            <div class='message'><?= $message ?></div>
             <form action="" method="post" id="form">
                 <div class="form-groupe m-4">
                     <input type="text" name="tCodeGrp" maxlength="15" id="tCodeGrp" class="inputs form-control" placeholder="Code Groupe">
@@ -198,10 +208,10 @@
 
                             <?php if ($_SESSION["Admin"]["Poste"] == "ChefSecteur") : ?>
                                 <?php if ($filiere['CodeSect'] == $_SESSION["Admin"]["secteur"]) : ?>
-                                    <option value="<?= $filiere['CodeFlr'] ?>"><?= $filiere['CodeFlr'] ?></option>
+                                    <option value="<?= htmlspecialchars($filiere['CodeFlr']) ?>"><?= htmlspecialchars($filiere['CodeFlr']) ?></option>
                                 <?php endif ?>
                             <?php else : ?>
-                                <option value="<?= $filiere['CodeFlr'] ?>"><?= $filiere['CodeFlr'] ?></option>
+                                <option value="<?= htmlspecialchars($filiere['CodeFlr']) ?>"><?= htmlspecialchars($filiere['CodeFlr']) ?></option>
                             <?php endif ?>
                         <?php endforeach; ?>
                     </select>

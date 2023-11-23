@@ -13,6 +13,8 @@ if (!isset($_SESSION["Admin"]) || $_SESSION["Admin"]["Poste"] == "Surveille") {
 
 
 $info = "";
+
+$message = "";
 $req = "SELECT CodeNiv FROM niveau ORDER BY CodeNiv DESC ";
 $exec = $conx::$cnx->prepare($req);
 $exec->execute();
@@ -34,7 +36,10 @@ if (isset($_POST['btnAjouter'])) {
         $fil->DescrpFl = $_POST['descrpfl'];
         $fil->CdSt = $_POST['CodeSect'];
         $fil->Nv = $_POST['nv'];
-        $fil->Add();
+        $n = $fil->Add();
+
+        if ($n)
+            $message = $page->message("Filière a été ajouté avec succès", "primary");
     }
 }
 
@@ -45,17 +50,24 @@ if (isset($_POST['btnModifier'])) {
         $fil->DescrpFl = $_POST['descrpfl'];
         $fil->CdSt = $_POST['CodeSect'];
         $fil->Nv = $_POST['nv'];
-        $fil->Update();
+        $n = $fil->Update();
+
+        if ($n)
+            $message = $page->message("Filière a été modifié avec succès", "primary");
     }
 }
 
 if (isset($_POST["sup"])) {
     $fil->codefl = $_POST["sup"];
-    $fil->Delete();
+    $n =  $fil->Delete();
+    if ($n)
+        $message = $page->message("Filière a été supprimé avec succès", "danger");
 }
 
 if (isset($_POST['btnSupprimer'])) {
-    $fil->DeleteAll();
+    $n =  $fil->DeleteAll();
+    if ($n)
+        $message = $page->message("Filière a été supprimé avec succès", "danger");
 }
 
 
@@ -83,15 +95,16 @@ if (isset($_GET['info'])) {
     }
 
 
-    echo " <div class='pagi_sup'>
+    if (count($_SESSION["filieres"]) > 0) {
+        echo " <div class='pagi_sup'>
                 <div class='pagination'>";
-    $filieres = $page->Pagination_Btn($_SESSION['filieres'], $_GET['get']);
-    $page->Pagination_Nb($filieres, $_GET['get']);
+        $filieres = $page->Pagination_Btn($_SESSION['filieres'], $_GET['get']);
+        $page->Pagination_Nb($filieres, $_GET['get']);
 
-    echo   "</div>
+        echo   "</div>
                 <div class='deleteAll'>
                     <form action='' method='post'>
-                        <input type='submit' value='Supprimer tous' name='btnSupprimer' class='btn btn-primary end-0' onclick='return confirm('Tu es Sure pour Supprimer Tous ?')' id='btnSupprimer'>
+                        <input type='submit' value='Supprimer tous' name='btnSupprimer' class='btn btn-primary end-0' onclick='return confirm(`Tu es Sure pour Supprimer Tous ?`)' id='btnSupprimer'>
                     </form>
                 </div>
             </div>
@@ -102,20 +115,23 @@ if (isset($_GET['info'])) {
                             <th scope='col'>code Filiere</th>
                             <th scope='col'>Description Filiere</th>";
 
-    if ($_SESSION["Admin"]["Poste"] !=  "ChefSecteur")
-        echo "<th scope='col'>code Secteur</th>";
-    echo "<th scope='col'>Niveau</th>
+        if ($_SESSION["Admin"]["Poste"] !=  "ChefSecteur")
+            echo "<th scope='col'>code Secteur</th>";
+        echo "<th scope='col'>Niveau</th>
         <th scope='col'>Action</th>
         </tr>
         </thead>
         <tbody >";
 
-    $page->GetTablePage($_SESSION['filieres'], $_GET['get']);
+        $page->GetTablePage($_SESSION['filieres'], $_GET['get']);
 
-    echo "
+        echo "
                     </tbody>
                 </table>
 </div>";
+    } else {
+        echo "<div><img src='../Images/nodata.jpg' alt='' /></div>";
+    }
 } else {
     if (isset($_SESSION["rechinfofiliere"])) {
         $info = $_SESSION["rechinfofiliere"];

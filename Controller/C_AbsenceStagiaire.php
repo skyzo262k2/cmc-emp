@@ -37,7 +37,7 @@ function AfficherStagiaire($Stagiaires, $seance, $date)
     global $absencestagiaire, $AnneeFr, $CodeEtab;
     echo "<div class='table_info'>
     <div class='buttonvalide'>
-    <button class='btn btn-primary' onclick='AddAbsence()'>Valider</button>
+    <button class='btn btn-primary ' onclick='AddAbsence()'>Sauvgarder</button>
     </div>
     <table class='table table-striped table-sm table-bordered m-2'>
     <thead>
@@ -48,7 +48,7 @@ function AfficherStagiaire($Stagiaires, $seance, $date)
             <th scope='col'>Discipline</th>
             <th scope='col' style='width:60px;'>A <input type='radio' name='tout' value='chekA' class='m-2' onchange='tout_checked(this)'/></th>
             <th scope='col' style='width:60px;'>R <input type='radio' name='tout' value='chekR' class='m-2' onchange='tout_checked(this)'/></th>
-            <th scope='col' style='width:120px;'>Justify</th>
+            <th scope='col' style='width:120px;'>Justifie</th>
             <th scope='col' style='width:120px;'>Action</th>
         </tr>
     </thead>
@@ -58,29 +58,29 @@ function AfficherStagiaire($Stagiaires, $seance, $date)
         $row = $absencestagiaire->VerifierAbsenceStagiaire($stg[0], $date, $AnneeFr, $seance, $CodeEtab);
 
         echo "<tr>
-                <td>$stg[0]</td>
-                <td>$stg[1]</td>
-                <td>$stg[2]</td>
-                <td>$stg[6]</td>";
+                <td>" . htmlspecialchars($stg[0]) . "</td>
+                <td>" . htmlspecialchars($stg[1]) . "</td>
+                <td>" . htmlspecialchars($stg[2]) . "</td>
+                <td>" . htmlspecialchars($stg[6]) . "</td>";
 
         if ($row == null) {
-            echo "  <td><input type='radio' class='inp_chek checked_input chekA' name='$stg[0]' value='$stg[0]/A' /></td>
-                    <td><input type='radio' class='inp_chek checked_input chekR' name='$stg[0]' value='$stg[0]/R' /></td>
-                    <td>-</td>
-                    <td>-</td>
+            echo "  <td class='text-center'><input type='radio' class='inp_chek checked_input chekA' name='" . htmlspecialchars($stg[0]) . "' value='" . htmlspecialchars($stg[0]) . "/A' /></td>
+                    <td class='text-center'><input type='radio' class='inp_chek checked_input chekR' name='" . htmlspecialchars($stg[0]) . "' value='" . htmlspecialchars($stg[0]) . "/R' /></td>
+                    <td class='text-center'>-</td>
+                    <td class='text-center'>-</td>
                 </tr>";
         } else {
             if ($row[8] === "A") {
-                echo "<td><input type='radio' checked /></td>
-                    <td><input type='radio' disabled  /></td>";
+                echo "<td class='text-center'><input type='radio' checked /></td>
+                    <td class='text-center'><input type='radio' disabled  /></td>";
             } else {
-                echo "<td><input type='radio' disabled  /></td>
-                    <td><input type='radio' checked /></td>";
+                echo "<td class='text-center'><input type='radio' disabled  /></td>
+                    <td class='text-center'><input type='radio' checked /></td>";
             }
 
-            echo "<td> <span>$row[6]</span> <span onclick='ChangeJustify(this)'><span style='display:none;'>$row[6]</span><span style='display:none;'>$stg[0]</span>
+            echo "<td class='text-center'> <span>" . htmlspecialchars($row[6]) . "</span> <span onclick='ChangeJustify(this)'><span style='display:none;'>" . htmlspecialchars($row[6]) . "</span><span style='display:none;'>" . htmlspecialchars($stg[0]) . "</span>
                             <span><img class='icon' src='../Images/Icon_Update.png'/></span></span>  </td>
-                    <td><div onclick='SupprimerAbsence(this)'><span><img class='icon' src='../Images/Icon_Delete.png'/></span><span style='display:none;'>$stg[0]</span></div></td>
+                    <td class='text-center'><div onclick='SupprimerAbsence(this)'><span><img class='icon' src='../Images/Icon_Delete.png'/></span><span style='display:none;'>" . htmlspecialchars($stg[0]) . "</span></div></td>
                     </tr>";
         }
     }
@@ -102,22 +102,20 @@ function information_Seance($infos)
                 
                 <div class="col-3">
                     <div class="form-groupe">
-                        <input type="text" class="form-control" disabled value="' . $infos[1] . '" style="text-align : center;">
+                        <input type="text" class="form-control" disabled value="' . htmlspecialchars($infos[1]) . '" style="text-align : center;">
                     </div>
                 </div>
-                <div class="col-5">
+                <div class="col-6">
                     <div class="form-groupe">
-                    <input type="text" class="form-control" disabled  style="text-align : center;" value="' . $infos[3] . '">
+                    <input type="text" class="form-control" disabled  style="text-align : center;" value="' . htmlspecialchars($infos[3]) . '">
                     </div>
-                </div>
-                <div class="col-1">
                     <div class="form-groupe">
-                    <input type="text" id="module" class="form-control" disabled  style="text-align : center;" value="' . $infos[2] . '">
+                    <input type="hidden" id="module" class="form-control" disabled  style="text-align : center;" value="' . htmlspecialchars($infos[2]) . '">
                     </div>
                 </div>
                 <div class="col-3">
                     <div class="form-groupe">
-                        <input type="text" class="form-control" disabled value="' . $infos[4] . '" style="text-align : center;">
+                        <input type="text" class="form-control" disabled value="' . htmlspecialchars($infos[4]) . '" style="text-align : center;">
                     </div>
                 </div>
                 </div>';
@@ -180,7 +178,7 @@ if (isset($_POST["add"]) && isset($_POST["date"]) && isset($_POST["seance"]) && 
             echo "<select name='groupe' id='groupe' class='form-control' onchange='ChangeGroupe(this)'>
                     <option value='choisir'>Choisir Groupe</option>";
             foreach ($Groupes as $grp) {
-                echo "<option value='$grp[0]'>$grp[0]</option>";
+                echo "<option value='" . htmlspecialchars($grp[0]) . "'>" . htmlspecialchars($grp[0]) . "</option>";
             }
             echo "</select>";
         } else
@@ -199,7 +197,6 @@ if (isset($_POST["add"]) && isset($_POST["date"]) && isset($_POST["seance"]) && 
         $information_seance = $absencestagiaire->GetInformationSeanceGroupe($_POST["groupe"], $day_name, $seance, $AnneeFr, $CodeEtab);
         information_Seance($information_seance);
         AfficherStagiaire($Stagiaires, $_POST["seance"], $_POST["date"]);
-        echo "</div>";
     }
 } else {
     $dt = new DateTime();

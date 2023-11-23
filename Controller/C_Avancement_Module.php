@@ -35,52 +35,49 @@ function GetSeance($date)
                                 $Seances_Day[] =  $donne;
                         }
                 }
-                echo "<table width='100%' class='table table-bordered table-hover table-borderless'>
-                <tr class='table-info'>
-                <th colspan='2'>Date</th>
-                <th colspan='3' >$date</th>
-                <th colspan='3'>Selection Tout : <input type='checkbox' name='tout' id='tout' onclick='Selection_Tout()'></th>
-                </tr>";
-                echo '<tr class="table-secondary">
+                if (count($Seances_Day) > 0) {
+                        echo '<div class="m-3"><div class="text-center m-2">
+                                <button class="btn btn btn-primary fw-bold w-100 p-2" style="font-size:20px" onclick="AddAvanvement(this)">Valider</button>
+                        </div>';
+                        echo "<table width='100%' class='table table-bordered table-hover table-borderless'>";
+                        echo '<tr class="table-secondary">
                             <th>Formateur</th>
                             <th>Groupe</th>
                             <th>Module</th>
                             <th>Code Salle</th>
-                            <th>Jour</th>
                             <th>Seance</th>
-                            <th>checked</th>
+                            <th class="d-flex"><span style="margin-right:10px">selection</span> <input type="checkbox" class="ml-2"  name="tout" id="tout" onclick="Selection_Tout()"></th>
                             <th>Action</th>
                          </tr>';
-                $i = 0;
-                foreach ($Seances_Day as $sec) {
-                        $n = $cnnx::$cnx->query("call PS_FindAvancement('$date','$sec[3]','$sec[2]','$sec[0]','$sec[1]','$anne[0]','$Etab')")->fetch(PDO::FETCH_NUM);
-                        $i++;
-                        $couleur = $cnnx::$cnx->query("call SP_Couleur_row_affectation('$sec[3]','$sec[2]','$sec[0]','$anne[0]','$Etab')")->fetch(PDO::FETCH_NUM);;
+                        $i = 0;
+                        foreach ($Seances_Day as $sec) {
+                                $n = $cnnx::$cnx->query("call PS_FindAvancement('$date','$sec[3]','$sec[2]','$sec[0]','$sec[1]','$anne[0]','$Etab')")->fetch(PDO::FETCH_NUM);
+                                $i++;
+                                $couleur = $cnnx::$cnx->query("call SP_Couleur_row_affectation('$sec[3]','$sec[2]','$sec[0]','$anne[0]','$Etab')")->fetch(PDO::FETCH_NUM);;
 
-                        echo "<tr class='trinfo'>";
-                        echo "  <td>$sec[4]</td>    
-                            <td>$sec[0]</td>
-                            <td>$sec[5]</td>
-                            <td>$sec[6]</td>
-                            <td>$Day</td>
-                            <td>$sec[1]</td>";
-                        if ($n != null) {
-                                echo "<td style='background-color: $couleur[0] ;'><input type='checkbox' name='$i' value='$date/$sec[3]/$sec[0]/$sec[2]/$sec[1]/$Day' disabled checked class='avc'></td>";
-                                // echo "<td><a href='../Controller/C_Avancement_Module.php?date=$date&mat=$sec[3]&md=$sec[2]&grp=$sec[0]&sc=$sec[1]'>supprimer</a></td>
-                                echo "<td><div onclick='DeleteAvanvement(this)'><img width='25px' src='../Images/Icon_Delete.png' alt=''/><input type='hidden' value='$date/$sec[3]/$sec[2]/$sec[0]/$sec[1]'/></div></td>
+                                echo "<tr class='trinfo'>";
+                                echo "  <td>" . htmlspecialchars($sec[4]) . "</td>    
+                            <td>" . htmlspecialchars($sec[0]) . "</td>
+                            <td>" . htmlspecialchars($sec[5]) . "</td>
+                            <td>" . htmlspecialchars($sec[6]) . "</td>
+                            <td class='text-center'>" . htmlspecialchars($sec[1]) . "</td>";
+                                if ($n != null) {
+                                        echo "<td  class='text-center' style='background-color: $couleur[0] ;'><input type='checkbox' name='$i' value='$date/" . htmlspecialchars($sec[3]) . "/" . htmlspecialchars($sec[0]) . "/" . htmlspecialchars($sec[2]) . "/" . htmlspecialchars($sec[1]) . "/" . htmlspecialchars($Day) . "' disabled checked class='avc'></td>";
+                                        echo "<td  class='text-center'><div onclick='DeleteAvanvement(this)'><img width='25px' src='../Images/Icon_Delete.png' alt=''/><input type='hidden' value='" . htmlspecialchars($date) . "/" . htmlspecialchars($sec[3]) . "/" . htmlspecialchars($sec[2]) . "/" . htmlspecialchars($sec[0]) . "/" . htmlspecialchars($sec[1]) . "'/></div></td>
                          </tr>";
-                        } else {
-                                echo "<td style='background-color: $couleur[0] ;'><input type='checkbox' name='$i' value='$date/$sec[3]/$sec[0]/$sec[2]/$sec[1]/$Day' class='avc'></td>";
-                                echo "<td>-</td></tr>";
+                                } else {
+                                        echo "<td  class='text-center' style='background-color: $couleur[0] ;'><input type='checkbox' name='$i' value='$date/" . htmlspecialchars($sec[3]) . "/" . htmlspecialchars($sec[0]) . "/" . htmlspecialchars($sec[2]) . "/" . htmlspecialchars($sec[1]) . "/" . htmlspecialchars($Day) . "' class='avc'></td>";
+                                        echo "<td  class='text-center'>-</td></tr>";
+                                }
                         }
-                }
-                echo '</table>';
-                echo '<div class="btn_val">
-                                <button class="btn btn btn-primary" onclick="AddAvanvement()">Valider</button>
+                        echo '</table></div>';
+                } else
+                        echo '<div class="alert alert-danger h2 text-center m-5">
+                                Aucun données
                         </div>';
         } else {
-                echo '<div class="btn_val m-5">
-                        <span class="btn btn btn-danger">Ajourd\'hui c\'est Dimanche </span>
+                echo '<div class="alert alert-danger h2 text-center m-5">
+                        Ajourd\'hui c\'est Dimanche 
                 </div>';
         }
 }
@@ -142,11 +139,13 @@ if (isset($_POST["date"]) && isset($_POST['execl'])) {
 } elseif (isset($_POST["date"]) && isset($_POST["add"])) {
         $T_Checked = explode(",", $_POST["add"]);
         // print_r($T_Checked);
-        foreach ($T_Checked as $chek) {
-                $values = explode("/", $chek);
-                $n = $cnnx::$cnx->exec("call PS_AddAvancement('$values[0]','$values[1]','$values[3]','$values[2]','$values[5]','$values[4]','$anne[0]','$Etab')");
-                if ($n) {
-                        $m = $cnnx::$cnx->exec("call PS_ModifierAffectmodulePlus('$values[1]','$values[3]','$values[2]','$anne[0]','$Etab')");
+        if (count($T_Checked) > 0 && $T_Checked[0] != "") {
+                foreach ($T_Checked as $chek) {
+                        $values = explode("/", $chek);
+                        $n = $cnnx::$cnx->exec("call PS_AddAvancement('$values[0]','$values[1]','$values[3]','$values[2]','$values[5]','$values[4]','$anne[0]','$Etab')");
+                        if ($n) {
+                                $m = $cnnx::$cnx->exec("call PS_ModifierAffectmodulePlus('$values[1]','$values[3]','$values[2]','$anne[0]','$Etab')");
+                        }
                 }
         }
         GetSeance($_POST["date"]);

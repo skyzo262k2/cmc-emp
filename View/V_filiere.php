@@ -90,63 +90,73 @@
             }
             x.send();
         }
+
+        setTimeout(function() {
+            document.querySelector('.message').style.display = 'none';
+        }, 5000);
     </script>
 </head>
 
 <body>
     <div class="row header">
-        <div class="col-4 title">
-            Gestion Filière
+
+        <div class="col-4"></div>
+        <div class="col-8 recherche">
+            <input type="text" id="filiere" class="form-control inp-recherche" name="filiere" value="<?= htmlspecialchars($info) ?>" onkeyup="Recherche()" placeholder="Recherche ....">
         </div>
-        <div class="col-2"></div>
-        <div class="col-4 recherche">
-            <input type="text" id="filiere" class="form-control inp-recherche" name="filiere" value="<?php echo $info; ?>" onkeyup="Recherche()" placeholder="Recherche ....">
-        </div>
-        <div class="col-2"></div>
     </div>
 
 
 
     <div class="row content">
         <div class="col-8 justify-content-center position-absolute end-0" id="infomations">
-            <div class="pagi_sup">
-                <div class="pagination">
-                    <?php
-                    $filieres = $page->Pagination_Btn($_SESSION['filieres'], $_GET['get']);
-                    $page->Pagination_Nb($filieres, $_GET['get']);
-                    ?>
+            <?php if (count($_SESSION["filieres"]) > 0) : ?>
+                <div class="pagi_sup">
+                    <div class="pagination">
+                        <?php
+                        $filieres = $page->Pagination_Btn($_SESSION['filieres'], $_GET['get']);
+                        $page->Pagination_Nb($filieres, $_GET['get']);
+                        ?>
+                    </div>
+                    <div class="deleteAll">
+                        <form action="" method="post">
+                            <input type="submit" value="Supprimer tous" name="btnSupprimer" class="btn btn-primary end-0" onclick="return confirm('Tu es Sure pour Supprimer Tous ?')" id="btnSupprimer">
+                        </form>
+                    </div>
                 </div>
-                <div class="deleteAll">
-                    <form action="" method="post">
-                        <input type="submit" value="Supprimer tous" name="btnSupprimer" class="btn btn-primary end-0" onclick="return confirm('Tu es Sure pour Supprimer Tous ?')" id="btnSupprimer">
-                    </form>
-                </div>
-            </div>
-            <div class="table-affiche">
-                <table class="table table-striped table-sm table-bordered">
-                    <thead>
-                        <tr class="table-success">
-                            <th scope="col">code Filiere</th>
-                            <th scope="col">Description Filiere</th>
+                <div class="table-affiche">
+                    <table class="table table-striped table-sm table-bordered">
+                        <thead>
+                            <tr class="table-success">
+                                <th scope="col">code Filiere</th>
+                                <th scope="col">Description Filiere</th>
 
-                            <?php if ($_SESSION["Admin"]["Poste"] != "ChefSecteur") : ?>
-                                <th scope="col">code Secteur</th>
-                            <?php endif; ?>
-                            <th scope="col">Niveau</th>
-                            <th scope="col">Action</th>
-                        </tr>
-                    </thead>
-                    <form action="" method="post">
-                        <tbody>
-                            <?php
-                            $page->GetTablePage($_SESSION['filieres'], $_GET['get']);
-                            ?>
-                        </tbody>
-                    </form>
-                </table>
-            </div>
+                                <?php if ($_SESSION["Admin"]["Poste"] != "ChefSecteur") : ?>
+                                    <th scope="col">code Secteur</th>
+                                <?php endif; ?>
+                                <th scope="col">Niveau</th>
+                                <th scope="col">Action</th>
+                            </tr>
+                        </thead>
+                        <form action="" method="post">
+                            <tbody>
+                                <?php
+                                $page->GetTablePage($_SESSION['filieres'], $_GET['get']);
+                                ?>
+                            </tbody>
+                        </form>
+                    </table>
+                </div>
+
+            <?php else : ?>
+                <div><img src='../Images/nodata.jpg' alt='' /></div>
+            <?php endif; ?>
         </div>
         <div class="col-4 justify-content-center  position-fixed start-0">
+            <div class="title">
+                Gestion des filières
+            </div>
+            <div class='message'><?= $message ?></div>
             <form action="" method="post" id="form">
                 <div class="form-groupe m-4">
                     <input type="text" name="cdfl" maxlength="20" class="inputs form-control" id="cdfil" placeholder="Code Filière">
@@ -164,14 +174,14 @@
                             <?php
                             foreach ($codeSects as $CdSt) {
                                 foreach ($CdSt as $cdsec) {
-                                    echo "<option value='$cdsec'>$cdsec</option>";
+                                    echo "<option value='".htmlspecialchars($cdsec)."'>".htmlspecialchars($cdsec)."</option>";
                                 }
                             }
                             ?>
                         </select>
                     </div>
                 <?php else : ?>
-                    <input type="hidden" name="CodeSect" class="inputs form-control" value="<?= $_SESSION["Admin"]["secteur"] ?>">
+                    <input type="hidden" name="CodeSect" class="inputs form-control" value="<?= htmlspecialchars($_SESSION["Admin"]["secteur"]) ?>">
                 <?php endif; ?>
 
                 <div class="form-groupe m-4">
@@ -180,7 +190,7 @@
                         <?php
                         foreach ($Niveaus as $niv) {
                             foreach ($niv as $nv) {
-                                echo "<option value='$nv'>$nv</option>";
+                                echo "<option value='".htmlspecialchars($nv)."'>".htmlspecialchars($nv)."</option>";
                             }
                         }
                         ?>

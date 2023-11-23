@@ -9,6 +9,7 @@ if (!isset($_SESSION["Admin"]) || $_SESSION["Admin"]["Poste"] == "Surveille") {
 
 $info = "";
 
+$message = "";
 $poste = $_SESSION['Admin']['Poste'];
 $secteur = isset($_SESSION['Admin']['secteur']) ? $_SESSION['Admin']['secteur'] : null;
 
@@ -24,12 +25,12 @@ function GetTablePage($tab, $nb)
                 break;
             };
             foreach ($tab[$i] as $col) {
-                echo "<td>" . $col . "</td>";
+                echo "<td>" . htmlspecialchars($col) . "</td>";
             }
             echo "<td>
             
             <form action='' method='POST'>
-                <button type='submit' name='sup' class='sup' value='" . $tab[$i]['CodeMd'] . "," . $tab[$i]['CodeFlr'] . "'><img src='../Images/Icon_Delete.png' width='30px' /></button>
+                <button type='submit' name='sup' class='sup' value='" . htmlspecialchars($tab[$i]['CodeMd']) . "," . htmlspecialchars($tab[$i]['CodeFlr']) . "'><img src='../Images/Icon_Delete.png' width='30px' /></button>
                 </form></td>";
             echo " </tr>";
         }
@@ -51,7 +52,9 @@ if (isset($_POST["sup"])) {
     $info = explode(",", $_POST["sup"]);
     $Module->CodeMd = $info[0];
     $Module->CodeFlr = $info[1];
-    $Module->DeleteModules();
+    $n = $Module->DeleteModules();
+    if ($n)
+        $message = $Pag->message("Module a été supprimé avec succès", "danger");
 }
 
 
@@ -65,7 +68,9 @@ if (isset($_POST["btnAjouter"])) {
         $Module->Dist = $_POST["tDist"];
         $Module->S1 = $_POST["tS1"];
         $Module->S2 = $_POST["tS2"];
-        $boolAdd = $Module->AddModules();
+        $n = $Module->AddModules();
+        if ($n)
+            $message = $Pag->message("Module a été ajouté avec succès", "primary");
     }
 }
 
@@ -79,15 +84,23 @@ if (isset($_POST["btnModifier"])) {
         $Module->Dist = $_POST["tDist"];
         $Module->S1 = $_POST["tS1"];
         $Module->S2 = $_POST["tS2"];
-        $Module->UpdateModules();
+        $n = $Module->UpdateModules();
+        if ($n)
+            $message = $Pag->message("Module a été modifié avec succès", "primary");
     }
 }
 if (isset($_POST["btnSupprimer"])) {
-    $Module->DeleteAllModules();
+    $n = $Module->DeleteAllModules();
+    if ($n)
+        $message = $Pag->message("Modules a été supprimés avec succès", "danger");
 }
 
 $Module->connexion();
-$Filiers = $Module::$cnx->query("call GetAllFiliere()")->fetchAll();
+
+$query = "SELECT * FROM Filiere ";
+$query .= isset($_SESSION['Admin']['secteur']) ? " WHERE CodeSect='{$_SESSION['Admin']['secteur']}';" : ";";
+
+$Filiers = $Module::$cnx->query($query)->fetchAll();
 $Module->Deconnexion();
 
 
@@ -107,16 +120,18 @@ if (isset($_GET['info'])) {
         else
             $_SESSION['modules'] = $Module::$cnx->query("call sp_RechercherGlobalSecteur('$info','$tblName','$CodeEtab','$secteur')")->fetchAll(PDO::FETCH_ASSOC);
     }
-    echo " <div class='pagi_sup'>
+
+    if (count($_SESSION["modules"]) > 0) {
+        echo " <div class='pagi_sup'>
 
     <div class='pagination'>";
-    $modules = $Pag->Pagination_Btn($_SESSION['modules'], $_GET['get']);
-    $Pag->Pagination_Nb($modules, $_GET['get']);
+        $modules = $Pag->Pagination_Btn($_SESSION['modules'], $_GET['get']);
+        $Pag->Pagination_Nb($modules, $_GET['get']);
 
-    echo "  </div>
+        echo "  </div>
     <div class='deleteAll'>
         <form action='' method='post'>
-            <input type='submit' value='Supprimer tous' name='btnSupprimer' class='btn btn-primary end-0' onclick='return confirm('Tu es Sure pour Supprimer Tous ?')' id='btnSupprimer'>
+            <input type='submit' value='Supprimer tous' name='btnSupprimer' class='btn btn-primary end-0' onclick='return confirm(`Tu es Sure pour Supprimer Tous ?`)' id='btnSupprimer'>
         </form>
     </div>
 
@@ -139,11 +154,14 @@ if (isset($_GET['info'])) {
             </tr>
         </thead>
             <tbody >";
-    GetTablePage($_SESSION["modules"], $_GET["get"]);
+        GetTablePage($_SESSION["modules"], $_GET["get"]);
 
-    echo " </tbody>
+        echo " </tbody>
     </table>
 </div>";
+    } else {
+        echo "<div><img src='../Images/nodata.jpg' alt='' /></div>";
+    }
 } else {
     if (isset($_SESSION["rechinfomodule"])) {
         $info = $_SESSION["rechinfomodule"];

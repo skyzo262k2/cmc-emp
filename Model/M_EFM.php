@@ -33,7 +33,7 @@ class EFM extends Connexion
         try {
             $this->connexion();
             $n = Connexion::$cnx->prepare("call SP_AddEFM(?,?,?,?,?,?,?,?)");
-            $n->execute(array($this->matricule, $this->groupe, $this->module, $this->url,$this->typeEFM, $this->AnneeFr, $this->Etab,$this->CodeFlr));
+            $n->execute(array($this->matricule, $this->groupe, $this->module, $this->url, $this->typeEFM, $this->AnneeFr, $this->Etab, $this->CodeFlr));
             $this->Deconnexion();
         } catch (Exception $ex) {
         }
@@ -95,11 +95,12 @@ class EFM extends Connexion
     }
     public function Showtable($examans)
     {
-        foreach ($examans as $e) {
-            $date = $e[7] == "" ? "-" : $e[7];
-            $remarque = $e[5] == "" ? "-" : $e[5];
-            $pdf = $e[7] == "" ? "-" : "<a href='../Controller/C_PDF_Proposition_EFM.php?efm=$e[0]'><img src='../Images/pdf.png' width='35px'/></a>"; 
-            echo "<tr>
+        if (count($examans) != 0) {
+            foreach ($examans as $e) {
+                $date = $e[7] == "" ? "-" : $e[7];
+                $remarque = $e[5] == "" ? "-" : $e[5];
+                $pdf = $e[7] == "" ? "-" : "<a href='../Controller/C_PDF_Proposition_EFM.php?efm=$e[0]'><img src='../Images/pdf.png' width='35px'/></a>";
+                echo "<tr>
                         <td>$e[2]</td>
                         <td>$e[13]</td>
                         <td>$e[8]</td>
@@ -110,7 +111,10 @@ class EFM extends Connexion
                         <td id='pdf'>$pdf</td>
                         <td><button class='btn' onclick='Supprimer(\"$e[0]\")'><img src='../Images/Icon_Delete.png' width='30px'></button></td>
                 </tr>";
-        }
+            }
+        } else 
+            echo "<tr> <td colspan='9' class='text-center '><img src='../Images/nodata.jpg' alt='' /></td></tr>";
+        
     }
     public function GetURLforDelete()
     {
@@ -165,15 +169,15 @@ class EFM extends Connexion
         }
         return $row;
     }
-     public function AvancementAffectation()
+    public function AvancementAffectation()
     {
         // $row = [];
         // try {
-            $this->connexion();
-            $n = Connexion::$cnx->prepare("call SP_AvancementAffectation(?,?,?,?,?)");
-            $n->execute(array($this->matricule,$this->module,$this->groupe,$this->Etab,$this->AnneeFr));
-            $row = $n->fetch(PDO::FETCH_NUM);
-            $this->Deconnexion();
+        $this->connexion();
+        $n = Connexion::$cnx->prepare("call SP_AvancementAffectation(?,?,?,?,?)");
+        $n->execute(array($this->matricule, $this->module, $this->groupe, $this->Etab, $this->AnneeFr));
+        $row = $n->fetch(PDO::FETCH_NUM);
+        $this->Deconnexion();
         // } catch (Exception $ex) {
         // }
         return $row;

@@ -15,14 +15,11 @@
         }
 
         .title {
-            margin: 5px;
             text-align: center;
         }
 
-        .title h4 {
+        .title h3 {
             color: blue;
-            /* font-size: 2em; */
-            margin-bottom: 25px;
             animation: slideInFromTop 1s ease-in-out;
         }
 
@@ -50,7 +47,7 @@
         function ChangeDate() {
             const date = document.getElementById("date").value;
             const seance = document.getElementById("seance").value;
-            document.getElementById("informations").innerHTML = "";
+            document.getElementById("informations").innerHTML = "<div class='text-center m-5'>  <img src='../Images/nodata.jpg' width='250px' alt='aucun données' />  </div>";
 
             var request = new XMLHttpRequest();
             request.open('POST', '../Controller/C_AbsenceStagiaire.php', true);
@@ -78,8 +75,9 @@
                     }
                 };
                 request.send(`groupe=${groupe}&date=${date}&seance=${seance}`);
-            }else{
-                document.getElementById("informations").innerHTML  = "";
+            } else {
+                document.getElementById("informations").innerHTML = "<div class='text-center m-5'>  <img src='../Images/nodata.jpg' width='250px' alt='aucun données' />  </div>";
+
             }
         }
 
@@ -165,43 +163,46 @@
 
 <body>
 
-    <!-- <input type="checkbox" value="Bilal" id="bb" checked> <button onclick="AddAbsence()"></button> -->
+    <div class="container-fluid mt-3">
+        <div class="row">
+            <div class="col-3">
+                <div class="title">
+                    <h3>Absences des stagiaires</h3>
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="form-groupe">
+                    <input type="date" name="date" id="date" value='<?= $sysdate ?>' class="form-control" onchange="ChangeDate()">
+                </div>
 
-    <div class="title">
-        <h4>Absence Stagiaire</h4>
-    </div>
-    <!-- <form action="" method="post"> -->
-    <div class="row">
-
-        <div class="col-2"></div>
-        <div class="col-3">
-            <div class="form-groupe">
-                <input type="date" name="date" id="date" value='<?php echo $sysdate ?>' class="form-control" onchange="ChangeDate()">
             </div>
 
-        </div>
-
-        <div class="col-3">
-            <div class="form-groupe">
-                <select name="seance" id="seance" class="form-control" onchange="ChangeDate()">
-                    <option value="choisir">Choisir Seance</option>
-                    <option value="1">8:30H - 11:00</option>
-                    <option value="2">11:00H - 13:30</option>
-                    <option value="3">13:30H - 16:00</option>
-                    <option value="4">16:00H - 18:30</option>
-                </select>
+            <div class="col-3">
+                <div class="form-groupe">
+                    <select name="seance" id="seance" class="form-control" onchange="ChangeDate()">
+                        <option value="choisir">Choisir Seance</option>
+                        <option value="1">8:30H - 11:00</option>
+                        <option value="2">11:00H - 13:30</option>
+                        <option value="3">13:30H - 16:00</option>
+                        <option value="4">16:00H - 18:30</option>
+                    </select>
+                </div>
             </div>
-        </div>
-        <div class="col-3">
-            <div class="form-groupe" id="groupe_select">
-                <select name="groupe" id="groupe" class="form-control" onchange="ChangeGroupe(this)">
-                    <option value="choisir">Choisir Groupe</option>
-                </select>
+            <div class="col-3">
+                <div class="form-groupe" id="groupe_select">
+                    <select name="groupe" id="groupe" class="form-control" onchange="ChangeGroupe(this)">
+                        <option value="choisir">Choisir Groupe</option>
+                    </select>
+                </div>
             </div>
         </div>
     </div>
 
     <div id="informations" class="m-2">
+
+        <div class='text-center m-5'>
+            <img src='../Images/nodata.jpg' width="250px" alt='aucun données' />
+        </div>
 
 
     </div>

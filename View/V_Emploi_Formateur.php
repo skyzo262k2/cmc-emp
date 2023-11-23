@@ -5,6 +5,8 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../Css/Bootstrap/css/bootstrap.min.css">
+    <script src="../Css/Bootstrap/js/bootstrap.bundle.min.js"></script>
     <!-- <script src="../Js/Ajax.js"></script> -->
     <script>
         function Ajax(route, send) {
@@ -46,7 +48,7 @@
             let rows = ""
             let semaine = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'];
             semaine.forEach(element => {
-                rows += `<tr style="height: 60px;"><td>${element}</td>`;
+                rows += `<tr style="height: 80px;" class='text-center'><th>${element}</th>`;
                 for (let index = 1; index < 5; index++) {
                     rows += `<td  class='td' id='${element}${index}'></td>`;
                 }
@@ -70,7 +72,7 @@
                 let send = `formateur=${frm.selectedOptions[0].value}`;
                 let table = Ajax(route, send)
                 document.getElementById('seul').hidden = false
-                document.getElementById('Groupe').innerHTML=`
+                document.getElementById('Groupe').innerHTML = `
                 <a href="../Controller/C_Emploi_Groupes.php?Matricule=${frm.selectedOptions[0].value}">
                         Emploi du Temps Groupes
                 </a>`
@@ -117,49 +119,10 @@
         box-shadow: none;
     }
 
-    #grp {
-        padding: 10px;
-        border-radius: 5px;
-        border: 1px solid gray;
-        font-size: 1em;
-        color: #555;
-        background-color: #fff;
-        margin-bottom: 20px;
-    }
-
-    #grp:hover {
-        background-color: #f5f5f5;
-        cursor: pointer;
-    }
 
 
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-bottom: 20px;
-        table-layout: fixed;
-    }
-
-    @media only screen and (min-width: 600px) {
-        table {
-            width: 100%;
-        }
-    }
-
-    td {
-        border: 1px solid black;
-        padding: 10px;
-    }
-
-    tr:nth-child(even) {
-        background-color: #f5f5f5;
-    }
-
-    #table td:hover {
-        background-color: #f5f5f5;
-    }
-
-    center h1 {
+    h3 {
+        color: blueviolet;
         animation: slideInFromTop 1s ease-in-out;
     }
 
@@ -290,9 +253,7 @@
     }
 
 
-    select {
-        width: 150px;
-    }
+
 
     .salles {
         display: inline-block;
@@ -350,93 +311,112 @@
         box-shadow: none;
     }
 
-    select {
-        background-color: #fff;
-        border: 1px solid #ccc;
-        padding: 5px;
-        width: 300px;
-        margin-bottom: 10px;
-        border-radius: 5px;
+
+
+    td {
+        text-align: center;
+    }
+
+    @keyframes slideInFromTop {
+        from {
+            transform: translateY(-100%);
+        }
+
+        to {
+            transform: translateY(0);
+        }
+    }
+
+    td:empty {
+        background-color: #f2f2f2;
+    }
+
+    .td {
+        font-size: 14px;
     }
 </style>
 
 
 
 <body>
-    <center>
-        <h1>Emploi Formateur</h1>
-    </center>
-    <form action="" method="post">
-        <?php if(!isset($_SESSION['userFormateur'])):?>
-        <center><button onclick="openPop()" type="button">Imprimer</button></center>
-        <table>
-            <tr>
-                <td style="text-align: center;font-size: larger;">Fomateur</td>
-                <td>
-                    <select name="formateur" onchange="Formateur(this)" id="frm">
-                        <option value="<?php if (isset($mat)) echo $mat . '/' . $nomp; ?>"><?php if (isset($nomp)) echo $nomp; ?></option>
-                        <?php
-                        if (isset($Formateurs)) :
-                            foreach ($Formateurs as $inf) {
-                                echo "<option value='" . $inf['Matricule'] . '/' . $inf['NomPr'] . "'>" . $inf['NomPr'] . "</option>";
-                            }
-                        endif;
-                        ?>
-                    </select>
-                    <span  id="Groupe"></span>
-                </td>
-            </tr>
-        </table>
-        <?php endif;?>
-        <div id="cacher">
-            <center>
+
+
+    <div class="container-fluid">
+        <form action="" method="post">
+            <?php if (!isset($_SESSION['userFormateur'])) : ?>
+                <div class="row m-3">
+                    <div class='col-3'>
+                        <h3>Emploi Formateur</h3>
+                    </div>
+                    <div class='col-7 d-flex'>
+                        <lable class="p-2 fw-bold">Fomateur : </lable>
+                        <select name="formateur" onchange="Formateur(this)" id="frm" class="form-control w-50 h-75">
+                            <option value="<?php if (isset($mat)) echo $mat . '/' . $nomp; ?>"><?php if (isset($nomp)) echo $nomp; ?></option>
+                            <?php
+                            if (isset($Formateurs)) :
+                                foreach ($Formateurs as $inf) {
+                                    echo "<option value='" . $inf['Matricule'] . '/' . $inf['NomPr'] . "'>" . $inf['NomPr'] . "</option>";
+                                }
+                            endif;
+                            ?>
+                        </select>
+                        <?php if ($_SESSION["Admin"]["Poste"] != "Surveille") : ?>
+                            <span id="Groupe" class="p-2"></span>
+                        <?php endif; ?>
+                    </div>
+                    <div class='col-2 text-end'>
+                        <button onclick="openPop()" type="button">Imprimer</button>
+                    </div>
+                </div>
+            <?php endif; ?>
+            <div id="cacher">
                 <button type="button" id="x" onclick="FermerPop()">X</button><br>
                 <p>
                     <!-- <h2 style="color:red;">les Dates sont Obligatoires </h2> -->
                 </p>
                 <label for="debut">Date Debut</label><input type="date" name="debut" id="debut"><br><br>
                 <label for="fin">Date fin</label><input type="date" name="fin" id="fin"><br><br>
-                <strong>Emploi All Formateurs</strong><br><br>
 
-
-                <button type="submit" name="word_all" style='background: none;border:none;'>
-                    <img src='../Images/word.png' style='width: 35px;height: 35px;' alt='not found'>
-                </button>
-                <button style="background: none;border:none;" name="tous_execl"><img src="../Images/execl.jpeg" style='width: 35px;height: 35px;' alt="not found"></button>
-
-                <br><br>
                 <span style="margin-left: auto;margin-right: auto;">
                     <table>
                         <tr>
-                            <th>PDF de Tout Formateur </th>
-                            <th>PDF Formateur P</th>
-                            <th>PDF Formateur V</th>
-                        </tr>
-                        <tr>
-                            <td style="border:none;">
+                            <th>
+                                <button type="submit" name="word_all" style='background: none;border:none;'>
+                                    <img src='../Images/word.png' style='width: 35px;height: 35px;' alt='not found'>
+                                </button>
+                                <button style="background: none;border:none;" name="tous_execl">
+                                    <img src="../Images/execl.jpeg" style='width: 30px;height: 30px;' alt="not found">
+                                </button>
                                 <button type="submit" name="pdfall" style='background: none;border:none;'>
                                     <img src='../Images/pdf.png' style='width: 35px;height: 35px;' alt='not found'>
                                 </button>
-                            </td>
-                            <td  style="border:none;">
+                            </th>
+                            <td class='fw-bold text-start'>Tout les formateurs </td>
+                        </tr>
+                        <tr>
+                            <th class="text-end">
                                 <button type='submit' name='pdfp' style='background: none; border:none;'>
                                     <img src='../Images/pdf.png' style='width: 35px;height: 35px;' alt='not found'>
                                 </button>
-                            </td>
-                            <td style="border:none;">
+                            </th>
+                            <td class='fw-bold text-start'>Les formateurs (P)</td>
+                        </tr>
+                        <tr>
+                            <th class="text-end">
                                 <button type='submit' name='pdfv' style='background: none; border:none;'>
                                     <img src='../Images/pdf.png' style='width: 35px;height: 35px;' alt='not found'>
                                 </button>
-                            </td>
-
+                            </th>
+                            <td class='fw-bold text-start'>Les formateurs (V)</td>
                         </tr>
+
                     </table>
 
                 </span>
 
                 <br><br>
                 <span style="margin-left: auto;margin-right: auto;" hidden id="seul">
-                    <strong>Emploi Formateur</strong><br>
+                    <strong>Emploi de Formateur choisi</strong><br>
                     <button type='submit' name='pdfone' style='background: none; border:none;'>
                         <img src='../Images/pdf.png' style='width: 50px;height: 50px;' alt='not found'>
                     </button>
@@ -447,44 +427,44 @@
                         <img src='../Images/execl.jpeg' style='width: 50px;height: 50px;' alt='not found'>
                     </button>
                 </span>
-            </center>
-        </div>
+            </div>
 
-        <table border="1">
-            <tr style="height: 60px;">
-                <td>Heures<br>Jours</td>
-                <td>8H30-11H00</td>
-                <td>11H00-13H30</td>
-                <td>13H30-16H00</td>
-                <td>16H00-18H30</td>
-            </tr>
-            <tbody id="col">
-                <script>
-                    let semaine = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'];
-                    semaine.forEach(element => {
-                        document.write(`<tr style="height: 60px;"><td>${element}</td>`);
-                        for (let index = 1; index < 5; index++) {
-                            document.write(`<td  class='td' id='${element}${index}'></td>`);
-                        }
-                        document.write(`</tr>`);
-                    });
-                </script>
-            </tbody>
-        </table>
-    </form>
+            <table border="1" class="table table-bordered">
+                <tr style="height: 60px;">
+                    <th class="text-center" width='10%'>Heures<br>Jours</th>
+                    <th class="text-center" width='22%'>8H30-11H00</th>
+                    <th class="text-center" width='22%'>11H00-13H30</th>
+                    <th class="text-center" width='22%'>13H30-16H00</th>
+                    <th class="text-center" width='22%'>16H00-18H30</th>
+                </tr>
+                <tbody id="col">
+                    <script>
+                        let semaine = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'];
+                        semaine.forEach(element => {
+                            document.write(`<tr style="height: 80px;" class='text-center'><th>${element}</th>`);
+                            for (let index = 1; index < 5; index++) {
+                                document.write(`<td  class='td' id='${element}${index}'></td>`);
+                            }
+                            document.write(`</tr>`);
+                        });
+                    </script>
+                </tbody>
+            </table>
     </div>
-    <?php if(isset($_SESSION['userFormateur'])):
+    <?php if (isset($_SESSION['userFormateur'])) :
         echo "
             <script>
             var emp={$_SESSION['userFormateur']['emploi']};
             var no_pr='$nomp';
             </script>";
-        ?>
+    ?>
         <script>
-            
-            Saisir(emp,no_pr);
+            Saisir(emp, no_pr);
         </script>
-    <?php endif;?>
+    <?php endif; ?>
+
+    </form>
+    </div>
 </body>
 
 </html>

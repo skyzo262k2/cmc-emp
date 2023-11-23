@@ -97,7 +97,7 @@
             for (const value of parentTr.children) {
                 value_list.push(value.textContent);
             }
-            
+
             let val = value_list[5].split("-");
             value_list[5] = val[0];
             for (const input of input_fields) {
@@ -105,67 +105,80 @@
                 indice++;
             }
         }
+        setTimeout(function() {
+            document.querySelector('.message').style.display = 'none';
+        }, 5000);
     </script>
 
 </head>
 
 <body>
     <div class="row header">
-        <div class="col-4 title">
-            Gestion Formateur
-        </div>
-        <div class="col-2"></div>
-        <div class="col-4 recherche">
+
+        <div class="col-4"></div>
+        <div class="col-8 recherche">
             <form action="" method="post" id="form">
-                <input type="text" id="formateur" class="form-control inp-recherche" name="formateur" value="<?php echo $info; ?>" onkeyup="Recherche()" placeholder="Recherche ....">
+                <input type="text" id="formateur" class="form-control inp-recherche" name="formateur" value="<?= htmlspecialchars($info) ?>" onkeyup="Recherche()" placeholder="Recherche ....">
             </form>
         </div>
-        <div class="col-2"></div>
     </div>
 
 
     <div class="row content">
         <div class="col-8 justify-content-center position-absolute end-0" id="infomations">
 
-            <div class="pagi_sup">
-                <?php if (count($_SESSION['Formateurs']) != 0) : ?>
+            <?php if (count($_SESSION["Formateurs"]) > 0) : ?>
+                <div class="pagi_sup">
+                    <?php if (count($_SESSION['Formateurs']) != 0) : ?>
 
-                    <div class="pagination">
-                        <?php
-                        $Formateus = $Pag->Pagination_Btn($_SESSION["Formateurs"], $_GET['get']);
-                        $Pag->Pagination_Nb($Formateus, $_GET['get']);
-                        ?>
-                    </div>
-                    <div class="deleteAll">
-                        <form action="" method="post">
-                            <input type="submit" value="Supprimer tous" class="btn btn-primary" name="btnSupprimer" class="end-0" onclick="return confirm('Tu es Sure pour Supprimer Tous ?')" id="btnSupprimer">
-                        </form>
-                    </div>
-                <?php endif; ?>
+                        <div class="pagination">
+                            <?php
+                            $Formateus = $Pag->Pagination_Btn($_SESSION["Formateurs"], $_GET['get']);
+                            $Pag->Pagination_Nb($Formateus, $_GET['get']);
+                            ?>
+                        </div>
+                        <div class="deleteAll">
+                            <form action="" method="post">
+                                <input type="submit" value="Supprimer tous" class="btn btn-primary" name="btnSupprimer" class="end-0" onclick="return confirm('Tu es Sure pour Supprimer Tous ?')" id="btnSupprimer">
+                            </form>
+                        </div>
+                    <?php endif; ?>
 
-            </div>
+                </div>
 
-            <div class="table-affiche">
-                <table class="table table-striped table-sm table-bordered">
-                    <thead>
-                        <tr class="table-success">
-                            <th scope="col">Matricule</th>
-                            <th scope="col">Nom</th>
-                            <th scope="col">Prénom</th>
-                            <th scope="col">Type</th>
-                            <th scope="col">Masse Horaire</th>
-                            <th scope="col">Secteur</th>
-                            <th scope="col">Réinitialiser</th>
-                            <th scope="col">Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php $Pag->GetTablePage($_SESSION["Formateurs"], $_GET["get"], 'formateur'); ?>
-                    </tbody>
-                </table>
-            </div>
+                <div class="table-affiche">
+                    <table class="table table-striped table-sm table-bordered">
+                        <thead>
+                            <tr class="table-success">
+                                <th scope="col">Matricule</th>
+                                <th scope="col">Nom</th>
+                                <th scope="col">Prénom</th>
+                                <th scope="col">Type</th>
+                                <th scope="col">Masse Horaire</th>
+                                <th scope="col">Secteur</th>
+                                <th scope="col">Réinitialiser</th>
+                                <th scope="col">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            <?php
+                            $Pag->GetTablePage($_SESSION["Formateurs"], $_GET["get"], 'formateur');
+                            ?>
+                        </tbody>
+                    </table>
+                </div>
+            <?php else : ?>
+                <div><img src='../Images/nodata.jpg' alt='' /></div>
+            <?php endif; ?>
+
         </div>
         <div class="col-4 justify-content-center  position-fixed start-0">
+
+            <div class="title">
+                Gestion Formateur
+            </div>
+            <div class='message'><?= $message ?></div>
             <form action="" method="post" id="form">
                 <div class="form-groupe m-4">
                     <input type="text" class="inputs form-control" maxlength="15" name="tMatricule" id="tMatricule" placeholder="Matricule">
@@ -195,7 +208,7 @@
                         <option value="choisir">Choisir Secteur</option>
                         <option value="Sans">Sans Secteur</option>
                         <?php foreach ($AlSecteurs as $sec) {
-                            echo '<option value=' . $sec[0] .'>' . $sec[1] . '</option>';
+                            echo '<option value=' . htmlspecialchars($sec[0]) . '>' . htmlspecialchars($sec[1]) . '</option>';
                         }
                         ?>
                     </select>

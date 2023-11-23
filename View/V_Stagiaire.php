@@ -90,6 +90,10 @@
             }
             x.send();
         }
+
+        setTimeout(function() {
+            document.querySelector('.message').style.display = 'none';
+        }, 5000);
     </script>
 
 </head>
@@ -98,15 +102,10 @@
 
 
     <div class="row header">
-        <div class="col-4 title">
-            Gestion Stagiaire
+        <div class="col-4"></div>
+        <div class="col-8 recherche">
+            <input type="text" id="stagiaire" class="form-control inp-recherche" name="stagiaire" value="<?= htmlspecialchars($info) ?>" onkeyup="Recherche()" placeholder="Recherche ....">
         </div>
-        <div class="col-2"></div>
-        <div class="col-4 recherche">
-            <input type="text" id="stagiaire" class="form-control inp-recherche" name="stagiaire" value="<?php echo $info; ?>" onkeyup="Recherche()" placeholder="Recherche ....">
-        </div>
-        <div class="col-2"></div>
-
     </div>
 
 
@@ -114,50 +113,58 @@
     <div class="row content">
         <div class="col-8 justify-content-center position-absolute end-0" id="infomations">
 
-            <div class="pagi_sup">
+            <?php if (count($_SESSION["Stagiaire"]) > 0) : ?>
+                <div class="pagi_sup">
 
-                <?php if (count($_SESSION['Stagiaire']) != 0) : ?>
-                    <div class="pagination">
-                        <?php
-                        $tab = $page->Pagination_Btn($_SESSION['Stagiaire'], $_GET['get']);
-                        $page->Pagination_Nb($tab, $_GET['get']);
-                        ?>
-                    </div>
+                    <?php if (count($_SESSION['Stagiaire']) != 0) : ?>
+                        <div class="pagination">
+                            <?php
+                            $tab = $page->Pagination_Btn($_SESSION['Stagiaire'], $_GET['get']);
+                            $page->Pagination_Nb($tab, $_GET['get']);
+                            ?>
+                        </div>
 
-                    <div class="deleteAll">
-                        <form action="" method="post">
-                            <input type="submit" value="Supprimer tous" name="btnSupprimer" class="btn btn-primary end-0" onclick="return confirm('Tu es Sure pour Supprimer Tous ?')" id="btnSupprimer">
-                        </form>
-                    </div>
+                        <div class="deleteAll">
+                            <form action="" method="post">
+                                <input type="submit" value="Supprimer tous" name="btnSupprimer" class="btn btn-primary end-0" onclick="return confirm('Tu es Sure pour Supprimer Tous ?')" id="btnSupprimer">
+                            </form>
+                        </div>
 
-                <?php endif; ?>
+                    <?php endif; ?>
 
-            </div>
+                </div>
 
-            <div class="table-affiche">
-                <table class="table table-striped table-sm table-bordered">
-                    <thead>
-                        <tr class="table-success">
-                            <th>CEF</th>
-                            <th>Nom</th>
-                            <th>Prénom</th>
-                            <th>Groupe</th>
-                            <th>Discipline</th>
-                            <th>Action</th>
-                            <!-- <th>Discipline</th> -->
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php
-                        $page->GetTablePage($_SESSION['Stagiaire'], $_GET['get']);
-                        ?>
-                    </tbody>
+                <div class="table-affiche">
+                    <table class="table table-sm table-bordered">
+                        <thead>
+                            <tr class="table-success">
+                                <th>CEF</th>
+                                <th>Nom</th>
+                                <th>Prénom</th>
+                                <th>Groupe</th>
+                                <th>Discipline</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php
+                            $page->GetTablePage($_SESSION['Stagiaire'], $_GET['get']);
+                            ?>
+                        </tbody>
 
-                </table>
-            </div>
+                    </table>
+                </div>
+            <?php else : ?>
+                <div><img src='../Images/nodata.jpg' alt='' /></div>
+            <?php endif; ?>
 
         </div>
         <div class="col-4 justify-content-center  position-fixed start-0 ">
+            <div class="title">
+                Gestion Stagiaire
+            </div>
+
+            <div class='message'><?= $message ?></div>
             <form action="" method="post" id="form">
                 <div class="form-groupe m-4">
                     <input type="number" class="inputs form-control" name="cef" id="cef" placeholder="CEF">
@@ -176,7 +183,7 @@
                         <option value="choisir">Choisir groupe</option>
                         <?php
                         foreach ($groupes as $grp) {
-                            echo "<option value='$grp[0]'>$grp[0]</option>";
+                            echo "<option value='".htmlspecialchars($grp[0])."'>".htmlspecialchars($grp[0])."</option>";
                         }
                         ?>
                     </select>

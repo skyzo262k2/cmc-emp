@@ -26,49 +26,70 @@ class Formateur extends Connexion implements IMethodeCRUD
         return $rows;
     }
 
-    public function GetFormateurSecteur($secteur,$anne)
+    public function GetFormateurSecteur($secteur)
     {
         parent::connexion();
-        $rows = parent::$cnx->query("call SP_GetFormateurSecteur('{$anne}','{$this->CodeEtab}','{$secteur}')")->fetchAll(PDO::FETCH_ASSOC);
+        $rows = parent::$cnx->query("call SP_GetFormateurSecteur('{$this->CodeEtab}','{$secteur}')")->fetchAll(PDO::FETCH_ASSOC);
         parent::Deconnexion();
         return $rows;
     }
-    
+
     public function Add()
     {
+        $n = null;
         try {
             parent::connexion();
             $query = "CALL SP_InsertFormateur(?,?,?,?,?,?,?,?)";
             $n = parent::$cnx->prepare($query);
-            $n->execute(array($this->Matricule, $this->Nom, $this->Prenom, $this->CodeEtab, $this->Type, $this->MassHoraire,$this->Password,$this->Secteur));
+            $n->execute(array($this->Matricule, $this->Nom, $this->Prenom, $this->CodeEtab, $this->Type, $this->MassHoraire, $this->Password, $this->Secteur));
+            parent::Deconnexion();
         } catch (PDOException  $er) {
+            $n = null;
         }
-        parent::Deconnexion();
+        return $n;
     }
 
     public function Update()
     {
-        parent::connexion();
-        $query = "call SP_UpdateFormateur(?,?,?,?,?,?,?)";
-        $n = parent::$cnx->prepare($query);
-        $n->execute(array($this->Matricule, $this->Nom, $this->Prenom, $this->CodeEtab, $this->Type, $this->MassHoraire,$this->Secteur));
-        parent::Deconnexion();
+        $n = null;
+        try {
+            parent::connexion();
+            $query = "call SP_UpdateFormateur(?,?,?,?,?,?,?)";
+            $n = parent::$cnx->prepare($query);
+            $n->execute(array($this->Matricule, $this->Nom, $this->Prenom, $this->CodeEtab, $this->Type, $this->MassHoraire, $this->Secteur));
+            parent::Deconnexion();
+        } catch (PDOException  $er) {
+            $n = null;
+        }
+        return $n;
     }
 
     public function Delete()
     {
-        parent::connexion();
-        $query = "call SP_DeleteFormateur(?,?)";
-        $n = parent::$cnx->prepare($query);
-        $n->execute(array($this->Matricule, $this->CodeEtab));
-        parent::Deconnexion();
+        $n = null;
+        try {
+            parent::connexion();
+            $query = "call SP_DeleteFormateur(?,?)";
+            $n = parent::$cnx->prepare($query);
+            $n->execute(array($this->Matricule, $this->CodeEtab));
+            parent::Deconnexion();
+        } catch (PDOException  $er) {
+            $n = null;
+        }
+        return $n;
     }
     public function DeleteAll()
     {
-        parent::connexion();
-        $n =  parent::$cnx->prepare("CALL SP_DeleteAllFormateurs(?)");
-        $n->execute(array($this->CodeEtab));
-        parent::Deconnexion();
+        $n = null;
+        try {
+            parent::connexion();
+            $n =  parent::$cnx->prepare("CALL SP_DeleteAllFormateurs(?)");
+            $n->execute(array($this->CodeEtab));
+            parent::Deconnexion();
+        } catch (PDOException  $er) {
+            $n = null;
+        }
+        return $n;
     }
 
     public function Find($val)
@@ -85,7 +106,7 @@ class Formateur extends Connexion implements IMethodeCRUD
     }
 
 
-    public function FindSecteur($val,$secteur)
+    public function FindSecteur($val, $secteur)
     {
         $rows = [];
         try {

@@ -9,6 +9,8 @@ if (!isset($_SESSION["Admin"]) || $_SESSION["Admin"]["Poste"] == "Surveille") {
 }
 
 
+
+$message = "";
 $info = "";
 
 $poste = $_SESSION['Admin']['Poste'];
@@ -19,17 +21,23 @@ if (!isset($_GET['get']))
 $sal = new Salle();
 $sal->CodeEtab = $_SESSION["Etablissement"]["CodeEtb"];
 
-$sal->connexion();
-$AlSecteurs = $sal::$cnx->query("select CodeSect,DescpSect from secteur;")->fetchAll(PDO::FETCH_NUM);
-$sal->Deconnexion();
+$query = "select CodeSect,DescpSect from secteur ";
+$query .= isset($_SESSION['Admin']['secteur']) ? "WHERE CodeSect='{$_SESSION['Admin']['secteur']}'" : ";";
 
-if (isset($_POST["sup"])) {
-    $sal->codesalle = $_POST["sup"];
-    $sal->Deletesalle();
-}
+
+$sal->connexion();
+$AlSecteurs = $sal::$cnx->query($query)->fetchAll(PDO::FETCH_NUM);
+$sal->Deconnexion();
 
 $sal->CodeEtab = $_SESSION['Admin']['CodeEtab'];
 $page = new Pagination();
+if (isset($_POST["sup"])) {
+    $sal->codesalle = $_POST["sup"];
+    $n = $sal->Deletesalle();
+    if ($n)
+        $message = $page->message("Salle a été supprimé avec succès", "danger");
+}
+
 
 if (isset($_POST['btnAjouter'])) {
     if (!empty($_POST['cdsl']) and !empty($_POST['descrpsl']) and isset($_POST['type'])) {
@@ -37,7 +45,10 @@ if (isset($_POST['btnAjouter'])) {
         $sal->descrpsal = $_POST['descrpsl'];
         $sal->type = $_POST['type'];
         $sal->Secteur = $_POST['tSecteur'];
-        $sal->AddSalle();
+        // echo $_POST['tSecteur'];
+        $n = $sal->AddSalle();
+        if ($n)
+            $message = $page->message("Salle a été ajouté avec succès", "primary");
     }
 }
 
@@ -48,11 +59,15 @@ if (isset($_POST['btnModifier'])) {
         $sal->descrpsal = $_POST['descrpsl'];
         $sal->type = $_POST['type'];
         $sal->Secteur = $_POST['tSecteur'];
-        $sal->Updatesalle();
+        $n = $sal->Updatesalle();
+        if ($n)
+            $message = $page->message("Salle a été modifié avec succès", "primary");
     }
 }
 if (isset($_POST['btnSupprimer'])) {
-    $sal->DeleteAllSalle();
+    $n = $sal->DeleteAllSalle();
+    if ($n)
+        $message = $page->message("Salles a été supprimés avec succès", "danger");
 }
 
 
@@ -76,18 +91,24 @@ if (isset($_GET['info'])) {
         else
             $_SESSION['salles'] = $sal::$cnx->query("call sp_RechercherGlobalSecteur('$info','$tblName','$sal->CodeEtab','$secteur')")->fetchAll(PDO::FETCH_ASSOC);
     }
+    for ($i = 0; $i < count($_SESSION['salles']); $i++) {
+        if ($_SESSION['salles'][$i]["secteur"] == "") {
+            $_SESSION['salles'][$i]["secteur"] = "Sans";
+        }
+    }
 
-    echo " <div class='pagi_sup'>
+    if (count($_SESSION["salles"]) > 0) {
+        echo " <div class='pagi_sup'>
 
     <div class='pagination'>
        ";
-    $salles = $page->Pagination_Btn($_SESSION['salles'], $_GET['get']);
-    $page->Pagination_Nb($salles, $_GET['get']);
+        $salles = $page->Pagination_Btn($_SESSION['salles'], $_GET['get']);
+        $page->Pagination_Nb($salles, $_GET['get']);
 
-    echo "</div>
+        echo "</div>
     <div class='deleteAll'>
         <form action='' method='post'>
-            <input type='submit' value='Supprimer tous' name='btnSupprimer' class='btn btn-primary end-0' onclick='return confirm('Tu es Sure pour Supprimer Tous ?')' id='btnSupprimer'>
+            <input type='submit' value='Supprimer tous' name='btnSupprimer' class='btn btn-primary end-0' onclick='return confirm(`Tu es Sure pour Supprimer Tous ?`)' id='btnSupprimer'>
         </form>
     </div>
 
@@ -108,11 +129,14 @@ if (isset($_GET['info'])) {
             <tbody>
                 ";
 
-    $page->GetTablePage($_SESSION['salles'], $_GET['get']);
+        $page->GetTablePage($_SESSION['salles'], $_GET['get']);
 
-    echo "</tbody>
+        echo "</tbody>
     </table>
 </div>";
+    } else {
+        echo "<div><img src='../Images/nodata.jpg' alt='' /></div>";
+    }
 } else {
     if (isset($_SESSION["rechinfosalle"])) {
         $info = $_SESSION["rechinfosalle"];
@@ -133,6 +157,11 @@ if (isset($_GET['info'])) {
             $_SESSION['salles'] = $sal->GetAllSalles();
         else
             $_SESSION['salles'] = $sal->GetSalleSecteur($secteur);
+    }
+    for ($i = 0; $i < count($_SESSION['salles']); $i++) {
+        if ($_SESSION['salles'][$i]["secteur"] == "") {
+            $_SESSION['salles'][$i]["secteur"] = "Sans";
+        }
     }
     require "../View/V_salle.php";
 }

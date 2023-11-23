@@ -10,13 +10,16 @@ if (!isset($_SESSION["Admin"]) || $_SESSION["Admin"]["Poste"] == "Surveille") {
 $cnnx = new Connexion();
 
 $CodeEtab = $_SESSION['Etablissement']["CodeEtb"];
-$anne = explode('/',$_SESSION['Annee']);
+$anne = explode('/', $_SESSION['Annee']);
 
 $pdf = new FPDF('L', 'mm', 'A4');
 
 $cnnx->connexion();
 
-$matricules =  $cnnx::$cnx->query("select matricule from formateur where CodeEtab = '$CodeEtab'")->fetchAll(PDO::FETCH_NUM);
+if ($_SESSION["Admin"]["Poste"] == "ChefSecteur")
+    $matricules =  $cnnx::$cnx->query("select matricule from formateur where secteur = '".$_SESSION["Admin"]["secteur"]."' and CodeEtab = '$CodeEtab'")->fetchAll(PDO::FETCH_NUM);
+else
+    $matricules =  $cnnx::$cnx->query("select matricule from formateur where CodeEtab = '$CodeEtab'")->fetchAll(PDO::FETCH_NUM);
 
 $page = new PagePDF_TableauService($pdf);
 
@@ -42,7 +45,7 @@ foreach ($matricules as $mat) {
 
     for ($i = 0; $i < $nbpage; $i++) {
         $page->pdf->AddPage();
-        $page->AddPagePDF($_SESSION["Annee"],$info[1],$info[0],$InfoHeures,array_slice($Affecteds,20*$i,20));
+        $page->AddPagePDF($_SESSION["Annee"], $info[1], $info[0], $InfoHeures, array_slice($Affecteds, 20 * $i, 20));
     }
 }
 

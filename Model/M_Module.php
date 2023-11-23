@@ -35,41 +35,55 @@ class Module extends Connexion
 
     public function AddModules()
     {
+        $n = null;
         try {
             parent::connexion();
             $query = "CALL SP_InsertModules(\"{$this->CodeMd}\",\"{$this->CodeFlr}\",\"{$this->Annee}\",\"{$this->DescMd}\",{$this->Pr},{$this->Dist},{$this->S1},{$this->S2}) ";
             $n = parent::$cnx->exec($query);
             parent::Deconnexion();
-            if ($n)
-                return true;
-            else
-                return false;
-        } catch (PDOException $er) {
+        } catch (PDOException  $er) {
+            $n = null;
         }
+        return $n;
     }
 
     public function UpdateModules()
     {
+        $n = null;
         try {
             parent::connexion();
             $query = "call SP_UpdateModules(\"{$this->CodeMd}\",\"{$this->CodeFlr}\",\"{$this->Annee}\",\"{$this->DescMd}\",{$this->Pr},{$this->Dist},{$this->S1},{$this->S2}) ";
-            parent::$cnx->exec($query);
+            $n = parent::$cnx->exec($query);
             parent::Deconnexion();
-        } catch (PDOException $er) {
+        } catch (PDOException  $er) {
+            $n = null;
         }
+        return $n;
     }
 
     public function DeleteModules()
     {
-        parent::connexion();
-        $query = "call SP_DeleteModules(\"{$this->CodeMd}\",\"{$this->CodeFlr}\")";
-        parent::$cnx->exec($query);
-        parent::Deconnexion();
+        $n = null;
+        try {
+            parent::connexion();
+            $query = "call SP_DeleteModules(\"{$this->CodeMd}\",\"{$this->CodeFlr}\")";
+            $n = parent::$cnx->exec($query);
+            parent::Deconnexion();
+        } catch (PDOException  $er) {
+            $n = null;
+        }
+        return $n;
     }
     public function DeleteAllModules()
     {
-        parent::connexion();
-        parent::$cnx->query("CALL SP_DeleteAllModules()");
-        parent::Deconnexion();
+        $n = null;
+        try {
+            parent::connexion();
+            parent::$cnx->query("CALL SP_DeleteAllModules()");
+            parent::Deconnexion();
+        } catch (PDOException  $er) {
+            $n = null;
+        }
+        return $n;
     }
 }

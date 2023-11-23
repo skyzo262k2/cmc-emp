@@ -4,34 +4,6 @@
     <link rel="stylesheet" href="../Css/Bootstrap/css/bootstrap.min.css">
 
     <style>
-        /* #form {
-            display: flex;
-            flex-direction: row;
-            align-items:flex-start;
-        }
-
-        #execl {
-            padding: 10px;
-            margin: 20px;
-            border: 2px solid #ccc;
-            border-radius: 5px;
-            font-size: 16px;
-        }
-
-        #file {
-            padding: 10px 20px;
-            background-color:blue;
-            color: #fff;
-            border: none;
-            border-radius: 5px;
-            font-size: 16px;
-            cursor: pointer;
-        }
-
-        #file:hover {
-            background-color: #3e8e41;
-        } */
-
         .color {
             width: 20px;
             height: 20px;
@@ -101,10 +73,8 @@
             text-align: center;
         }
 
-        .title h4 {
+        .title h3 {
             color: blue;
-            /* font-size: 2em; */
-            margin-bottom: 25px;
             animation: slideInFromTop 1s ease-in-out;
         }
 
@@ -124,6 +94,8 @@
             border-radius: 5px;
             height: 37px;
         }
+  
+  
     </style>
 
 </head>
@@ -157,11 +129,14 @@
         request.send(`getdate=${getdate}`);
     }
 
-    function AddAvanvement() {
+    function AddAvanvement(btn) {
         let T_Value = [];
         const btn_checked = document.getElementsByClassName("avc");
         const date = document.getElementById("date").value;
 
+        
+        btn.innerHTML="chargement ...";
+        btn.disabled=true;
         for (i = 0; i < btn_checked.length; i++) {
             if (btn_checked[i].checked == true && btn_checked[i].disabled == false) {
                 T_Value.push(btn_checked[i].value)
@@ -173,6 +148,8 @@
         request.onload = function() {
             if (this.status == 200 && this.readyState == 4) {
                 document.getElementById("informations").innerHTML = this.responseText;
+                btn.innerHTML="Valider";
+        btn.disabled=false;
             }
         };
         request.send(`add=${T_Value}&date=${date}`);
@@ -196,47 +173,46 @@
 
 <body>
 
-    <form method="POST">
-        <div class="row m-3">
-            <div class="col-8">
-                <div class="title">
-                    <h4>Avancement Module</h4>
+    <div class="row m-3">
+        <div class="col-8">
+            <div class="d-flex">
+                <div class="title w-50">
+                    <h3>Avancement Module</h3>
                 </div>
-                <div class='form-groupe'>
-                    <!-- <label for='date'>Choisir la date :</label> -->
-                    <input type='date' name='date' id='date' onchange="GetSeance()" class='inp' value='<?php echo $sysdate ?>'>
-                    <!-- <button type="button"  class="btn btn-primary">Get Seance</button> -->
-                    <button style="background: none;border:none;" name="execl"><img src="../Images/execl.jpeg" style='width: 32px;height: 30px;' alt="not found"></button>
-
-                </div>
+                <form method="POST" action='' class="w-50">
+                    <div class='form-groupe w-100 d-flex'>
+                        <input type='date' name='date' id='date' onchange="GetSeance()" class='form-control' value='<?= $sysdate ?>'>
+                        <button style="background: none;border:none;" class="pb-3" name="execl"><img src="../Images/execl.jpeg" style='width: 32px;height: 30px;' alt=""></button>
+                    </div>
+                </form>
             </div>
-
-            <div class="col-4">
-                <div class="divColor">
-                    <div class="c1">
-                        <div class="color green"></div>
-                        <span>Avancement < 90%</span>
-                    </div>
-
-                    <div class="c2">
-                        <div class="color yellow"></div>
-                        <span>Avancement entre 90% et 100% </span>
-                    </div>
-
-                    <div class="c3">
-                        <div class="color red"></div>
-                        <span> Avancement >= 100%</span>
-                    </div>
-                </div>
+            <div>
+                <form action="" method="post" id="form" enctype="multipart/form-data" class="d-flex w-100 ">
+                    <input type="file" name="execl" class="form-control m-2" id="execl">
+                    <input type="submit" value="Importer" id="file" class="btn btn-success m-2" name="import">
+                </form>
             </div>
-
         </div>
 
-    </form>
-    <form action="" method="post" id="form" enctype="multipart/form-data">
-        <input type="file" name="execl" id="execl">
-        <input type="submit" value="Import" id="file" name="import">
-    </form>
+        <div class="col-4 p-3 alert alert-info">
+            <div class="divColor">
+                <div class="c1">
+                    <div class="color green"></div>
+                    <span>Avancement < 90%</span>
+                </div>
+
+                <div class="c2">
+                    <div class="color yellow"></div>
+                    <span>Avancement entre 90% et 100% </span>
+                </div>
+
+                <div class="c3">
+                    <div class="color red"></div>
+                    <span> Avancement >= 100%</span>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <div id="informations">
         <?php GetSeance($sysdate); ?>

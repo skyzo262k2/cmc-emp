@@ -84,12 +84,11 @@ if (isset($_POST["dtdebut"]) && isset($_POST["dtfin"]) && isset($_POST["seance"]
                     <th>Nombre $texttype</th></tr>";
                 foreach ($ab_groupes as $con) {
                     foreach ($groupes as $g) {
-                        // print_r($g);
                         if ($con[0] == $g[0]) {
                             echo "<tr>
-                     <td>$con[0]</td>
-                     <td>$con[1]</td>
-                </tr>";
+                                        <td>".htmlspecialchars($con[0])."</td>
+                                        <td>".htmlspecialchars($con[1])."</td>
+                                    </tr>";
                         }
                     }
                 }
@@ -104,11 +103,11 @@ if (isset($_POST["dtdebut"]) && isset($_POST["dtfin"]) && isset($_POST["seance"]
                     <th>Nombre $texttype</th></tr>";
             foreach ($ConsParEtabAbsence as $con) {
                 echo "<tr>
-                     <td>$con[0]</td>
-                     <td>$con[1]</td>
-                     <td>$con[2]</td>
-                     <td>$con[3]</td>
-                     <td>$con[4]</td>
+                     <td>".htmlspecialchars($con[0])."</td>
+                     <td>".htmlspecialchars($con[1])."</td>
+                     <td>".htmlspecialchars($con[2])."</td>
+                     <td>".htmlspecialchars($con[3])."</td>
+                     <td>".htmlspecialchars($con[4])."</td>
                 </tr>";
             }
         }
@@ -138,15 +137,17 @@ if (isset($_POST["dtdebut"]) && isset($_POST["dtfin"]) && isset($_POST["seance"]
                     $m = $data[0];
                 }
                 echo "<tr>
-                    <td>$f</td>
-                    <td>$m</td>
+                    <td>".htmlspecialchars($f)."</td>
+                    <td>".htmlspecialchars($m)."</td>
                     <td>" . GetHeureSeance($con[4]) . "</td>
-                    <td>$con[2]</td>
-                    <td>$con[6]</td>
+                    <td>".htmlspecialchars($con[2])."</td>
+                    <td>".htmlspecialchars($con[6])."</td>
                     </tr>";
             }
         }
         echo   "</table>";
+    } else {
+        echo "<div class='text-center m-5'>  <img src='../Images/nodata.jpg' width='250px' alt='aucun données' />  </div>";
     }
 } elseif (isset($_POST["dtdebut"]) && isset($_POST["dtfin"]) && isset($_POST["seance"]) && isset($_POST["groupe"]) && isset($_POST["stg"])) {
     $dtD = $_POST["dtdebut"];
@@ -164,18 +165,16 @@ if (isset($_POST["dtdebut"]) && isset($_POST["dtfin"]) && isset($_POST["seance"]
         $stagiaires = $absencestg->GetStagiairebyGroupe($grp, $AnneeFr, $CodeEtab);
         foreach ($stagiaires as $stagiaire) {
             if ($stg == $stagiaire[0])
-                echo "<option selected value='$stagiaire[0]'>$stagiaire[1] $stagiaire[2]</option>";
+                echo "<option selected value='".htmlspecialchars($stagiaire[0])."'>".htmlspecialchars($stagiaire[1]." ".$stagiaire[2])."</option>";
             else
-                echo "<option value='$stagiaire[0]'>$stagiaire[1] $stagiaire[2]</option>";
+                echo "<option value='".htmlspecialchars($stagiaire[0])."'>".htmlspecialchars($stagiaire[1] ." ".$stagiaire[2])."</option>";
         }
     }
 
     echo  "</select>
-                        </div>
-                    </div>
-                </div>
-            <div class='col-5'></div></div>";
-    // echo $dtD . "  -  " . $dtF . "  -  " . $seance . "  -  " . $grp . "  -  " . $stg."<br>";
+            </div>
+           </div>
+         </div>";
     $Absence = [0];
     $Retard = [0];
     if (isset($_SESSION["userFormateur"])) {
@@ -193,22 +192,27 @@ if (isset($_POST["dtdebut"]) && isset($_POST["dtfin"]) && isset($_POST["seance"]
         }
     }
 
-    echo "<div class='row nb_statistique'>
-                <div class='col-4'></div>
-                <div class='col-2 statistique'>
-                        <span class='title'>Absence</span>
-                    <div>
-                        <span id='nbA'>$Absence[0]</span><span onclick='Detail(\"A\")'><img class='icon' src='../Images/Icon_Find.png'/></span>
+    echo "<div class='container'>
+            <div class='row mt-3 nb_statistique'>
+                <div class='col-6 statistique  text-center'>
+                    <div class='alert alert-info '>
+                        <span class='h5 title'>Les absences : </span>
+                        <span id='nbA' class='m-5 nb_stat'>".htmlspecialchars($Absence[0])."</span>
+                        <span onclick='Detail(\"A\")'><img class='icon' src='../Images/Icon_Find.png'/></span>
+                
                     </div>
                 </div>
-                <div class='col-2 statistique'>
-                    <span class='title'>Reterd</span>
-                    <div>
-                        <span id='nbR'>$Retard[0]</span><span onclick='Detail(\"R\")'><img class='icon' src='../Images/Icon_Find.png'/></span>
+                <div class='col-6 statistique  text-center'>
+                    <div class='alert alert-primary'>
+                        <span class='h5 title'>Les retards :</span>
+                        <span id='nbR' class='m-5 nb_stat'>".htmlspecialchars($Retard[0])."</span>
+                        <span onclick='Detail(\"R\")'><img class='icon' src='../Images/Icon_Find.png'/></span>
                     </div>
                 </div>
-                <div class='col-4'></div>
-            </div>";
+            </div>
+        </div>";
+
+    echo "  <div id='informations' class='m-5'>";
     if ($dtD != "" && $dtF != "" && $seance == "choisir" && $grp == "choisir" &&  $stg == "choisir") {
         if (isset($_SESSION["Admin"])) {
             $TopAbsenceStagiaire = $absencestg->GetTopAbsenceStagiaire($dtD, $dtF, "A", $AnneeFr, $CodeEtab);
@@ -223,37 +227,37 @@ if (isset($_POST["dtdebut"]) && isset($_POST["dtfin"]) && isset($_POST["seance"]
                     $top10[] = $stg;
                 }
             }
-            echo " <div class='m-5'  id='informations'>
-        <div>
-            <b>Absences Stagiaire : Top 10 </b>
-        </div>
-        <table class='table table-striped table-sm table-bordered'>
-                    <thead>
-                        <tr>
-                            <th>CEF</th>
-                            <th>Nom</th>
-                            <th>Prénom</th>
-                            <th>Groupe</th>
-                            <th>Discipline</th>
-                            <th>Nombre Absence</th>
-                        </tr>
-                    </thead>
-                    <tbody>";
+            echo "           <div>
+                            <div class='h3 text-primary'>Absences Stagiaire : Top 10 </div>
+                        </div>
+                        <table class='table table-striped table-sm table-bordered'>
+                                    <thead>
+                                        <tr>
+                                            <th>CEF</th>
+                                            <th>Nom</th>
+                                            <th>Prénom</th>
+                                            <th>Groupe</th>
+                                            <th>Discipline</th>
+                                            <th>Nombre Absence</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>";
 
             foreach ($top10 as $stg) {
                 echo "<tr>";
-                echo "<td>$stg[0]</td>";
-                echo "<td>$stg[1]</td>";
-                echo "<td>$stg[2]</td>";
-                echo "<td>$stg[3]</td>";
-                echo "<td>$stg[4]</td>";
-                echo "<td>$stg[5]</td>";
+                echo "<td>".htmlspecialchars($stg[0])."</td>";
+                echo "<td>".htmlspecialchars($stg[1])."</td>";
+                echo "<td>".htmlspecialchars($stg[2])."</td>";
+                echo "<td>".htmlspecialchars($stg[3])."</td>";
+                echo "<td>".htmlspecialchars($stg[4])."</td>";
+                echo "<td>".htmlspecialchars($stg[5])."</td>";
                 echo "</tr>";
             }
             echo "</tbody>
-                </table></div>";
+                </table>";
         }
     }
+    echo "</div>";
 } else {
     $dt = new DateTime();
     $sysdate = $dt->format("Y-m-d");

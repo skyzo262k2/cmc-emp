@@ -8,10 +8,12 @@ class Groupe extends Connexion
     public $CodeFlr;
     public $Annee;
     public $Fpa;
-    
+
     public $taux;
 
-    function __construct(){}
+    function __construct()
+    {
+    }
 
     public function GetAllGroupe()
     {
@@ -21,7 +23,7 @@ class Groupe extends Connexion
         return $rows;
     }
 
-    public function FindGroupe($Codegrp,$Codeetab)
+    public function FindGroupe($Codegrp, $Codeetab)
     {
         parent::connexion();
         $row = parent::$cnx->query("CALL sp_FindGrp('$Codegrp','$Codeetab')")->fetch();
@@ -32,57 +34,63 @@ class Groupe extends Connexion
     public function AddGroupe()
     {
 
-        $existe = $this->FindGroupe($this->CodeGrp,$this->CodeEtab);
+        $n = null;
+        $existe = $this->FindGroupe($this->CodeGrp, $this->CodeEtab);
         if ($existe == null) {
-            
-            parent::connexion();
-            $query = "CALL sp_InsertGrp('{$this->CodeGrp}','{$this->CodeFlr}','{$this->CodeEtab}','{$this->Annee}','{$this->Fpa}',{$this->taux})";
-            $n = parent::$cnx->exec($query);
-            parent::Deconnexion();
-            if ($n)
-                return true;
-            else 
-                return false;
-        }else{
-            
-        }     
+            try {
+                parent::connexion();
+                $query = "CALL sp_InsertGrp('{$this->CodeGrp}','{$this->CodeFlr}','{$this->CodeEtab}','{$this->Annee}','{$this->Fpa}',{$this->taux})";
+                $n = parent::$cnx->exec($query);
+                parent::Deconnexion();
+            } catch (PDOException  $er) {
+                $n = null;
+            }
+        } else {
+            $n = null;
+        }
+        return $n;
     }
-    
+
     public function DeleteGroupe()
     {
-        parent::connexion();
-        $success = parent::$cnx->exec("CALL sp_DeleteGrp('$this->CodeGrp','$this->CodeEtab')");
-        parent::Deconnexion();
-        if ($success)
-            return true;
-        else
-            return false;
+        $n = null;
+        try {
+            parent::connexion();
+            $n = parent::$cnx->exec("CALL sp_DeleteGrp('$this->CodeGrp','$this->CodeEtab')");
+            parent::Deconnexion();
+        } catch (PDOException  $er) {
+            $n = null;
+        }
+        return $n;
     }
     public function UpdateGroupe()
     {
-        $existe = $this->FindGroupe($this->CodeGrp,$this->CodeEtab);
+        $n = null;
+        $existe = $this->FindGroupe($this->CodeGrp, $this->CodeEtab);
         if ($existe != null) {
-            parent::connexion();
-            $query = "CALL sp_UpdateGrp('{$this->CodeGrp}','{$this->CodeEtab}','{$this->CodeFlr}','{$this->Annee}','{$this->Fpa}',{$this->taux})";
-            $success = parent::$cnx->exec($query);
-            parent::Deconnexion();
-            if ($success)
-                return true;
-            else
-                return false;
+            try {
+                parent::connexion();
+                $query = "CALL sp_UpdateGrp('{$this->CodeGrp}','{$this->CodeEtab}','{$this->CodeFlr}','{$this->Annee}','{$this->Fpa}',{$this->taux})";
+                $n = parent::$cnx->exec($query);
+                parent::Deconnexion();
+            } catch (PDOException  $er) {
+                $n = null;
+            }
+        } else {
+            $n = null;
         }
-
+        return $n;
     }
     public function DeleteAllGroupes()
     {
-        parent::connexion();
-        $success = parent::$cnx->query("CALL SP_DeleteAllGroupes('{$this->CodeEtab}')");
-        parent::Deconnexion();
-        if($success){
-            return true;
-        }else{
-            return false;
+        $n = null;
+        try {
+            parent::connexion();
+            $n = parent::$cnx->query("CALL SP_DeleteAllGroupes('{$this->CodeEtab}')");
+            parent::Deconnexion();
+        } catch (PDOException  $er) {
+            $n = null;
         }
+        return $n;
     }
 }
-?>

@@ -8,7 +8,7 @@ class Filiere extends Connexion implements IMethodeCRUD
     public $DescrpFl;
     public $CdSt;
     public $Nv;
-    
+
     public $etab;
     public  function __construct()
     {
@@ -42,46 +42,67 @@ class Filiere extends Connexion implements IMethodeCRUD
 
     public function Add()
     {
+        $n = null;
         try {
             parent::connexion();
             $req = "CALL SP_Add_filiere(?,?,?,?)";
-            $exec = parent::$cnx->prepare($req);
-            $exec->bindParam(1, $this->codefl);
-            $exec->bindParam(2, $this->DescrpFl);
-            $exec->bindParam(3, $this->CdSt);
-            $exec->bindParam(4, $this->Nv);
-            $exec->execute();
+            $n = parent::$cnx->prepare($req);
+            $n->bindParam(1, $this->codefl);
+            $n->bindParam(2, $this->DescrpFl);
+            $n->bindParam(3, $this->CdSt);
+            $n->bindParam(4, $this->Nv);
+            $n->execute();
             parent::Deconnexion();
         } catch (PDOException  $er) {
+            $n = null;
         }
+        return $n;
     }
 
     public function Update()
     {
-        parent::connexion();
-        $req = "CALL SP_Update_filiere(?,?,?,?)";
-        $exec = parent::$cnx->prepare($req);
-        $exec->bindParam(1, $this->codefl);
-        $exec->bindParam(2, $this->DescrpFl);
-        $exec->bindParam(3, $this->CdSt);
-        $exec->bindParam(4, $this->Nv);
-        $exec->execute();
-        parent::Deconnexion();
+        $n = null;
+        try {
+            parent::connexion();
+            $req = "CALL SP_Update_filiere(?,?,?,?)";
+            $n = parent::$cnx->prepare($req);
+            $n->bindParam(1, $this->codefl);
+            $n->bindParam(2, $this->DescrpFl);
+            $n->bindParam(3, $this->CdSt);
+            $n->bindParam(4, $this->Nv);
+            $n->execute();
+            parent::Deconnexion();
+        } catch (PDOException  $er) {
+            $n = null;
+        }
+        return $n;
     }
     public function Delete()
     {
-        parent::connexion();
-        $req = "CALL SP_Delete_filiere(?)";
-        $exec = parent::$cnx->prepare($req);
-        $exec->bindParam(1, $this->codefl);
-        $exec->execute();
-        parent::Deconnexion();
+        $n = null;
+        try {
+            parent::connexion();
+            $req = "CALL SP_Delete_filiere(?)";
+            $n = parent::$cnx->prepare($req);
+            $n->bindParam(1, $this->codefl);
+            $n->execute();
+            parent::Deconnexion();
+        } catch (PDOException  $er) {
+            $n = null;
+        }
+        return $n;
     }
     public function DeleteAll()
     {
-        parent::connexion();
-        parent::$cnx->query("CALL SP_DeleteAllFilieres()");
-        parent::Deconnexion();
+        $n = null;
+        try {
+            parent::connexion();
+            $n = parent::$cnx->exec("CALL SP_DeleteAllFilieres()");
+            parent::Deconnexion();
+        } catch (PDOException  $er) {
+            $n = null;
+        }
+        return $n;
     }
 
     public function CodeSecteur()

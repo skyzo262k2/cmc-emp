@@ -5,6 +5,8 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../Css/Bootstrap/css/bootstrap.min.css">
+    <script src="../Css/Bootstrap/js/bootstrap.bundle.min.js"></script>
     <title>Document</title>
     <script>
         function Saisir(table) {
@@ -46,7 +48,7 @@
                 if (td.innerHTML == "") {
                     document.getElementById("type").disabled = true
                     document.getElementById("sal").disabled = true
-                    document.getElementById('supprimer').hidden = true
+                    // document.getElementById('supprimer').hidden = true
 
                     document.getElementById('ajouter').style.display = "block"
                     document.getElementById('supprimer').style.display = "none"
@@ -89,7 +91,7 @@
             let rows = ""
             let semaine = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'];
             semaine.forEach(element => {
-                rows += `<tr style="height: 60px;"><td>${element}</td>`;
+                rows += `<tr style="height: 80px;"><th class='text-center'>${element}</th>`;
                 for (let index = 1; index < 5; index++) {
                     rows += `<td onclick="openF(this)" class='td' id='${element}/${index}'></td>`;
                 }
@@ -172,68 +174,12 @@
         margin: 0 auto;
     }
 
-    input[type="button"]
-    ,button,
-    #ajt {
-        background-color: blue;
-        color: white;
-        padding: 10px 20px;
-        border: none;
-        cursor: pointer;
-        margin-bottom: 20px;
-        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-        transform: translateY(4px);
-        transition: all 0.2s ease-in-out;
-    }
-
-    input[type="button"]:active,button:active {
-        transform: translateY(0px);
-        box-shadow: none;
-    }
-
-    #grp {
-        padding: 10px;
-        border-radius: 5px;
-        border: 1px solid gray;
-        font-size: 1em;
-        color: #555;
-        background-color: #fff;
-        margin-bottom: 20px;
-    }
-
-    #grp:hover {
-        background-color: #f5f5f5;
-        cursor: pointer;
-    }
 
 
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-bottom: 20px;
-        table-layout: fixed;
-    }
 
-    @media only screen and (min-width: 600px) {
-        table {
-            width: 100%;
-        }
-    }
 
-    td {
-        border: 1px solid black;
-        padding: 10px;
-    }
-
-    tr:nth-child(even) {
-        background-color: #f2f2f2;
-    }
-
-    #table td:hover {
-        background-color: #f5f5f5;
-    }
-
-    center h1 {
+    h3 {
+        color: blueviolet;
         animation: slideInFromTop 1s ease-in-out;
     }
 
@@ -273,7 +219,7 @@
         border-radius: 5px;
         float: right;
         cursor: pointer;
-        margin-top: -15px;
+        margin-top: -35px;
         margin-right: -15px;
     }
 
@@ -285,12 +231,7 @@
         margin-top: 30px;
     }
 
-    #popup #inp label {
-        font-weight: bold;
-        margin-right: 10px;
-        display: inline-block;
-        width: 100px;
-    }
+
 
     #popup input[type="text"],
     #popup select {
@@ -348,6 +289,28 @@
         to {
             opacity: 1;
         }
+    }
+
+    td {
+        text-align: center;
+    }
+
+    @keyframes slideInFromTop {
+        from {
+            transform: translateY(-100%);
+        }
+
+        to {
+            transform: translateY(0);
+        }
+    }
+
+    td:empty {
+        background-color: #f2f2f2;
+    }
+
+    .td {
+        font-size: 14px;
     }
 </style>
 
@@ -522,21 +485,15 @@
 </script>
 
 <body>
-    <center>
-        <h1>Emploi Brouillon</h1>
-    </center>
-
-    <form action="" method="post">
-        <input type="hidden" name="frm_hid" id="frm_hid">
-        <input type="button" onclick="Utiliser()" value="utiliser" name="utl">
-        <button onclick="EmploiGroupe()" id="relaod" hidden type="button">
-            reload
-        </button>
-        <table>
-            <tr>
-                <td style="text-align: center;font-size: larger;">Groupes</td>
-                <td>
-                    <select name="group" onchange="EmploiGroupe()" id="grp">
+    <div class="container-fluid">
+        <form action="" method="post">
+            <div class="row m-3">
+                <div class='col-5'>
+                    <h3>Emploi Brouillon</h3>
+                </div>
+                <div class='col-5 d-flex'>
+                    <lable class="p-2 fw-bold">Groupes : </lable>
+                    <select name="group" onchange="EmploiGroupe()" class="form-control w-50" id="grp">
                         <option value="<?php if (isset($grp)) echo $grp; ?>"><?php if (isset($grp)) echo $grp; ?></option>
                         <?php
                         if (isset($Groupes)) :
@@ -546,91 +503,114 @@
                         endif;
                         ?>
                     </select>
-                </td>
-            </tr>
-        </table>
-        <table border="1" id="table">
-            <tr style="height: 60px;">
-                <td>Heures<br>Jours</td>
-                <td>8H30-11H00</td>
-                <td>11H00-13H30</td>
-                <td>13H30-16H00</td>
-                <td>16H00-18H30</td>
-            </tr>
-            <tbody id='rows'>
-                <script>
-                    CreationRows()
-                </script>
-            </tbody>
-        </table>
-        <div id="popup" class="popup">
-            <center>
-                <input type="button" value="X" onclick="Fermer()" id='fermer'>
-                <div id="inp">
-                    <label>Jour :</label>
-                    <input type="text" readonly value="<?= $jour ?>" name="jour" id="jour"><br><br>
-                    <label>Seance :</label>
-                    <input type="text" readonly value="<?= $seance ?>" name="seance" id="seance">
-                    <p id="p" style="color:red;">
-                        <!-- par script js -->
-                    </p>
                 </div>
-                <div id="supprimer" <?= $hiddensup ?>>
-
-                    <p><strong>Formateur :</strong></p> <input type="text" readonly id="sup_frm" name="sup_frm">
-                    <p><strong>Type Seance :</strong></p> <input type="text" readonly id="sup_typsc" name="sup_typsc">
-                    <p><strong>Salle :</strong></p>
-                    <!-- <input type="text" readonly id="sup_sal" name="sup_sal"> -->
-                    <select name="sup_sal" id="sup_sal">
-                        <option value=""></option>
-                    </select>
-                    <p><strong>Module :</strong></p>
-                    <!-- <input type="text" readonly id="sup_mdl" name="sup_mdl"><br><br> -->
-                    <select name="sup_mdl" id="sup_mdl">
-                        <option value=""></option>
-                    </select>
-                    <br><br>
-                    <input type="button" onclick="Supprimer()" value="supprimer" name="sup">
-                    <input type="button" onclick="Modifier()" value="Modifier" name="mod">
-
+                <div class='col-2'>
+                    <input type="hidden" name="frm_hid" id="frm_hid">
+                    <input type="button" onclick="Utiliser()" value="utiliser" name="utl" class="btn btn-primary">
+                    <button onclick="EmploiGroupe()" id="relaod" hidden type="button" class="btn btn-info">
+                        reload
+                    </button>
                 </div>
+            </div>
 
-                <div id="ajouter">
-                    <h2>Ajouter leçon</h2>
-                    <label for="Form"><strong>Formateur :</strong></label><br>
-                    <select class="inputs" name="frm" onchange="FormateurC(this)" id="Form">
-                        <option value=""></option>
-                        <!-- Remplit par un script js -->
-                    </select>
+            <table border="1" id="table" class="table table-bordered">
+                <tr style="height: 60px;">
+                    <th width="10%" class='text-center'>Heures<br>Jours</th>
+                    <th width="22%" class='text-center'>8H30-11H00</th>
+                    <th width="22%" class='text-center'>11H00-13H30</th>
+                    <th width="22%" class='text-center'>13H30-16H00</th>
+                    <th width="22%" class='text-center'>16H00-18H30</th>
+                </tr>
+                <tbody id='rows'>
+                    <script>
+                        CreationRows()
+                    </script>
+                </tbody>
+            </table>
+            <div id="popup" class="popup">
+                <center>
+                    <input type="button" value="X" onclick="Fermer()" id='fermer'>
+                    <div id="inp" class="row m-3">
+                        <div class='col-6'>
+                            <div class="form-groupe d-flex">
+                                <label class='p-2 fw-bold'>Jour:</label>
+                                <input type="text" readonly value="<?= $jour ?>" name="jour" id="jour">
+                            </div>
+                        </div>
+                        <div class='col-6 d-flex'>
+                            <label class='p-2 fw-bold'>Seance:</label>
+                            <input type="text" readonly value="<?= $seance ?>" name="seance" id="seance">
+                        </div>
 
-                    <br>
-
-                    <label for="type"><strong>Type Séance :</strong></label><br>
-                    <select class="inputs" name="typesc" <?= $blocktype ?> onchange="TypeSeance(this)" id="type">
-                        <option value=""></option>
-                        <option value="Présentiel">Présentiel</option>
-                        <option value="Distance">Distance</option>
-                    </select>
-                    <br>
-                    <div class="salles">
-                        <label for="sal"><strong>Salle :</strong></label><br>
-                        <select class="inputs" name="salle" <?= $blocksalle; ?> id="sal">
-                            <option value=""></option>
+                        <p id="p" style="color:red;" class='fw-bold'>
                             <!-- par script js -->
-                        </select>
+                        </p>
                     </div>
-                    <br>
+                    <div id="supprimer" <?= $hiddensup ?>>
+                        <div class='d-flex'>
+                            <label for="Form" class="w-25"><strong>Formateur :</strong></label>
+                            <input type="text" readonly id="sup_frm" name="sup_frm" class="form-control w-75">
+                        </div>
 
-                    <div id="meme">
-                        <!-- par script js -->
+                        <div class='d-flex'>
+                            <label for="Form" class="w-25"><strong>Type Seance :</strong></label>
+                            <input type="text" readonly id="sup_typsc" name="sup_typsc" class="form-control w-75">
+                        </div>
+
+                        <div class='d-flex'>
+                            <label for="Form" class="w-25"><strong>Salle :</strong></label>
+                            <select name="sup_sal" id="sup_sal" class="form-control w-75">
+                                <option value=""></option>
+                            </select>
+                        </div>
+                        <div class='d-flex'>
+                            <label for="Form" class="w-25"><strong>Module :</strong></label>
+                            <select name="sup_mdl" id="sup_mdl" class="form-control w-75">
+                                <option value=""></option>
+                            </select>
+                        </div>
+                        <div class="m-3">
+                            <input type="button" onclick="Supprimer()" class="btn btn-info" value="supprimer" name="sup">
+                            <input type="button" onclick="Modifier()" class="btn btn-danger" value="Modifier" name="mod">
+                        </div>
                     </div>
 
-                    <input type="button" onclick="Ajouter()" value="Ajouter" name="ajt" id='ajt'>
-                </div>
-                <br><br>
-            </center>
-        </div>
-    </form>
+                    <div id="ajouter">
+                        <div class='d-flex'>
+                            <label for="Form" class="w-25"><strong>Formateur :</strong></label>
+                            <select class="inputs form-control w-75" name="frm" onchange="FormateurC(this)" id="Form">
+                                <option value=""></option>
+                                <!-- Remplit par un script js -->
+                            </select>
+                        </div>
+                        <div class='d-flex'>
+                            <label for="type" class="w-25"><strong>Type Séance :</strong></label>
+                            <select class="inputs form-control w-75" name="typesc" <?= $blocktype ?> onchange="TypeSeance(this)" id="type">
+                                <option value=""></option>
+                                <option value="Présentiel">Présentiel</option>
+                                <option value="Distance">Distance</option>
+                            </select>
+                        </div>
+                        <div class="salles d-flex">
+                            <label for="sal" class="w-25"><strong>Salle :</strong></label><br>
+                            <select class="inputs form-control w-75" name="salle" <?= $blocksalle; ?> id="sal">
+                                <option value=""></option>
+                                <!-- par script js -->
+                            </select>
+                        </div>
+
+                        <div id="meme">
+                            <!-- par script js -->
+                        </div>
+                        <div class="m-3">
+                            <input type="button" class="btn btn-primary" onclick="Ajouter()" value="Ajouter" name="ajt" id='ajt'>
+                        </div>
+                    </div>
+                </center>
+            </div>
+        </form>
+
+    </div>
 </body>
 
 </html>

@@ -15,7 +15,7 @@ class Pagination
         return $inputs;
     }
 
-    public function GetTablePage($tab, $nb,$pg='')
+    public function GetTablePage($tab, $nb, $pg = '')
     {
         if ($tab) {
             $n = $nb * 25;
@@ -26,20 +26,19 @@ class Pagination
                     break;
                 };
                 foreach ($tab[$i] as $col) {
-                    echo "<td>" . $col . "</td>";
+                    echo "<td>" . htmlspecialchars($col) . "</td>";
                 }
-
-                if($pg=='formateur'){
+                if ($pg == 'formateur') {
                     echo "<td>
                             <form action='' method='POST'>
-                                <button  type='submit' name='Reinitialiser' value='".$tab[$i][$key]."'>Réinitialiser</button>
+                                <button  type='submit' name='Reinitialiser' class='sup' value='" . htmlspecialchars($tab[$i][$key]) . "'><img src='../Images/reinitialiser.png' width='30px' /></button>
                             </form>
                         </td>";
                 }
 
                 echo '<td>
                 <form action="" method="POST">
-                <button class="sup" type=' . 'submit' . ' name=' . 'sup' . ' value="' . $tab[$i][$key] . '" ><img src="../Images/Icon_Delete.png" width="30px" /></button>
+                <button class="sup" type=' . 'submit' . ' name=' . 'sup' . ' value="' . htmlspecialchars($tab[$i][$key]) . '" ><img src="../Images/Icon_Delete.png" width="30px" /></button>
                 </form></td>';
                 echo " </tr>";
             }
@@ -56,7 +55,7 @@ class Pagination
                     break;
                 };
                 foreach ($tab[$i] as $col) {
-                    echo "<td>" . $col . "</td>";
+                    echo "<td>" . htmlspecialchars($col) . "</td>";
                 }
                 echo " </tr>";
             }
@@ -88,5 +87,11 @@ class Pagination
                 }
             }
         }
+    }
+    public function message($message, $mode)
+    {
+        return "<div class='alert alert-" . htmlspecialchars($mode) . " alert-dismissible fade show m-2'>" .
+            htmlspecialchars($message) .
+            "</div>";
     }
 }

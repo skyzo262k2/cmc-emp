@@ -75,7 +75,7 @@
         td {
             text-align: center;
         }
-  
+
         /* Styles pour le tableau */
         table {
             border-collapse: collapse;
@@ -121,7 +121,7 @@
             justify-content: center;
             align-items: center;
             z-index: 9999;
-            height:max-content;
+            height: max-content;
         }
 
         #ajouter {
@@ -255,8 +255,7 @@
             request.open('POST', '../Controller/C_Valider.php', true);
             request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
             request.onload = function() {
-                if (this.status == 200 && this.readyState == 4) {
-                }
+                if (this.status == 200 && this.readyState == 4) {}
             };
             request.send(`remarque=${text.name}/${text.value}`);
         }
@@ -269,7 +268,7 @@
                 if (input.checked) {
                     valeurs.push('Oui');
                 } else {
-                    document.getElementsByName(input.name)[1].checked=true
+                    document.getElementsByName(input.name)[1].checked = true
                     valeurs.push('Non')
                 }
             });
@@ -285,10 +284,10 @@
             request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
             request.onload = function() {
                 if (this.status == 200 && this.readyState == 4) {
-                    if(this.response==1)
+                    if (this.response == 1)
                         Message('Sauvgarder avec succès')
                     else
-                    Message('Instruction ne passe pas')
+                        Message('Instruction ne passe pas')
                 }
             };
             request.send(`valider=${vals}`);
@@ -303,29 +302,31 @@
         }
     </script>
 </head>
+
 <body>
     <div class="title">
         <h4>Gestion Validation Examen Fin Module</h4>
     </div>
     <div class='row'>
         <form action="" method="post">
-            <table class="table table-striped table-sm table-bordered m-3">
-                <thead>
-                    <tr class="table-success">
-                        <th scope="col">Formateur</th>
-                        <th scope="col">Groupe</th>
-                        <th scope="col">Description Module</th>
-                        <th scope="col">EFM </th>
-                        <th scope="col">Valider</th>
-                        <th scope="col">Remarque</th>
-                    </tr>
-                </thead>
-                <tbody id='informations'>
+            <?php
+            if (count($Efms) > 0) : ?>
+                <table class="table table-striped table-sm table-bordered m-3">
+                    <thead>
+                        <tr class="table-success">
+                            <th scope="col">Formateur</th>
+                            <th scope="col">Groupe</th>
+                            <th scope="col">Description Module</th>
+                            <th scope="col">EFM </th>
+                            <th scope="col">Valider</th>
+                            <th scope="col">Remarque</th>
+                        </tr>
+                    </thead>
+                    <tbody id='informations'>
 
-                    <?php
-                    if (count($Efms) > 0) :
-                        foreach ($Efms as $value) :
-                    ?>
+
+                        <?php foreach ($Efms as $value) :
+                        ?>
                             <tr>
                                 <td><?= $value['NomP'] ?></td>
                                 <td><?= $value['groupe'] ?></td>
@@ -338,12 +339,14 @@
                                     <textarea class='form-control' name="<?= $value['matricule'] ?>/<?= $value['groupe'] ?>/<?= $value['module'] ?>" onchange="Remarque(this)" cols="15" rows="1"><?= $value['Remarque'] ?></textarea>
                                 </td>
                             </tr>
-                    <?php
-                        endforeach;
-                    endif;
-                    ?>
-                </tbody>
-            </table>
+                        <?php endforeach; ?>
+
+                    </tbody>
+                </table>
+
+            <?php else : ?>
+                <div class='m-5 text-center '><img src='../Images/nodata.jpg' alt='' /></div>
+            <?php endif; ?>
         </form>
     </div>
     <div id="popup">
